@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>img/darktheme.png</file>
+        <file>img/whitetheme.png</file>
+        <file>img/2835252_rewind_undo_loop_redo_arrow.png</file>
+        <file>img/2835258_long arrow_down_arrow_down arrow_downward.png</file>
+        <file>img/2835260_control_more_options_menu select_list view_menu.png</file>
+    </qresource>
+</RCC>
