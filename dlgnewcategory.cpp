@@ -8,31 +8,41 @@
 
 dlgNewCategory::dlgNewCategory(OpenMode mode, uint32_t id, QWidget *parent) :
   QDialog(parent), ui(new Ui::dlgNewCategory),
-  id_{id}, db_ { QSqlDatabase::database("xxxConection") }
+  mode_{mode}, id_{id}, db_ { QSqlDatabase::database("xxxConection") }
 {
   ui->setupUi(this);
   setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
 
-  if(mode == OpenMode::Edit){
+  if(mode_ == OpenMode::Edit){
       setWindowTitle(qApp->applicationName().append(" - Edit category data."));
       loadData();
     }
 
 
   QObject::connect(ui->buttonBox, &QDialogButtonBox::accepted, this, [&](){
-      QSqlQuery qry(db_);
-      [[ maybe_unused ]] auto res = qry.prepare("UPDATE category SET category_name=?, desc=? WHERE id=? ");
-      qry.addBindValue(ui->txtCategory->text(), QSql::In);
-      qry.addBindValue(ui->pteDesc->toPlainText(), QSql::In);
-      qry.addBindValue(id_, QSql::In);
-      if(!qry.exec()){
-          QMessageBox::critical(this, qApp->applicationName(), "Error al ajecutar la consulta!\n"+
-                                qry.lastError().text());
-          return;
-        }
 
-      QMessageBox::information(this, qApp->applicationName(), "Datos actualizados!\n");
-      dlgNewCategory::accept();
+      if(mode_ == OpenMode::New){
+          if(!validateData())
+            return;
+          accept();
+        }else{
+
+          if(!validateData()) return;
+
+          QSqlQuery qry(db_);
+          [[ maybe_unused ]] auto res = qry.prepare("UPDATE category SET category_name=?, desc=? WHERE id=? ");
+          qry.addBindValue(ui->txtCategory->text(), QSql::In);
+          qry.addBindValue(ui->pteDesc->toPlainText(), QSql::In);
+          qry.addBindValue(id_, QSql::In);
+          if(!qry.exec()){
+              QMessageBox::critical(this, qApp->applicationName(), "Error al ajecutar la consulta!\n"+
+                                    qry.lastError().text());
+              return;
+            }
+
+          QMessageBox::information(this, qApp->applicationName(), "Datos actualizados!\n");
+          dlgNewCategory::accept();
+        }
     });
   QObject::connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &dlgNewCategory::reject);
 }
@@ -69,3 +79,14 @@ void dlgNewCategory::loadData() noexcept
   ui->txtCategory->setText(qry.value(0).toString());
   ui->pteDesc->setPlainText(qry.value(1).toString());
 }
+
+bool dlgNewCategory::validateData() const noexcept
+{
+  if(ui->txtCategory->text().simplified().isEmpty()){
+      QMessageBox::warning(nullptr, qApp->applicationName(), "Debe ingresar un nombre de categoría!\n");
+      ui->txtCategory->setFocus(Qt::OtherFocusReason);
+      return false;
+    }
+  return true;
+}
+

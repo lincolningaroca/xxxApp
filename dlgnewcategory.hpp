@@ -23,9 +23,11 @@ public:
 
 private:
   Ui::dlgNewCategory *ui;
+  const OpenMode mode_;
   const uint32_t id_{};
   const QSqlDatabase db_{};
 
   void loadData() noexcept;
+  bool validateData() const noexcept;
 };
 
