@@ -16,6 +16,8 @@ dlgNewCategory::dlgNewCategory(OpenMode mode, uint32_t id, QWidget *parent) :
   if(mode_ == OpenMode::Edit){
       setWindowTitle(qApp->applicationName().append(" - Edit category data."));
       loadData();
+    }else{
+      setWindowTitle(qApp->applicationName().append(" - New category."));
     }
 
 
