@@ -1,4 +1,6 @@
 
 CMakeLists.txt.user
-/db
+db/
+.gitignore~
+..gitignore.un~
 
