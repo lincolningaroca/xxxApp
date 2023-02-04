@@ -13,7 +13,7 @@ class Widget : public QWidget
   Q_OBJECT
 
 public:
-  Widget(QWidget *parent = nullptr);
+  explicit Widget(QWidget *parent = nullptr);
   ~Widget();
   enum class Theme{ Modo_Claro, Modo_Oscuro };
   //slots

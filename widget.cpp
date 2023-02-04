@@ -28,7 +28,19 @@ Widget::Widget(QWidget *parent)
 
   readSettings();
 
+//connect to slot to btnDeleteCategory
+  QObject::connect(ui->btnDeleteCategory,&QPushButton::clicked, this, [&](){
+      QSqlQuery qry(db);
+      [[maybe_unused]] auto res=qry.prepare("DELETE FROM category WHERE id=?");
+      auto categoryId=categoryList.key(ui->cboCategory->currentText());
+      qry.addBindValue(categoryId, QSql::In);
+      if(!qry.exec()){
+          QMessageBox::critical(this, qApp->applicationName(), "Fallo la ejecución de la sentencia!\n"
+                                +qry.lastError().text());
+          return;
+      }
 
+  });
   //connect to slots to btnAdd
   QObject::connect(ui->btnAdd,&QPushButton::clicked, this, [&](){
 
@@ -194,6 +206,7 @@ void Widget::initFrm() noexcept
   //btnAdd disabled
   ui->btnAdd->setDisabled(true);
 
+
 }
 
 void Widget::editAction(bool op) noexcept
@@ -338,7 +351,8 @@ void Widget::readSettings() noexcept
 
 bool Widget::urlValidate(const QString &url) const noexcept
 {
-  static QRegularExpression regex("^(http|https:\\/\\/)?[\\w\\-]+(\\.[\\w\\-]+)+[/#?]?.*$");
+//  static QRegularExpression regex("^(http|https:\\/\\/)?[\\w\\-]+(\\.[\\w\\-]+)+[/#?]?.*$");
+  static QRegularExpression regex(R"(^(http|https:\/\/)?[\w\-]+(\.[\w\\-]+)+[/#?]?.*$)");
   auto match = regex.match(url);
   return match.hasMatch();
 }
