@@ -25,6 +25,7 @@ public:
 private:
     Ui::Widget *ui;
     const QSqlDatabase db{};
+    QAction* delCategory{};
 
     //custom functions
     void initFrm() noexcept;
@@ -51,6 +52,7 @@ private:
     const QString lightModeColor{"#ff7e00"};
 
     std::tuple<bool, QString> verifyDeleteGroup()const noexcept;
+    void setUpCboCategoryContextMenu() noexcept;
 
 
     // QWidget interface
