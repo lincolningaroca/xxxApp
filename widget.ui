@@ -86,7 +86,7 @@
         </property>
         <property name="icon">
          <iconset resource="rsc.qrc">
-          <normaloff>:/img/15514 - editdelete.png</normaloff>:/img/15514 - editdelete.png</iconset>
+          <normaloff>:/img/118277.png</normaloff>:/img/118277.png</iconset>
         </property>
         <property name="iconSize">
          <size>

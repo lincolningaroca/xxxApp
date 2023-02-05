@@ -519,8 +519,9 @@ Widget::verifyDeleteCategory() noexcept
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Widget::setUpCboCategoryContextMenu() noexcept
 {
+  QIcon icon(":/img/118277.png");
   ui->cboCategory->setContextMenuPolicy(Qt::ActionsContextMenu);
-  delCategory = new QAction("Forzar eliminación de categoría",this);
+  delCategory = new QAction(icon, "Forzar eliminación de categoría",this);
   ui->cboCategory->addAction(delCategory);
 
 
