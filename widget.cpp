@@ -245,7 +245,7 @@ bool Widget::saveData(const QString& url, const QString& desc, std::uint32_t id)
   QSqlQuery qry(db);
   [[maybe_unused]] auto res = qry.prepare("INSERT INTO urls(url,desc,category_id) VALUES(?,?,?)");
   qry.addBindValue(url.simplified(), QSql::In);
-  qry.addBindValue(desc.simplified(), QSql::In);
+  qry.addBindValue(desc.simplified().simplified().toUpper(), QSql::In);
   qry.addBindValue(id, QSql::In);
   return qry.exec();
 }
@@ -254,8 +254,8 @@ bool Widget::saveCategoryData(const QString &catName, const QString &desc) const
 {
   QSqlQuery qry(db);
   [[maybe_unused]] auto res = qry.prepare("INSERT INTO category(category_name, desc) VALUES(?,?)");
-  qry.addBindValue(catName.simplified(), QSql::In);
-  qry.addBindValue(desc.simplified(), QSql::In);
+  qry.addBindValue(catName.simplified().toUpper(), QSql::In);
+  qry.addBindValue(desc.simplified().toUpper(), QSql::In);
   return qry.exec();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////

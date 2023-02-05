@@ -33,8 +33,8 @@ dlgNewCategory::dlgNewCategory(OpenMode mode, uint32_t id, QWidget *parent) :
 
           QSqlQuery qry(db_);
           [[ maybe_unused ]] auto res = qry.prepare("UPDATE category SET category_name=?, desc=? WHERE id=? ");
-          qry.addBindValue(ui->txtCategory->text(), QSql::In);
-          qry.addBindValue(ui->pteDesc->toPlainText(), QSql::In);
+          qry.addBindValue(ui->txtCategory->text().simplified().toUpper(), QSql::In);
+          qry.addBindValue(ui->pteDesc->toPlainText().simplified().toUpper(), QSql::In);
           qry.addBindValue(id_, QSql::In);
           if(!qry.exec()){
               QMessageBox::critical(this, qApp->applicationName(), "Error al ajecutar la consulta!\n"+
