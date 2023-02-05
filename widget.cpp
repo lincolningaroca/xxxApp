@@ -30,16 +30,19 @@ Widget::Widget(QWidget *parent)
 
 //connect to slot to btnDeleteCategory
   QObject::connect(ui->btnDeleteCategory,&QPushButton::clicked, this, [&](){
-      QSqlQuery qry(db);
-      [[maybe_unused]] auto res=qry.prepare("DELETE FROM category WHERE id=?");
-      auto categoryId=categoryList.key(ui->cboCategory->currentText());
-      qry.addBindValue(categoryId, QSql::In);
-      if(!qry.exec()){
-          QMessageBox::critical(this, qApp->applicationName(), "Fallo la ejecución de la sentencia!\n"
-                                +qry.lastError().text());
+      auto [res, errCode] = verifyDeleteGroup();
+
+      if(!res){
+          QMessageBox::warning(this, qApp->applicationName(),
+                               QString("<p>No se puede eliminar ésta categoría.<br>"
+                               "Esto es debido a que ésta categoría tiene asociado uno o mas elementos.<br>"
+                               "<span style='color:#FB4934;'>Código de error: %1</span><br><br>"
+                                       "<strong>Sugerencia:</strong><br>"
+                                       "Si desea eliminar una categoría y todo su contenido, "
+                                       "puede optar por dar click derecho sobre el nombre de la categoría y "
+                                       "del menú contextual elegir:<br><br> <mark style='background:#FABD2F;color:#FB4934;'>\"->Forzar eliminación de categoría.\"</mark></p>").arg(errCode));
           return;
       }
-
   });
   //connect to slots to btnAdd
   QObject::connect(ui->btnAdd,&QPushButton::clicked, this, [&](){
@@ -399,6 +402,23 @@ void Widget::loadListCategory() noexcept
   while(qry.next()){
       categoryList.insert(qry.value(0).toUInt(), qry.value(1).toString());
     }
+
+}
+
+std::tuple<bool, QString> Widget::verifyDeleteGroup() const noexcept
+{
+    QSqlQuery qry(db);
+    bool ret{};
+    QString errorCode{};
+    [[maybe_unused]] auto res=qry.prepare("DELETE FROM category WHERE id=?");
+    auto categoryId=categoryList.key(ui->cboCategory->currentText());
+    qry.addBindValue(categoryId, QSql::In);
+    if(!qry.exec()){
+        ret=false;
+        errorCode=qry.lastError().nativeErrorCode();
+    }
+
+    return std::tuple{ret, errorCode};
 
 }
 
