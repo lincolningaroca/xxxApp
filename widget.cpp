@@ -11,7 +11,7 @@
 #include <QRegularExpression>
 #include <QAction>
 #include "dlgnewcategory.hpp"
-//#include <QDebug>
+#include <QDebug>
 //#include <QSqlRecord>
 
 
@@ -39,19 +39,18 @@ Widget::Widget(QWidget *parent)
 
     //connect to slot to btnDeleteCategory
     QObject::connect(ui->btnDeleteCategory,&QPushButton::clicked, this, [&](){
-        auto [res, errCode] = verifyDeleteGroup();
 
-        if(!res){
+        if(!verifyDeleteGroup()){
             QMessageBox::warning(this, qApp->applicationName(),
                                  QString("<p>No se puede eliminar ésta categoría.<br>"
-                                         "Esto es debido a que ésta categoría tiene asociado uno o mas elementos.<br>"
-                                         "<span style='color:#FB4934;'>Código de error: %1</span><br><br>"
+                                         "Esto es debido a que ésta categoría tiene asociado uno o mas elementos.<br><br>"
                                          "<strong>Sugerencia:</strong><br>"
                                          "Si desea eliminar una categoría y todo su contenido, "
                                          "puede optar por dar click derecho sobre el nombre de la categoría y "
-                                         "del menú contextual elegir:<br><br> <mark style='background:#FABD2F;color:#FB4934;'>\"->Forzar eliminación de categoría.\"</mark></p>").arg(errCode));
+                                         "del menú contextual elegir:<br><br> <mark style='background:#FABD2F;color:#FB4934;'>\"->Forzar eliminación de categoría.\"</mark></p>"));
             return;
         }
+        QMessageBox::information(this, qApp->applicationName(), "Si se puede borrar!");
     });
     //connect to slots to btnAdd
     QObject::connect(ui->btnAdd,&QPushButton::clicked, this, [&](){
@@ -414,20 +413,21 @@ void Widget::loadListCategory() noexcept
 
 }
 
-std::tuple<bool, QString> Widget::verifyDeleteGroup() const noexcept
+bool Widget::verifyDeleteGroup() const noexcept
 {
     QSqlQuery qry(db);
     bool ret{};
-    QString errorCode{};
-    [[maybe_unused]] auto res=qry.prepare("DELETE FROM category WHERE id=?");
+    [[maybe_unused]] auto res=qry.prepare("SELECT COUNT (*) FROM urls WHERE category_id=?");
     auto categoryId=categoryList.key(ui->cboCategory->currentText());
     qry.addBindValue(categoryId, QSql::In);
-    if(!qry.exec()){
-        ret=false;
-        errorCode=qry.lastError().nativeErrorCode();
-    }
+    [[maybe_unused]] auto query_res = qry.exec();
 
-    return std::tuple{ret, errorCode};
+    qry.next();
+    auto count=qry.value(0).toUInt();
+    if(count != 0) ret=false;
+    else ret=true;
+    qDebug()<<categoryId<<" "<<count;
+    return ret;
 
 }
 
@@ -437,6 +437,7 @@ void Widget::setUpCboCategoryContextMenu() noexcept
     delCategory = new QAction("Forzar eliminación de categoría",this);
     ui->cboCategory->addAction(delCategory);
 }
+
 
 void Widget::closeEvent(QCloseEvent *event)
 {
