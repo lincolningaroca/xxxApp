@@ -51,8 +51,12 @@ private:
     const QString darkModeColor{"#2e8b57"};
     const QString lightModeColor{"#ff7e00"};
 
-    bool verifyDeleteGroup()const noexcept;
+    std::tuple<bool, uint32_t, QString> verifyDeleteCategory() noexcept;
     void setUpCboCategoryContextMenu() noexcept;
+    bool deleteCategory() const noexcept;
+    bool deleteUrls() const noexcept;
+    bool deleteAll()const noexcept;
+    void verifyContextMenu() noexcept;
 
     // QWidget interface
 protected:

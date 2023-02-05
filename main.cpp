@@ -22,8 +22,6 @@ int main(int argc, char *argv[])
       return 1;
     }
 
-
-
   Widget w;
   w.setWindowTitle(a.applicationName());
   a.setStyle("Fusion");
