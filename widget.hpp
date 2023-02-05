@@ -48,13 +48,14 @@ private:
 
     //menbers var
     QHash<uint32_t, QString> categoryList{};
+    QHash<uint32_t, QString> urlList{};
     const QString darkModeColor{"#2e8b57"};
     const QString lightModeColor{"#ff7e00"};
 
     std::tuple<bool, uint32_t, QString> verifyDeleteCategory() noexcept;
     void setUpCboCategoryContextMenu() noexcept;
     bool deleteCategory() const noexcept;
-    bool deleteUrls() const noexcept;
+    bool deleteUrls(uint8_t op) const noexcept;
     bool deleteAll()const noexcept;
     void verifyContextMenu() noexcept;
 

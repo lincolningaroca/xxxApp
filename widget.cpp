@@ -177,14 +177,18 @@ Widget::Widget(QWidget *parent)
 
       auto currentRow = ui->tvUrl->currentIndex().row();
       auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
+//      qDebug()<<"fila actual: "<<currentRow<<"url: "<<url<<'\n';
       QMessageBox msgBox;
       msgBox.setText(QString("<span>Confirma que desea eliminar esta dirección:\n <h4 style='color:#ff0800;'>%1</h4></span>").arg(url));
       msgBox.setIcon(QMessageBox::Question);
       msgBox.addButton("Eliminar",QMessageBox::AcceptRole);
       msgBox.addButton("Cancelar",QMessageBox::RejectRole);
       if(msgBox.exec() == QMessageBox::AcceptRole){
-          ui->tvUrl->model()->removeRow(ui->tvUrl->currentIndex().row());
-          setUpTable(categoryList.key(ui->cboCategory->currentText()));
+          if(deleteUrls(2)){
+              ui->tvUrl->model()->removeRow(ui->tvUrl->currentIndex().row());
+              setUpTable(categoryList.key(ui->cboCategory->currentText()));
+            }
+
         }
 
     });
@@ -302,8 +306,15 @@ void Widget::setUpTable(uint32_t categoryId) noexcept
   [[maybe_unused]] auto res = qry.prepare("SELECT * FROM urls WHERE category_id=?");
   qry.addBindValue(categoryId);
   if(!qry.exec()) return;
+
+  while(qry.next()){
+      urlList.insert(qry.value(0).toUInt(),qry.value(1).toString());
+    }
+
   auto *model = new QSqlQueryModel(this);
   model->setQuery(std::move(qry));
+
+
 
 
   //  model->select();
@@ -530,21 +541,33 @@ bool Widget::deleteCategory() const noexcept
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Widget::deleteUrls() const noexcept
+bool Widget::deleteUrls(std::uint8_t op) const noexcept
 {
   QSqlQuery qry(db);
-  [[maybe_unused]] auto res=qry.prepare("DELETE FROM urls WHERE category_id=?");
-  auto categoryId=categoryList.key(ui->cboCategory->currentText());
-  qry.addBindValue(categoryId, QSql::In);
-  if(!qry.exec())
-    return false;
+  if(op == 1){
+      [[maybe_unused]] auto res=qry.prepare("DELETE FROM urls WHERE category_id=?");
+      auto categoryId=categoryList.key(ui->cboCategory->currentText());
+      qry.addBindValue(categoryId, QSql::In);
+      if(!qry.exec())
+        return false;
+    }else{
+      [[maybe_unused]] auto res=qry.prepare("DELETE FROM urls WHERE id=?");
+      auto currentRow = ui->tvUrl->currentIndex().row();
+      auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
+      auto urlId=urlList.key(url);
+      qry.addBindValue(urlId, QSql::In);
+      if(!qry.exec())
+        return false;
+    }
+
+
 
   return true;
 }
 
 bool Widget::deleteAll() const noexcept
 {
-  if(deleteUrls()){
+  if(deleteUrls(1)){
       if(deleteCategory())
         return true;
     }
