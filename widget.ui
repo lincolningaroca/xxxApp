@@ -78,6 +78,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="btnDeleteCategory">
+        <property name="toolTip">
+         <string>Delete category</string>
+        </property>
         <property name="text">
          <string/>
         </property>
