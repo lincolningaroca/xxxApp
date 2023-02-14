@@ -30,6 +30,7 @@ Widget::Widget(QWidget *parent)
   /// ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   //context menu implementation
   setUpCboCategoryContextMenu();
+  verifyContextMenu();
 
   QObject::connect(delCategory, &QAction::triggered, this, [&](){
       QMessageBox msgBox;
@@ -109,7 +110,7 @@ Widget::Widget(QWidget *parent)
           QSqlQuery qry(db);
           [[maybe_unused]] auto res=qry.prepare("UPDATE  urls SET url=?, desc=? WHERE id=?");
           qry.addBindValue(ui->txtUrl->text(), QSql::In);
-          qry.addBindValue(ui->pteDesc->toPlainText(), QSql::In);
+          qry.addBindValue(ui->pteDesc->toPlainText().simplified().toUpper(), QSql::In);
           auto currentRow = ui->tvUrl->currentIndex().row();
           auto id = ui->tvUrl->model()->index(currentRow,0).data().toInt();
           qry.addBindValue(id, QSql::In);
