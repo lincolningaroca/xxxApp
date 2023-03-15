@@ -6,9 +6,9 @@
 #include <QMessageBox>
 
 
-dlgNewCategory::dlgNewCategory(OpenMode mode, uint32_t id, QWidget *parent) :
+dlgNewCategory::dlgNewCategory(OpenMode mode, uint32_t id, const QStringList &list, QWidget *parent) :
   QDialog(parent), ui(new Ui::dlgNewCategory),
-  mode_{mode}, id_{id}, db_ { QSqlDatabase::database("xxxConection") }
+  mode_{mode}, id_{id},  db_ { QSqlDatabase::database("xxxConection")}, list_{list}
 {
   ui->setupUi(this);
   setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
@@ -26,6 +26,18 @@ dlgNewCategory::dlgNewCategory(OpenMode mode, uint32_t id, QWidget *parent) :
       if(mode_ == OpenMode::New){
           if(!validateData())
             return;
+
+          if(std::any_of(list_.begin(), list_.end(), [&](const QString& l){
+                         return l.compare(ui->txtCategory->text().toUpper()) == 0;
+        })){
+              QMessageBox::warning(this, qApp->applicationName(),
+                                   QString("<p><cite>La categoría: <strong style='color:#ff0800;'>\"%1\"</strong>, ya esta registrada en la base de datos.<br>"
+                                           "pruebe con otro nombre por favor!</cite></p>").arg(ui->txtCategory->text().toUpper()));
+              ui->txtCategory->selectAll();
+              ui->txtCategory->setFocus(Qt::OtherFocusReason);
+              return;
+            }
+
           accept();
         }else{
 
@@ -99,4 +111,5 @@ bool dlgNewCategory::validateData() const noexcept
     }
   return true;
 }
+
 

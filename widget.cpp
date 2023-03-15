@@ -136,14 +136,15 @@ Widget::Widget(QWidget *parent)
 
   //btnAddNewCategory
   QObject::connect(ui->btnNewCategory, &QPushButton::clicked, this, [&](){
-      dlgNewCategory newCategory(dlgNewCategory::OpenMode::New, 0 ,this);
+      QStringList l=categoryList.values();
+      dlgNewCategory newCategory(dlgNewCategory::OpenMode::New, 0 , l, this);
 
       if(newCategory.exec() == QDialog::Accepted){
           if(!saveCategoryData(newCategory.category(), newCategory.description())){
               QMessageBox::critical(this, qApp->applicationName(), "Error alguardar los datos!\n");
               return;
             }
-          ui->cboCategory->clear();
+//          ui->cboCategory->clear();
           loadListCategory();
           loadCategopryData();
 
@@ -156,9 +157,9 @@ Widget::Widget(QWidget *parent)
   QObject::connect(ui->btnEditCategory, &QPushButton::clicked, this, [&](){
 
       auto id = categoryList.key(ui->cboCategory->currentText());
-      dlgNewCategory editCategory(dlgNewCategory::OpenMode::Edit, id, this);
+      dlgNewCategory editCategory(dlgNewCategory::OpenMode::Edit, id, QStringList{}, this);
       if(editCategory.exec() == QDialog::Accepted){
-          ui->cboCategory->clear();
+//          ui->cboCategory->clear();
           loadListCategory();
           loadCategopryData();
         }
@@ -595,7 +596,8 @@ void Widget::verifyContextMenu() noexcept
 void Widget::setCboCategoryToolTip() noexcept
 {
   auto id = categoryList.key(ui->cboCategory->currentText());
-  dlgNewCategory nc(dlgNewCategory::OpenMode::Edit,id,this);
+
+  dlgNewCategory nc(dlgNewCategory::OpenMode::Edit, id, QStringList{}, this);
   auto desc=nc.descriptionToolTip();
   if(desc.isEmpty()){
       ui->cboCategory->setToolTip("<p><cite><strong>Descripción de la categoría:</strong><br><br>"
