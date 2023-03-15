@@ -58,8 +58,10 @@ private:
     bool deleteUrls(uint8_t op) const noexcept;
     bool deleteAll()const noexcept;
     void verifyContextMenu() noexcept;
+    void setCboCategoryToolTip() noexcept;
 
     // QWidget interface
 protected:
     virtual void closeEvent(QCloseEvent *event) override;
+
 };

@@ -19,7 +19,8 @@ public:
   ~dlgNewCategory();
 
   QString category() const noexcept;
-  QString description() const noexcept;
+  QString description() noexcept;
+  QString descriptionToolTip() noexcept;
 
 private:
   Ui::dlgNewCategory *ui;

@@ -32,12 +32,14 @@ Widget::Widget(QWidget *parent)
   setUpCboCategoryContextMenu();
   verifyContextMenu();
 
+
+
   QObject::connect(delCategory, &QAction::triggered, this, [&](){
       QMessageBox msgBox;
       msgBox.setWindowTitle(qApp->applicationName().append(" - Advertencia"));
-      msgBox.setText("<p style='color:#FB4934;'>Esta a punto eliminar ésta categoría y todo su contenido.<br>"
+      msgBox.setText("<p style='color:#FB4934;'><cite><strong>Esta a punto eliminar ésta categoría y todo su contenido.<br>"
                      "Recuerde que al aceptar, eliminará de forma permanente estos datos.<br>"
-                     "Desea continuar y eliminar los datos?</p>");
+                     "Desea continuar y eliminar los datos?</strong></cite></p>");
       msgBox.setIcon(QMessageBox::Warning);
       msgBox.addButton("Borrar categoría", QMessageBox::AcceptRole);
       msgBox.addButton("Cancelar", QMessageBox::RejectRole);
@@ -65,7 +67,7 @@ Widget::Widget(QWidget *parent)
                                        "<strong>Sugerencia:</strong><br>"
                                        "Si desea eliminar una categoría y todo su contenido, "
                                        "puede optar por dar click derecho sobre el nombre de la categoría y "
-                                       "del menú contextual elegir:<br><br> <mark style='background:#FABD2F;color:#FB4934;'>\"->Forzar eliminación de categoría.\"</mark></p>"));
+                                       "del menú contextual elegir:<br><br> <cite style='background:#FABD2F;color:#FB4934;'>->Forzar eliminación de categoría.</cite></p>"));
           //            qDebug()<<count<<'\n';
           return;
 
@@ -180,7 +182,8 @@ Widget::Widget(QWidget *parent)
       auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
 //      qDebug()<<"fila actual: "<<currentRow<<"url: "<<url<<'\n';
       QMessageBox msgBox;
-      msgBox.setText(QString("<span>Confirma que desea eliminar esta dirección:\n <h4 style='color:#ff0800;'>%1</h4></span>").arg(url));
+      msgBox.setText(QString("<span>Confirma que desea eliminar esta dirección:<br>"
+                             " <cite style='color:#ff0800;'><strong>%1</strong></cite></span>").arg(url));
       msgBox.setIcon(QMessageBox::Question);
       msgBox.addButton("Eliminar",QMessageBox::AcceptRole);
       msgBox.addButton("Cancelar",QMessageBox::RejectRole);
@@ -230,7 +233,10 @@ Widget::Widget(QWidget *parent)
   QObject::connect(ui->cboCategory, &QComboBox::currentIndexChanged, this, [&](){
       setUpTable(categoryList.key(ui->cboCategory->currentText()));
       verifyContextMenu();
+      setCboCategoryToolTip();
     });
+
+ setCboCategoryToolTip();
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -442,7 +448,7 @@ bool Widget::urlValidate(const QString &url) const noexcept
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Widget::setLabelInfo(const QString& color) noexcept
 {
-  ui->lblState->setText(QString("<span style='color:%1;'>SWSystem's - Lincoln Ingaroca</span>").arg(color));
+  ui->lblState->setText(QString("<span style='color:%1;'><strong>SWSystem's - Lincoln Ingaroca</strong></span>").arg(color));
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -584,6 +590,21 @@ void Widget::verifyContextMenu() noexcept
     delCategory->setDisabled(true);
   else
     delCategory->setEnabled(true);
+}
+
+void Widget::setCboCategoryToolTip() noexcept
+{
+  auto id = categoryList.key(ui->cboCategory->currentText());
+  dlgNewCategory nc(dlgNewCategory::OpenMode::Edit,id,this);
+  auto desc=nc.descriptionToolTip();
+  if(desc.isEmpty()){
+      ui->cboCategory->setToolTip("<p><cite><strong>Descripción de la categoría:</strong><br><br>"
+                                  "Esta categoría no cuenta con una descripción!</cite></p>");
+      return;
+    }
+
+  ui->cboCategory->setToolTip(
+        QString("<p><cite><strong>Descripción de la categoría:</strong><br><br>%1</cite></p>").arg(desc));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////

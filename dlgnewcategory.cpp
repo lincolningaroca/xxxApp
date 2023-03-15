@@ -47,6 +47,8 @@ dlgNewCategory::dlgNewCategory(OpenMode mode, uint32_t id, QWidget *parent) :
         }
     });
   QObject::connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &dlgNewCategory::reject);
+
+
 }
 
 dlgNewCategory::~dlgNewCategory()
@@ -60,10 +62,16 @@ QString dlgNewCategory::category() const noexcept
 
 }
 
-QString dlgNewCategory::description() const noexcept
+QString dlgNewCategory::description() noexcept
 {
   return ui->pteDesc->toPlainText();
 
+}
+
+QString dlgNewCategory::descriptionToolTip() noexcept
+{
+  loadData();
+  return ui->pteDesc->toPlainText();
 }
 
 void dlgNewCategory::loadData() noexcept
