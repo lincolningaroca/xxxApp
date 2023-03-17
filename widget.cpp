@@ -30,6 +30,7 @@ Widget::Widget(QWidget *parent)
   /// ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   //context menu implementation
   setUpCboCategoryContextMenu();
+  setUptvUrlContextMenu();
   verifyContextMenu();
 
 
@@ -106,6 +107,7 @@ Widget::Widget(QWidget *parent)
               ui->txtUrl->setFocus(Qt::OtherFocusReason);
               setUpTable(categoryList.key(ui->cboCategory->currentText()));
               verifyContextMenu();
+              hastvUrlData();
             }
         }else{
 
@@ -144,9 +146,10 @@ Widget::Widget(QWidget *parent)
               QMessageBox::critical(this, qApp->applicationName(), "Error alguardar los datos!\n");
               return;
             }
-//          ui->cboCategory->clear();
+          //          ui->cboCategory->clear();
           loadListCategory();
           loadCategopryData();
+
 
         }else return;
 
@@ -159,7 +162,7 @@ Widget::Widget(QWidget *parent)
       auto id = categoryList.key(ui->cboCategory->currentText());
       dlgNewCategory editCategory(dlgNewCategory::OpenMode::Edit, id, QStringList{}, this);
       if(editCategory.exec() == QDialog::Accepted){
-//          ui->cboCategory->clear();
+          //          ui->cboCategory->clear();
           loadListCategory();
           loadCategopryData();
         }
@@ -179,46 +182,41 @@ Widget::Widget(QWidget *parent)
   QObject::connect(ui->btnQuit, &QPushButton::clicked,this, [&](){
       if(!validateSelectedRow()) return;
 
-      auto currentRow = ui->tvUrl->currentIndex().row();
-      auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
-//      qDebug()<<"fila actual: "<<currentRow<<"url: "<<url<<'\n';
-      QMessageBox msgBox;
-      msgBox.setText(QString("<span>Confirma que desea eliminar esta dirección:<br>"
-                             " <cite style='color:#ff0800;'><strong>%1</strong></cite></span>").arg(url));
-      msgBox.setIcon(QMessageBox::Question);
-      msgBox.addButton("Eliminar",QMessageBox::AcceptRole);
-      msgBox.addButton("Cancelar",QMessageBox::RejectRole);
-      if(msgBox.exec() == QMessageBox::AcceptRole){
-          if(deleteUrls(2)){
-              ui->tvUrl->model()->removeRow(ui->tvUrl->currentIndex().row());
-              setUpTable(categoryList.key(ui->cboCategory->currentText()));
-            }
+      quitUrl();
+      hastvUrlData();
 
-        }
+    });
+
+  QObject::connect(quittUrl_, &QAction::triggered,this, [&](){
+      if(!validateSelectedRow()) return;
+
+      quitUrl();
+      hastvUrlData();
 
     });
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
   //btn edit
   QObject::connect(ui->btnEdit, &QPushButton::clicked, this, &Widget::btnEdit);
+
+  QObject::connect(editUrl_, &QAction::triggered, this, &Widget::btnEdit);
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
   //btnopenUrl
   QObject::connect(ui->btnopen, &QPushButton::clicked, this, [&](){
       if(!validateSelectedRow()) return;
 
-      auto currentRow = ui->tvUrl->currentIndex().row();
-      auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
-      if(!QDesktopServices::openUrl(QUrl(url))){
-          QMessageBox::critical(this, qApp->applicationName(), "Fallo al intentar abrir dirección url!\n");
-          return;
-        }
+      openUrl();
 
 
     });
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+  QObject::connect(openUrl_, &QAction::triggered, this, [&](){
+      if(!validateSelectedRow()) return;
 
+      openUrl();
+    });
 
   //cboTheme
   QObject::connect(ui->cboTheme, &QComboBox::currentTextChanged, this, [&](const QString& text){
@@ -231,15 +229,19 @@ Widget::Widget(QWidget *parent)
         }
 
     });
+  //cboCategory connection
   QObject::connect(ui->cboCategory, &QComboBox::currentIndexChanged, this, [&](){
       setUpTable(categoryList.key(ui->cboCategory->currentText()));
       verifyContextMenu();
       setCboCategoryToolTip();
+      hastvUrlData();
     });
 
- setCboCategoryToolTip();
+  setCboCategoryToolTip();
+  hastvUrlData();
 
-}
+
+}//Fin del contructor
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -534,6 +536,22 @@ void Widget::setUpCboCategoryContextMenu() noexcept
 
 
 }
+
+void Widget::setUptvUrlContextMenu() noexcept
+{
+
+  ui->tvUrl->setContextMenuPolicy(Qt::ActionsContextMenu);
+
+  openUrl_ = new QAction(QIcon(":/img/openurl.png"), "Open Url", this);
+  editUrl_ = new QAction(QIcon(":/img/editurl.png"), "Edit url", this);
+  quittUrl_ = new QAction(QIcon(":/img/quiturl.png"), "Quit url", this);
+
+  ui->tvUrl->addAction(openUrl_);
+  ui->tvUrl->addAction(editUrl_);
+  ui->tvUrl->addAction(quittUrl_);
+
+
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool Widget::deleteCategory() const noexcept
@@ -586,7 +604,7 @@ bool Widget::deleteAll() const noexcept
 void Widget::verifyContextMenu() noexcept
 {
   auto [res, count, errMessage] = verifyDeleteCategory();
-//      qDebug()<<count;
+  //      qDebug()<<count;
   if(count == 0)
     delCategory->setDisabled(true);
   else
@@ -607,6 +625,55 @@ void Widget::setCboCategoryToolTip() noexcept
 
   ui->cboCategory->setToolTip(
         QString("<p><cite><strong>Descripción de la categoría:</strong><br><br>%1</cite></p>").arg(desc));
+}
+
+void Widget::openUrl() noexcept
+{
+  auto currentRow = ui->tvUrl->currentIndex().row();
+  auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
+  if(!QDesktopServices::openUrl(QUrl(url))){
+      QMessageBox::critical(this, qApp->applicationName(), "Fallo al intentar abrir dirección url!\n");
+      return;
+    }
+}
+
+void Widget::quitUrl() noexcept
+{
+  auto currentRow = ui->tvUrl->currentIndex().row();
+  auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
+  //      qDebug()<<"fila actual: "<<currentRow<<"url: "<<url<<'\n';
+  QMessageBox msgBox;
+  msgBox.setText(QString("<span>Confirma que desea eliminar esta dirección:<br>"
+                         " <cite style='color:#ff0800;'><strong>%1</strong></cite></span>").arg(url));
+  msgBox.setIcon(QMessageBox::Question);
+  msgBox.addButton("Eliminar",QMessageBox::AcceptRole);
+  msgBox.addButton("Cancelar",QMessageBox::RejectRole);
+  if(msgBox.exec() == QMessageBox::AcceptRole){
+      if(deleteUrls(2)){
+          ui->tvUrl->model()->removeRow(ui->tvUrl->currentIndex().row());
+          setUpTable(categoryList.key(ui->cboCategory->currentText()));
+        }
+
+    }
+}
+
+void Widget::hastvUrlData() noexcept
+{
+  if(ui->tvUrl->model()->rowCount() == 0){
+      openUrl_->setDisabled(true);
+      ui->btnopen->setDisabled(true);
+      ui->btnEdit->setDisabled(true);
+      ui->btnQuit->setDisabled(true);
+      editUrl_->setDisabled(true);
+      quittUrl_->setDisabled(true);
+    }else{
+      openUrl_->setEnabled(true);
+      ui->btnopen->setEnabled(true);
+      ui->btnEdit->setEnabled(true);
+      ui->btnQuit->setEnabled(true);
+      editUrl_->setEnabled(true);
+      quittUrl_->setEnabled(true);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////

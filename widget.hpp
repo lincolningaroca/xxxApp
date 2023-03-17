@@ -26,6 +26,9 @@ private:
     Ui::Widget *ui;
     const QSqlDatabase db{};
     QAction* delCategory{};
+    QAction* openUrl_{};
+    QAction* editUrl_{};
+    QAction* quittUrl_{};
 
     //custom functions
     void initFrm() noexcept;
@@ -54,11 +57,16 @@ private:
 
     std::tuple<bool, uint32_t, QString> verifyDeleteCategory() noexcept;
     void setUpCboCategoryContextMenu() noexcept;
+    void setUptvUrlContextMenu() noexcept;
     bool deleteCategory() const noexcept;
     bool deleteUrls(uint8_t op) const noexcept;
     bool deleteAll()const noexcept;
     void verifyContextMenu() noexcept;
     void setCboCategoryToolTip() noexcept;
+
+    void openUrl() noexcept;
+    void quitUrl() noexcept;
+    void hastvUrlData() noexcept;
 
     // QWidget interface
 protected:
