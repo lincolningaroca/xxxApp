@@ -93,7 +93,19 @@ Widget::Widget(QWidget *parent)
 
       if(ui->btnAdd->text().compare("&Add") == 0){
           if(!urlValidate(ui->txtUrl->text())){
-              QMessageBox::warning(this, qApp->applicationName(), "La dirección que ingreso no es válida!\n");
+              QMessageBox::warning(this, qApp->applicationName(),
+                                   QString("<p><cite>La dirección: <strong>\"%1\"</strong>, no es válida!<br>"
+                                           "una dirección url válida debe tener una de las siguiente formas:"
+                                           "<ol>"
+                                           "<strong><li>http://www.url.dominio</li></strong>"
+                                           "<strong><li>https://www.url.dominio</li></strong>"
+                                           "<strong><li>www.url.dominio</li></strong>"
+                                           "</ol><br>"
+                                           "Tenga en cuenta que para éste sistema:<br>"
+                                           "http:// o https:// son opcionales.<br>"
+                                           "Lo mínimo que se espera es <strong>www.url.domino</strong><br>"
+                                           "<strong>Siendo (www.)</strong> requerida!"
+                                           "</cite></p>").arg(ui->txtUrl->text()));
               ui->txtUrl->selectAll();
               ui->txtUrl->setFocus(Qt::OtherFocusReason);
               return;
