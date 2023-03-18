@@ -274,7 +274,7 @@ void Widget::initFrm() noexcept
 {
   setWindowFlags(Qt::MSWindowsFixedSizeDialogHint);
   //placeholder
-  ui->txtUrl->setPlaceholderText("http://www.url.com");
+  ui->txtUrl->setPlaceholderText("(http | https://)www.url.com");
   ui->pteDesc->setPlaceholderText("Description to url's");
   ui->btnNewCategory->setToolTip("New Category!");
   ui->btnEditCategory->setToolTip("Edit Category Data!");
@@ -443,7 +443,7 @@ void Widget::readSettings() noexcept
 bool Widget::urlValidate(const QString &url) const noexcept
 {
   //  static QRegularExpression regex("^(http|https:\\/\\/)?[\\w\\-]+(\\.[\\w\\-]+)+[/#?]?.*$");
-  static QRegularExpression regex(R"(^(http|https:\/\/)?[\w\-]+(\.[\w\\-]+)+[/#?]?.*$)");
+  static QRegularExpression regex(R"(^(http|https)?(:\/\/)?[w]{3}(\.[\w\\-]+)+[/#?]?.*$)");
   auto match = regex.match(url);
   return match.hasMatch();
 }
