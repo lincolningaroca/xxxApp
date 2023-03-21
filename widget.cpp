@@ -357,6 +357,7 @@ void Widget::setUpTableHeaders() const noexcept
   ui->tvUrl->setColumnWidth(1, 350);
   ui->tvUrl->model()->setHeaderData(2,Qt::Horizontal, "Descripción");
   ui->tvUrl->setColumnWidth(2, 300);
+  ui->tvUrl->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
 
 
@@ -447,7 +448,7 @@ void Widget::readSettings() noexcept
   setTheme(static_cast<Theme>(theme));
   settings.endGroup();
 
-  ui->cboTheme->setCurrentIndex(theme);
+  ui->cboTheme->setCurrentIndex(static_cast<int>(theme));
   restoreGeometry(settings.value("position").toByteArray());
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
