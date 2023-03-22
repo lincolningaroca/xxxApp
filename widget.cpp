@@ -60,20 +60,27 @@ Widget::Widget(QWidget *parent)
   //connect to slot to btnDeleteCategory
   QObject::connect(ui->btnDeleteCategory,&QPushButton::clicked, this, [&](){
 
-      auto [res, count, errMessage] = verifyDeleteCategory();
+      auto [res, errMessage] = verifyDeleteCategory();
       if(!res){
           QMessageBox::warning(this, qApp->applicationName().append(" - Advertencia"),
-                               QString("<p>No se puede eliminar ésta categoría.<br>"
+                               QString("<p>"
+                                       "<cite>"
+                                       "No se puede eliminar ésta categoría.<br>"
                                        "Esto es debido a que ésta categoría tiene asociado uno o mas elementos.<br><br>"
                                        "<strong>Sugerencia:</strong><br>"
                                        "Si desea eliminar una categoría y todo su contenido, "
                                        "puede optar por dar click derecho sobre el nombre de la categoría y "
-                                       "del menú contextual elegir:<br><br> <cite style='background:#FABD2F;color:#FB4934;'>->Forzar eliminación de categoría.</cite></p>"));
+                                       "del menú contextual elegir:<br><br>"
+                                       "<strong>"
+                                       "<mark style='background:#FFFF00;color:#FF5500;'>->Forzar eliminación de categoría.</mark>"
+                                       "</strong>"
+                                       "</cite>"
+                                       "</p>"));
           //            qDebug()<<count<<'\n';
           return;
 
         }
-      auto ret = QMessageBox::warning(this, qApp->applicationName(), "Esta seguro de eliminar esta categoría?"
+      auto ret = QMessageBox::warning(this, qApp->applicationName(), "<p><cite>Esta seguro de eliminar esta categoría?</cite></p>"
                                       ,QMessageBox::Yes, QMessageBox::Cancel);
       if(ret==QMessageBox::Yes){
           if(deleteCategory()){
@@ -335,15 +342,10 @@ void Widget::setUpTable(uint32_t categoryId) noexcept
 
   auto *model = new QSqlQueryModel(this);
   model->setQuery(std::move(qry));
-
-
-
-
   //  model->select();
   ui->tvUrl->setModel(model);
   //qDebug()<<model->record(0).value("url").toString();
   setUpTableHeaders();
-
 
 
 }
@@ -357,10 +359,7 @@ void Widget::setUpTableHeaders() const noexcept
   ui->tvUrl->setColumnWidth(1, 350);
   ui->tvUrl->model()->setHeaderData(2,Qt::Horizontal, "Descripción");
   ui->tvUrl->setColumnWidth(2, 300);
-  ui->tvUrl->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-
-
-
+  ui->tvUrl->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -514,30 +513,32 @@ void Widget::loadListCategory() noexcept
       categoryList.insert(qry.value(0).toUInt(), qry.value(1).toString());
     }
 
+
+
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-std::tuple<bool, uint32_t, QString>
+std::tuple<bool, QString>
 Widget::verifyDeleteCategory() noexcept
 {
   QSqlQuery qry(db);
-  bool ret{};
-  uint32_t count{};
+  [[maybe_unused]]bool ret{false};
+
   QString errMessage{};
   [[maybe_unused]] auto res=qry.prepare("SELECT COUNT (*) FROM urls WHERE category_id=?");
   auto categoryId=categoryList.key(ui->cboCategory->currentText());
   qry.addBindValue(categoryId, QSql::In);
   if(!qry.exec()){
       errMessage=qry.lastError().text();
-      ret=false;
+      return std::tuple{ret, errMessage};
     }
 
   qry.next();
-  count=qry.value(0).toUInt();
-  if(count != 0) ret=false;
+
+  if(qry.value(0).toUInt() != 0) ret=false;
   else ret=true;
 
-  return std::tuple{ret, count, errMessage};
+  return std::tuple{ret, errMessage};
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -618,12 +619,9 @@ bool Widget::deleteAll() const noexcept
 
 void Widget::verifyContextMenu() noexcept
 {
-  auto [res, count, errMessage] = verifyDeleteCategory();
+  auto [res, errMessage] = verifyDeleteCategory();
   //      qDebug()<<count;
-  if(count == 0)
-    delCategory->setDisabled(true);
-  else
-    delCategory->setEnabled(true);
+  (res) ? delCategory->setDisabled(true) : delCategory->setEnabled(true);
 }
 
 void Widget::setCboCategoryToolTip() noexcept

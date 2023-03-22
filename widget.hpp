@@ -55,7 +55,7 @@ private:
     const QString darkModeColor{"#2e8b57"};
     const QString lightModeColor{"#ff7e00"};
 
-    std::tuple<bool, uint32_t, QString> verifyDeleteCategory() noexcept;
+    std::tuple<bool, QString> verifyDeleteCategory() noexcept;
     void setUpCboCategoryContextMenu() noexcept;
     void setUptvUrlContextMenu() noexcept;
     bool deleteCategory() const noexcept;
