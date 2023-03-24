@@ -455,8 +455,8 @@ void Widget::readSettings() noexcept
 bool Widget::urlValidate(const QString &url) const noexcept
 {
   //  static QRegularExpression regex("^(http|https:\\/\\/)?[\\w\\-]+(\\.[\\w\\-]+)+[/#?]?.*$");
-//  static QRegularExpression regex(R"(^(http:\/\/|https:\/\/)?[w]{3}(\.\w+)+[.\w]{2,3}[.\w]?[/#?]?.*$)");
-//  static QRegularExpression regex(R"(^((http|https):\/\/)?(www\.([\w+]))+\.([\w])?)");
+  //  static QRegularExpression regex(R"(^(http:\/\/|https:\/\/)?[w]{3}(\.\w+)+[.\w]{2,3}[.\w]?[/#?]?.*$)");
+  //  static QRegularExpression regex(R"(^((http|https):\/\/)?(www\.([\w+]))+\.([\w])?)");
   static QRegularExpression regex(R"(^(:?(http|https)://)?(:?www\..+\.\w{2,4})(:?\.\w)?(:?.+)?$)");
   auto match = regex.match(url);
   return match.hasMatch();
@@ -509,10 +509,11 @@ void Widget::loadListCategory() noexcept
                             qry.lastError().text());
       return;
     }
-  while(qry.next()){
-      categoryList.insert(qry.value(0).toUInt(), qry.value(1).toString());
+  if(qry.isSelect()){
+      while(qry.next()){
+          categoryList.insert(qry.value(0).toUInt(), qry.value(1).toString());
+        }
     }
-
 
 
 }
@@ -522,7 +523,7 @@ std::tuple<bool, QString>
 Widget::verifyDeleteCategory() noexcept
 {
   QSqlQuery qry(db);
-  [[maybe_unused]]bool ret{false};
+  bool ret{false};
 
   QString errMessage{};
   [[maybe_unused]] auto res=qry.prepare("SELECT COUNT (*) FROM urls WHERE category_id=?");
@@ -533,10 +534,11 @@ Widget::verifyDeleteCategory() noexcept
       return std::tuple{ret, errMessage};
     }
 
-  qry.next();
+  if(qry.isSelect())
+    qry.first();
 
-  if(qry.value(0).toUInt() != 0) ret=false;
-  else ret=true;
+  if(qry.value(0).toUInt() == 0) ret=true;
+
 
   return std::tuple{ret, errMessage};
 
