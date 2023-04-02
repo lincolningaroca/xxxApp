@@ -3,7 +3,6 @@
 
 
 #include <QSqlError>
-//#include <QSqlQueryModel>
 #include <QSqlQuery>
 #include <QMessageBox>
 #include <QDesktopServices>
@@ -12,7 +11,6 @@
 #include <QAction>
 #include "dlgnewcategory.hpp"
 #include <QDebug>
-//#include <QSqlRecord>
 
 
 Widget::Widget(QWidget *parent)
@@ -34,7 +32,7 @@ Widget::Widget(QWidget *parent)
   verifyContextMenu();
 
 
-
+//action delete category
   QObject::connect(delCategory, &QAction::triggered, this, [&](){
     QMessageBox msgBox;
     msgBox.setWindowTitle(qApp->applicationName().append(" - Advertencia"));
@@ -45,21 +43,20 @@ Widget::Widget(QWidget *parent)
     msgBox.addButton("Borrar categoría", QMessageBox::AcceptRole);
     msgBox.addButton("Cancelar", QMessageBox::RejectRole);
 
-    if(msgBox.exec() == QMessageBox::AcceptRole){
-      if(deleteAll()){
-        QMessageBox::information(this, qApp->applicationName(),"Datos eliminados.");
-        ui->cboCategory->clear();
-        loadListCategory();
-        //              loadCategopryData();
-      }
+    if(msgBox.exec() == QMessageBox::RejectRole)
+      return;
+    if(deleteAll()){
+      QMessageBox::information(this, qApp->applicationName(),"Datos eliminados.");
+      ui->cboCategory->clear();
+      loadListCategory();
+
     }
-    return;
   });
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
   //connect to slot to btnDeleteCategory
-  QObject::connect(ui->btnDeleteCategory,&QPushButton::clicked, this, [&](){
+  QObject::connect(ui->btnDeleteCategory, &QPushButton::clicked, this, [&](){
 
     auto [res, errMessage] = verifyDeleteCategory();
     if(!res){
@@ -68,7 +65,8 @@ Widget::Widget(QWidget *parent)
                                    "<cite>"
                                    "No se puede eliminar ésta categoría.<br>"
                                    "Esto es debido a que ésta categoría tiene asociado uno o mas elementos.<br><br>"
-                                   "<strong>Sugerencia:</strong><br>"
+                                   "<strong>Sugerencia:"
+                                   "</strong><br>"
                                    "Si desea eliminar una categoría y todo su contenido, "
                                    "puede optar por dar click derecho sobre el nombre de la categoría y "
                                    "del menú contextual elegir:<br><br>"
@@ -81,18 +79,17 @@ Widget::Widget(QWidget *parent)
       return;
 
     }
-    auto ret = QMessageBox::warning(this, qApp->applicationName(), "<p><cite>Esta seguro de eliminar esta categoría?</cite></p>"
+    auto ret = QMessageBox::warning(this, qApp->applicationName(),
+                                    "<p><cite>Esta seguro de eliminar esta categoría?</cite></p>"
                                     ,QMessageBox::Yes, QMessageBox::Cancel);
-    if(ret==QMessageBox::Yes){
-      if(deleteCategory()){
-        QMessageBox::information(this, qApp->applicationName(), "Categoría eliminada!");
-        ui->cboCategory->clear();
-        loadListCategory();
-        //              loadCategopryData();
-      }
+    if(ret==QMessageBox::Cancel)
+      return;
+    if(deleteCategory()){
+      QMessageBox::information(this, qApp->applicationName(), "Categoría eliminada!");
+      ui->cboCategory->clear();
+      loadListCategory();
 
-    }else return;
-
+    }
   });
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -159,7 +156,7 @@ Widget::Widget(QWidget *parent)
   //btnAddNewCategory
   QObject::connect(ui->btnNewCategory, &QPushButton::clicked, this, [&](){
     QStringList l=categoryList.values();
-    dlgNewCategory newCategory(dlgNewCategory::OpenMode::New, 0 , l, this);
+    dlgNewCategory newCategory(dlgNewCategory::OpenMode::New, l, this);
 
     if(newCategory.exec() == QDialog::Rejected)
       return;
@@ -169,9 +166,6 @@ Widget::Widget(QWidget *parent)
     }
     ui->cboCategory->clear();
     loadListCategory();
-    //      ui->cboCategory->clear();
-    //      loadCategopryData();
-
 
   });
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -180,13 +174,17 @@ Widget::Widget(QWidget *parent)
   QObject::connect(ui->btnEditCategory, &QPushButton::clicked, this, [&](){
 
     auto id = categoryList.key(ui->cboCategory->currentText());
-    dlgNewCategory editCategory(dlgNewCategory::OpenMode::Edit, id, QStringList{}, this);
-    if(editCategory.exec() == QDialog::Accepted){
+    QStringList data = {dataCategory(id)};
+    dlgNewCategory editCategory(dlgNewCategory::OpenMode::Edit, data, this);
+    if(editCategory.exec() == QDialog::Rejected){
+      return;
+    }
+    if(updateCategory(editCategory.category(), editCategory.description(), id)){
+      QMessageBox::information(this, qApp->applicationName(), "Datos actualizados!\n");
       ui->cboCategory->clear();
       loadListCategory();
-      //          ui->cboCategory->clear();
-      //          loadCategopryData();
     }
+
 
   });
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -204,6 +202,7 @@ Widget::Widget(QWidget *parent)
     if(!validateSelectedRow()) return;
 
     quitUrl();
+
     hastvUrlData();
 
   });
@@ -262,7 +261,7 @@ Widget::Widget(QWidget *parent)
   hastvUrlData();
 
 
-}//Fin del contructor
+}//Fin del constructor
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -279,6 +278,21 @@ bool Widget::saveData(const QString& url, const QString& desc, std::uint32_t id)
   qry.addBindValue(desc.simplified().simplified().toUpper(), QSql::In);
   qry.addBindValue(id, QSql::In);
   return qry.exec();
+}
+
+bool Widget::updateCategory(const QString &url, const QString &desc, uint32_t category_id) const noexcept
+{
+  QSqlQuery qry(db);
+  [[ maybe_unused ]] auto res = qry.prepare("UPDATE category SET category_name=?, desc=? WHERE id=? ");
+  qry.addBindValue(url, QSql::In);
+  qry.addBindValue(desc, QSql::In);
+  qry.addBindValue(category_id, QSql::In);
+  if(!qry.exec()){
+    return false;
+  }
+
+  return true;
+
 }
 
 bool Widget::saveCategoryData(const QString &catName, const QString &desc) const noexcept
@@ -328,37 +342,13 @@ bool Widget::validateSelectedRow() noexcept
 
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-//void Widget::setUpTable(uint32_t categoryId) noexcept
-//{
-//  //  qDebug()<<ui->tvUrl->geometry().width();
-//  QSqlQuery qry(db);
-//  [[maybe_unused]] auto res = qry.prepare("SELECT * FROM urls WHERE category_id=?");
-//  qry.addBindValue(categoryId);
-//  if(!qry.exec()) return;
-
-//  while(qry.next()){
-//      urlList.insert(qry.value(0).toUInt(),qry.value(1).toString());
-//    }
-
-//  auto *model = new QSqlQueryModel(this);
-//  model->setQuery(std::move(qry));
-//  //  model->select();
-//  ui->tvUrl->setModel(model);
-//  //qDebug()<<model->record(0).value("url").toString();
-//  setUpTableHeaders();
-
-
-//}
 
 void Widget::setUpTable(uint32_t categoryId) noexcept
 {
-  //  qDebug()<<ui->tvUrl->geometry().width();
-  //  QSqlQuery reuseQry(db);
-  //  [[maybe_unused]] auto res = qry.prepare("SELECT * FROM urls WHERE category_id=?");
-  //  qry.addBindValue(categoryId);
-  //  if(!qry.exec()) return;
+
   xxxModel_ = new QSqlTableModel(this, db);
   xxxModel_->setTable("urls");
   xxxModel_->setFilter(QString("category_id=%1").arg(categoryId));
@@ -374,15 +364,6 @@ void Widget::setUpTable(uint32_t categoryId) noexcept
       urlList.insert(reuseQry.value(0).toUInt(),reuseQry.value(1).toString());
     }
   }
-
-
-  //  auto *model = new QSqlQueryModel(this);
-  //  model->setQuery(std::move(qry));
-  //  model->select();
-
-  //qDebug()<<model->record(0).value("url").toString();
-
-
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -527,17 +508,12 @@ QString Widget::getColorReg(QByteArray dataColor) noexcept
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-//void Widget::loadCategopryData() noexcept
-//{
-//  //  ui->cboCategory->clear();
-//  ui->cboCategory->addItems(categoryList.values());
 
-//}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Widget::loadListCategory() noexcept
 {
-  //  categoryList.clear();
+  categoryList.clear();
   QSqlQuery qryCategory(db);
   [[maybe_unused]] auto res=qryCategory.prepare("SELECT id, category_name FROM category");
   if(!qryCategory.exec()){
@@ -552,6 +528,24 @@ void Widget::loadListCategory() noexcept
   }
 
   ui->cboCategory->addItems(categoryList.values());
+
+}
+
+QStringList Widget::dataCategory(uint32_t category_id) noexcept
+{
+  QSqlQuery dataQuery(db);
+  QStringList data{};
+  [[maybe_unused]] auto res=dataQuery.prepare("SELECT category_name, desc FROM category WHERE id=?");
+  dataQuery.addBindValue(category_id);
+  if(!dataQuery.exec()){
+    QMessageBox::critical(this, qApp->applicationName(), "Error al ejecutar la sentencia!\n"+
+                          dataQuery.lastError().text());
+    return data;
+  }
+  dataQuery.first();
+  data.append(dataQuery.value(0).toString());
+  data.append(dataQuery.value(1).toString());
+  return data;
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -615,10 +609,8 @@ bool Widget::deleteCategory() const noexcept
   [[maybe_unused]] auto res=qry.prepare("DELETE FROM category WHERE id=?");
   auto categoryId=categoryList.key(ui->cboCategory->currentText());
   qry.addBindValue(categoryId, QSql::In);
-  if(!qry.exec())
-    return false;
+  return qry.exec();
 
-  return true;
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -630,21 +622,17 @@ bool Widget::deleteUrls(std::uint8_t op) const noexcept
     [[maybe_unused]] auto res=qry.prepare("DELETE FROM urls WHERE category_id=?");
     auto categoryId=categoryList.key(ui->cboCategory->currentText());
     qry.addBindValue(categoryId, QSql::In);
-    if(!qry.exec())
-      return false;
+    return qry.exec();
+
   }else{
     [[maybe_unused]] auto res=qry.prepare("DELETE FROM urls WHERE id=?");
     auto currentRow = ui->tvUrl->currentIndex().row();
     auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
     auto urlId=urlList.key(url);
     qry.addBindValue(urlId, QSql::In);
-    if(!qry.exec())
-      return false;
+    return qry.exec();
+
   }
-
-
-
-  return true;
 }
 
 bool Widget::deleteAll() const noexcept
@@ -665,9 +653,9 @@ void Widget::verifyContextMenu() noexcept
 
 void Widget::setCboCategoryToolTip() noexcept
 {
-  auto id = categoryList.key(ui->cboCategory->currentText());
+  //  auto id = categoryList.key(ui->cboCategory->currentText());
 
-  dlgNewCategory nc(dlgNewCategory::OpenMode::Edit, id, QStringList{}, this);
+  dlgNewCategory nc(dlgNewCategory::OpenMode::Edit, QStringList{}, this);
   auto desc=nc.descriptionToolTip();
   if(desc.isEmpty()){
     ui->cboCategory->setToolTip("<p><cite><strong>Descripción de la categoría:</strong><br><br>"
