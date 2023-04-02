@@ -3,7 +3,9 @@
 #include <QWidget>
 #include <QSqlDatabase>
 #include <QHash>
+#include <QMap>
 #include <tuple>
+#include <QSqlTableModel>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -29,7 +31,7 @@ private:
     QAction* openUrl_{};
     QAction* editUrl_{};
     QAction* quittUrl_{};
-
+    QSqlTableModel* xxxModel_{};
     //custom functions
     void initFrm() noexcept;
     void editAction(bool op) noexcept;

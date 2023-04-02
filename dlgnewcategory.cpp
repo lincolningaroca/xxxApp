@@ -55,7 +55,7 @@ dlgNewCategory::dlgNewCategory(OpenMode mode, uint32_t id, const QStringList &li
             }
 
           QMessageBox::information(this, qApp->applicationName(), "Datos actualizados!\n");
-          dlgNewCategory::accept();
+          accept();
         }
     });
   QObject::connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &dlgNewCategory::reject);
