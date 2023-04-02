@@ -30,6 +30,7 @@ private:
     QAction* editUrl_{};
     QAction* quittUrl_{};
     QSqlTableModel* xxxModel_{};
+
     //custom functions
     void initFrm() noexcept;
     void editAction(bool op) noexcept;
@@ -72,6 +73,7 @@ private:
     bool updateCategory(const QString &url, const QString &desc, uint32_t category_id) const noexcept;
     bool saveCategoryData(const QString &catName, const QString& desc) const noexcept;
     void btnEdit() noexcept;
+
 
 
 

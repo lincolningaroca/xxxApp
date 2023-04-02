@@ -32,7 +32,7 @@ Widget::Widget(QWidget *parent)
   verifyContextMenu();
 
 
-//action delete category
+  //action delete category
   QObject::connect(delCategory, &QAction::triggered, this, [&](){
     QMessageBox msgBox;
     msgBox.setWindowTitle(qApp->applicationName().append(" - Advertencia"));
@@ -534,18 +534,20 @@ void Widget::loadListCategory() noexcept
 QStringList Widget::dataCategory(uint32_t category_id) noexcept
 {
   QSqlQuery dataQuery(db);
-  QStringList data{};
+  QStringList dataCategory{};
   [[maybe_unused]] auto res=dataQuery.prepare("SELECT category_name, desc FROM category WHERE id=?");
   dataQuery.addBindValue(category_id);
   if(!dataQuery.exec()){
     QMessageBox::critical(this, qApp->applicationName(), "Error al ejecutar la sentencia!\n"+
                           dataQuery.lastError().text());
-    return data;
+    return dataCategory;
   }
-  dataQuery.first();
-  data.append(dataQuery.value(0).toString());
-  data.append(dataQuery.value(1).toString());
-  return data;
+  if(dataQuery.next()){
+    dataCategory.append(dataQuery.value(0).toString());
+    dataCategory.append(dataQuery.value(1).toString());
+  }
+
+  return dataCategory;
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -653,10 +655,24 @@ void Widget::verifyContextMenu() noexcept
 
 void Widget::setCboCategoryToolTip() noexcept
 {
-  //  auto id = categoryList.key(ui->cboCategory->currentText());
+  auto id = categoryList.key(ui->cboCategory->currentText());
+  QStringList categoryData{dataCategory(id)};
+  //  auto categoryDesc{};
+  //  dlgNewCategory nc(dlgNewCategory::OpenMode::Edit, QStringList{}, this);
+  //  QSqlQuery toolTipQuery(db);
+  //  toolTipQuery.prepare("SELECT desc FROM category WHERE id=?");
+  //  toolTipQuery.addBindValue(id);
 
-  dlgNewCategory nc(dlgNewCategory::OpenMode::Edit, QStringList{}, this);
-  auto desc=nc.descriptionToolTip();
+  //  if(!toolTipQuery.exec()){
+  //    QMessageBox::critical(this, qApp->applicationName(), "Error al ejecutar la sentencia!\n"+
+  //                          toolTipQuery.lastError().text());
+  //    return;
+  //  }
+
+  //  toolTipQuery.first();
+
+  auto desc=categoryData.value(1);
+  //  QString desc{};
   if(desc.isEmpty()){
     ui->cboCategory->setToolTip("<p><cite><strong>Descripción de la categoría:</strong><br><br>"
                                 "Esta categoría no cuenta con una descripción!</cite></p>");
@@ -665,6 +681,7 @@ void Widget::setCboCategoryToolTip() noexcept
 
   ui->cboCategory->setToolTip(
         QString("<p><cite><strong>Descripción de la categoría:</strong><br><br>%1</cite></p>").arg(desc));
+
 }
 
 void Widget::openUrl() noexcept
