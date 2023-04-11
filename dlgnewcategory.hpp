@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QDialog>
-#include <QSqlDatabase>
 
 namespace Ui {
 class dlgNewCategory;

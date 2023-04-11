@@ -1,8 +1,5 @@
 #include "dlgnewcategory.hpp"
 #include "ui_dlgnewcategory.h"
-
-#include <QSqlError>
-#include <QSqlQuery>
 #include <QMessageBox>
 
 

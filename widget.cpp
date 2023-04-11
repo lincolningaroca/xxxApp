@@ -1,7 +1,6 @@
 #include "widget.hpp"
 #include "./ui_widget.h"
 
-
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QMessageBox>
@@ -9,6 +8,7 @@
 #include <QSettings>
 #include <QRegularExpression>
 #include <QAction>
+#include <QSqlTableModel>
 #include "dlgnewcategory.hpp"
 #include <QDebug>
 
@@ -307,7 +307,7 @@ bool Widget::saveCategoryData(const QString &catName, const QString &desc) const
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Widget::initFrm() noexcept
 {
-  setWindowFlags(Qt::MSWindowsFixedSizeDialogHint);
+  setWindowFlags(windowFlags() ^Qt::MSWindowsFixedSizeDialogHint);
   //placeholder
   ui->txtUrl->setPlaceholderText("(http | https://)www.url.com");
   ui->pteDesc->setPlaceholderText("Description to url's");
@@ -375,7 +375,7 @@ void Widget::setUpTableHeaders() const noexcept
   ui->tvUrl->model()->setHeaderData(1,Qt::Horizontal, "Dirección URL");
   ui->tvUrl->setColumnWidth(1, 350);
   ui->tvUrl->model()->setHeaderData(2,Qt::Horizontal, "Descripción");
-  ui->tvUrl->setColumnWidth(2, 300);
+  ui->tvUrl->setColumnWidth(2, 345);
   ui->tvUrl->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -398,7 +398,7 @@ void Widget::btnEdit() noexcept
 void Widget::setTheme(Theme theme) const noexcept
 {
   QPalette mPalette;
-  qApp->setStyle("Fusion");
+//  qApp->setStyle("Fusion");
   if(theme == Theme::Modo_Claro)
     mPalette = qApp->style()->standardPalette();
   else{
@@ -657,20 +657,6 @@ void Widget::setCboCategoryToolTip() noexcept
 {
   auto id = categoryList.key(ui->cboCategory->currentText());
   QStringList categoryData{dataCategory(id)};
-  //  auto categoryDesc{};
-  //  dlgNewCategory nc(dlgNewCategory::OpenMode::Edit, QStringList{}, this);
-  //  QSqlQuery toolTipQuery(db);
-  //  toolTipQuery.prepare("SELECT desc FROM category WHERE id=?");
-  //  toolTipQuery.addBindValue(id);
-
-  //  if(!toolTipQuery.exec()){
-  //    QMessageBox::critical(this, qApp->applicationName(), "Error al ejecutar la sentencia!\n"+
-  //                          toolTipQuery.lastError().text());
-  //    return;
-  //  }
-
-  //  toolTipQuery.first();
-
   auto desc=categoryData.value(1);
   //  QString desc{};
   if(desc.isEmpty()){

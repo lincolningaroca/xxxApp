@@ -40,6 +40,9 @@
           <height>350</height>
          </size>
         </property>
+        <property name="editable">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
@@ -118,6 +121,9 @@
       </item>
       <item>
        <widget class="QComboBox" name="cboTheme">
+        <property name="editable">
+         <bool>true</bool>
+        </property>
         <item>
          <property name="text">
           <string>Modo Claro</string>
