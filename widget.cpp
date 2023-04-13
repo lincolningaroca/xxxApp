@@ -10,7 +10,7 @@
 #include <QAction>
 #include <QSqlTableModel>
 #include "dlgnewcategory.hpp"
-#include <QDebug>
+//#include <QDebug>
 
 
 Widget::Widget(QWidget *parent)
@@ -19,7 +19,6 @@ Widget::Widget(QWidget *parent)
   ui->setupUi(this);
   initFrm();
   loadListCategory();
-  //  loadCategopryData();
   setUpTable(categoryList.key(ui->cboCategory->currentText()));
 
 
@@ -260,6 +259,9 @@ Widget::Widget(QWidget *parent)
   setCboCategoryToolTip();
   hastvUrlData();
 
+//  setUpTableHeaders();
+
+
 
 }//Fin del constructor
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -307,7 +309,7 @@ bool Widget::saveCategoryData(const QString &catName, const QString &desc) const
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Widget::initFrm() noexcept
 {
-  setWindowFlags(windowFlags() ^Qt::MSWindowsFixedSizeDialogHint);
+//  setWindowFlags(windowFlags() ^Qt::MSWindowsFixedSizeDialogHint);
   //placeholder
   ui->txtUrl->setPlaceholderText("(http | https://)www.url.com");
   ui->pteDesc->setPlaceholderText("Description to url's");
@@ -373,10 +375,11 @@ void Widget::setUpTableHeaders() const noexcept
   ui->tvUrl->hideColumn(0);
   ui->tvUrl->hideColumn(3);
   ui->tvUrl->model()->setHeaderData(1,Qt::Horizontal, "Dirección URL");
-  ui->tvUrl->setColumnWidth(1, 350);
   ui->tvUrl->model()->setHeaderData(2,Qt::Horizontal, "Descripción");
-  ui->tvUrl->setColumnWidth(2, 345);
   ui->tvUrl->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+  ui->tvUrl->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
