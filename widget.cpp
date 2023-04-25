@@ -35,7 +35,8 @@ Widget::Widget(QWidget *parent)
   QObject::connect(delCategory, &QAction::triggered, this, [&](){
     QMessageBox msgBox;
     msgBox.setWindowTitle(qApp->applicationName().append(" - Advertencia"));
-    msgBox.setText("<p style='color:#FB4934;'><cite><strong>Esta a punto eliminar ésta categoría y todo su contenido.<br>"
+    msgBox.setText("<p style='color:#FB4934;'>"
+                   "<cite><strong>Esta a punto eliminar ésta categoría y todo su contenido.<br>"
                    "Recuerde que al aceptar, eliminará de forma permanente estos datos.<br>"
                    "Desea continuar y eliminar los datos?</strong></cite></p>");
     msgBox.setIcon(QMessageBox::Warning);
@@ -63,14 +64,16 @@ Widget::Widget(QWidget *parent)
                            QString("<p>"
                                    "<cite>"
                                    "No se puede eliminar ésta categoría.<br>"
-                                   "Esto es debido a que ésta categoría tiene asociado uno o mas elementos.<br><br>"
+                                   "Esto es debido a que ésta categoría tiene asociado uno o mas"
+                                   " elementos.<br><br>"
                                    "<strong>Sugerencia:"
                                    "</strong><br>"
                                    "Si desea eliminar una categoría y todo su contenido, "
-                                   "puede optar por dar click derecho sobre el nombre de la categoría y "
+                                   "puede optar por dar click derecho sobre el nombre de la categoría y"
                                    "del menú contextual elegir:<br><br>"
                                    "<strong>"
-                                   "<mark style='background:#FFFF00;color:#FF5500;'>->Forzar eliminación de categoría.</mark>"
+                                   "<mark style='background:#FFFF00;color:#FF5500;'>"
+                                   "->Forzar eliminación de categoría.</mark>"
                                    "</strong>"
                                    "</cite>"
                                    "</p>"));
@@ -259,7 +262,7 @@ Widget::Widget(QWidget *parent)
   setCboCategoryToolTip();
   hastvUrlData();
 
-//  setUpTableHeaders();
+  //  setUpTableHeaders();
 
 
 
@@ -309,7 +312,7 @@ bool Widget::saveCategoryData(const QString &catName, const QString &desc) const
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Widget::initFrm() noexcept
 {
-//  setWindowFlags(windowFlags() ^Qt::MSWindowsFixedSizeDialogHint);
+  //  setWindowFlags(windowFlags() ^Qt::MSWindowsFixedSizeDialogHint);
   //placeholder
   ui->txtUrl->setPlaceholderText("(http | https://)www.url.com");
   ui->pteDesc->setPlaceholderText("Description to url's");
@@ -401,7 +404,7 @@ void Widget::btnEdit() noexcept
 void Widget::setTheme(Theme theme) const noexcept
 {
   QPalette mPalette;
-//  qApp->setStyle("Fusion");
+  //  qApp->setStyle("Fusion");
   if(theme == Theme::Modo_Claro)
     mPalette = qApp->style()->standardPalette();
   else{
@@ -485,7 +488,9 @@ bool Widget::urlValidate(const QString &url) const noexcept
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Widget::setLabelInfo(const QString& color) noexcept
 {
-  ui->lblState->setText(QString("<span style='color:%1;'><strong>SWSystem's - Lincoln Ingaroca</strong></span>").arg(color));
+  ui->lblState->setText(QString("<span style='color:%1;'>"
+                                "<strong>SWSystem's - Lincoln Ingaroca"
+                                "</strong></span>").arg(color));
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -668,8 +673,9 @@ void Widget::setCboCategoryToolTip() noexcept
     return;
   }
 
-  ui->cboCategory->setToolTip(
-        QString("<p><cite><strong>Descripción de la categoría:</strong><br><br>%1</cite></p>").arg(desc));
+  ui->cboCategory->setToolTip(QString("<p>"
+                                      "<cite><strong>Descripción de la categoría:</strong>"
+                                      "<br><br>%1</cite></p>").arg(desc));
 
 }
 
