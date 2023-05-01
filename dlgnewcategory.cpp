@@ -64,13 +64,13 @@ QString dlgNewCategory::category() const noexcept
 
 }
 
-QString dlgNewCategory::description() noexcept
+QString dlgNewCategory::description() const noexcept
 {
   return ui->pteDesc->toPlainText().toUpper().simplified();
 
 }
 
-QString dlgNewCategory::descriptionToolTip() noexcept
+QString dlgNewCategory::descriptionToolTip() const noexcept
 {
   return ui->pteDesc->toPlainText();
 }

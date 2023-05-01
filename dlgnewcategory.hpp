@@ -18,14 +18,14 @@ public:
   ~dlgNewCategory();
 
   QString category() const noexcept;
-  QString description() noexcept;
-  QString descriptionToolTip() noexcept;
+  QString description() const noexcept;
+  QString descriptionToolTip() const noexcept;
 
 private:
   Ui::dlgNewCategory *ui;
 //  const QStringList list_{};
 
-  void loadData() noexcept;
+//  void loadData() noexcept;
   bool validateData() const noexcept;
 
 };
