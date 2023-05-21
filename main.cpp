@@ -35,6 +35,8 @@ int main(int argc, char *argv[])
 
     w.setWindowTitle(a.applicationName());
     w.show();
+  }else{
+    return 2;
   }
 
   return a.exec();
