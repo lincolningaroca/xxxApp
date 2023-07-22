@@ -23,8 +23,8 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
       return;
     }
-    getUser_id();
-//    qInfo() << id;
+
+//    qInfo() << getUser_id();
     accept();
   });
   //coneccion del boton de mas opciones
@@ -65,17 +65,18 @@ LogInDialog::~LogInDialog()
   delete ui;
 }
 
-void LogInDialog::getUser_id() noexcept
+uint32_t LogInDialog::getUser_id() noexcept
 {
   QSqlQuery qry{db_};
 
-
+  uint32_t ret_value{0};
   [[maybe_unused]] auto res = qry.prepare("SELECT user_id FROM users WHERE user = ?");
   qry.addBindValue(ui->txtUser->text());
   if(!qry.exec())
-    return;
+    return ret_value;
   qry.first();
-  userid_= qry.value(0).toUInt();
+  ret_value= qry.value(0).toUInt();
+  return ret_value;
 //  id=1;
 }
 

@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
   QSqlDatabase db=QSqlDatabase::addDatabase("QSQLITE", "xxxConection");
 
 
-  db.setDatabaseName(qApp->applicationDirPath().append("/db/xxx.db"));
+  db.setDatabaseName(qApp->applicationDirPath().append("/db/xxxdb.db"));
   if(!db.open()){
     QMessageBox::critical(nullptr, qApp->applicationName(),
                           "Error desconocido!\n"+db.lastError().text());

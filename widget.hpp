@@ -23,11 +23,11 @@ public:
 private:
     Ui::Widget *ui;
     const QSqlDatabase db{};
-    QAction* delCategory{};
-    QAction* openUrl_{};
-    QAction* editUrl_{};
-    QAction* quittUrl_{};
-    QSqlTableModel* xxxModel_{};
+    QAction* delCategory{ nullptr };
+    QAction* openUrl_{ nullptr };
+    QAction* editUrl_{ nullptr };
+    QAction* quittUrl_{ nullptr };
+    QSqlTableModel* xxxModel_{ nullptr };
 
 
 

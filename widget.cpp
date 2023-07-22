@@ -272,7 +272,9 @@ Widget::Widget(QWidget *parent)
 //conect btn login
   QObject::connect(ui->btnLogIn, &QToolButton::clicked, this, [&](){
     LogInDialog logDialog;
-    logDialog.exec();
+    if(logDialog.exec() == QDialog::Accepted){
+      qInfo() <<"fesde form principal: id de usuario recibido = "<< logDialog.getUser_id();
+    }
   });
 
 }//Fin del constructor
