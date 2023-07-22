@@ -1,9 +1,12 @@
 #include "logindialog.hpp"
 #include "ui_logindialog.h"
+#include <QSqlQuery>
+#include <QMessageBox>
+#include <QDebug>
 
 
 LogInDialog::LogInDialog(QWidget *parent) :
-  QDialog(parent), ui(new Ui::LogInDialog)
+  QDialog(parent), ui(new Ui::LogInDialog), db_{QSqlDatabase::database("xxxConection")}
 {
   ui->setupUi(this);
   setUp_Form();
@@ -12,10 +15,17 @@ LogInDialog::LogInDialog(QWidget *parent) :
   QObject::connect(ui->pbCancel, &QPushButton::clicked, this, &LogInDialog::reject);
   QObject::connect(ui->pbLogIn, &QPushButton::clicked, this, [&](){
 
-    if(ui->txtUser->text().compare("usuario") == 0 &&
-       ui->txtPassword->text().compare("password") == 0){
-      accept();
+    if(!logIn()){
+      QMessageBox::warning(this, qApp->applicationName(), "Los datos que ingreso son incorrectos\n"
+                                                          "vuelva a intentarlo.");
+      ui->txtUser->selectAll();
+      ui->txtUser->setFocus(Qt::OtherFocusReason);
+
+      return;
     }
+    getUser_id();
+//    qInfo() << id;
+    accept();
   });
   //coneccion del boton de mas opciones
   ui->btnOtherOptions->setCheckable(true);
@@ -53,6 +63,20 @@ LogInDialog::LogInDialog(QWidget *parent) :
 LogInDialog::~LogInDialog()
 {
   delete ui;
+}
+
+void LogInDialog::getUser_id() noexcept
+{
+  QSqlQuery qry{db_};
+
+
+  [[maybe_unused]] auto res = qry.prepare("SELECT user_id FROM users WHERE user = ?");
+  qry.addBindValue(ui->txtUser->text());
+  if(!qry.exec())
+    return;
+  qry.first();
+  userid_= qry.value(0).toUInt();
+//  id=1;
 }
 
 void LogInDialog::setUp_Form() noexcept
@@ -103,11 +127,27 @@ void LogInDialog::setOptionsToComboBox(int index) noexcept
   if(index == 0){
     ui->lineEdit->setPlaceholderText("Ingrese una pregunta!");
     ui->lineEdit_2->setPlaceholderText("Ingrese su respuesta!");
-//    ui->lineEdit->setFocus(Qt::OtherFocusReason);
+    //    ui->lineEdit->setFocus(Qt::OtherFocusReason);
 
   }else{
     ui->lineEdit->setPlaceholderText("Ingrese PIN numérico de 4 cifras!");
     ui->lineEdit_2->setPlaceholderText("Vuelva a ingresar el el número");
-//    ui->lineEdit->setFocus(Qt::OtherFocusReason);
+    //    ui->lineEdit->setFocus(Qt::OtherFocusReason);
   }
 }
+
+bool LogInDialog::logIn() const noexcept
+{
+  QSqlQuery qry{db_};
+  [[maybe_unused]] auto res = qry.prepare("SELECT COUNT(*) FROM users WHERE user = ? AND password = ?");
+  qry.addBindValue(ui->txtUser->text());
+  qry.addBindValue(ui->txtPassword->text());
+  if(!qry.exec())
+    return false;
+  if(qry.first() && qry.value(0).toInt() == 1)
+    return true;
+  return false;
+
+
+}
+

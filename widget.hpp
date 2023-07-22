@@ -20,7 +20,6 @@ public:
     enum class Theme{ Modo_Claro, Modo_Oscuro };
     //slots
 
-
 private:
     Ui::Widget *ui;
     const QSqlDatabase db{};
@@ -29,6 +28,9 @@ private:
     QAction* editUrl_{};
     QAction* quittUrl_{};
     QSqlTableModel* xxxModel_{};
+
+
+
 
     //custom functions
     void initFrm() noexcept;
@@ -46,7 +48,7 @@ private:
     QByteArray setColorReg(const QString &color) const noexcept;
     QString getColorReg(QByteArray dataColor) noexcept;
 
-    void loadListCategory() noexcept;
+    void loadListCategory(uint32_t user_id=3) noexcept;
     QStringList dataCategory(uint32_t category_id) noexcept;
 
     //menbers var

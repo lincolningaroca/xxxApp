@@ -10,13 +10,18 @@
 #include <QAction>
 #include <QSqlTableModel>
 #include "dlgnewcategory.hpp"
-//#include <QDebug>
+#include "logindialog.hpp"
+#include <QDebug>
 
 
 Widget::Widget(QWidget *parent)
-  : QWidget(parent), ui(new Ui::Widget), db{QSqlDatabase::database("xxxConection")}
+  : QWidget(parent), ui(new Ui::Widget),
+    db{QSqlDatabase::database("xxxConection")}
 {
   ui->setupUi(this);
+
+  //  userId_=LogInDialog::userid_;
+
   initFrm();
   loadListCategory();
   setUpTable(categoryList.key(ui->cboCategory->currentText()));
@@ -157,8 +162,8 @@ Widget::Widget(QWidget *parent)
 
   //btnAddNewCategory
   QObject::connect(ui->btnNewCategory, &QPushButton::clicked, this, [&](){
-    QStringList l=categoryList.values();
-    dlgNewCategory newCategory(dlgNewCategory::OpenMode::New, l, this);
+//    QStringList l{};
+    dlgNewCategory newCategory(dlgNewCategory::OpenMode::New, QStringList{}, this);
 
     if(newCategory.exec() == QDialog::Rejected)
       return;
@@ -264,7 +269,11 @@ Widget::Widget(QWidget *parent)
 
   //  setUpTableHeaders();
 
-
+//conect btn login
+  QObject::connect(ui->btnLogIn, &QToolButton::clicked, this, [&](){
+    LogInDialog logDialog;
+    logDialog.exec();
+  });
 
 }//Fin del constructor
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -519,11 +528,13 @@ QString Widget::getColorReg(QByteArray dataColor) noexcept
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Widget::loadListCategory() noexcept
+void Widget::loadListCategory(uint32_t user_id) noexcept
 {
   categoryList.clear();
   QSqlQuery qryCategory(db);
-  [[maybe_unused]] auto res=qryCategory.prepare("SELECT id, category_name FROM category");
+  [[maybe_unused]] auto res=qryCategory.prepare(
+        "SELECT id, category_name FROM category WHERE user_id = ?");
+  qryCategory.addBindValue(user_id);
   if(!qryCategory.exec()){
     QMessageBox::critical(this, qApp->applicationName(), "Error al ejecutar la sentencia!\n"+
                           qryCategory.lastError().text());

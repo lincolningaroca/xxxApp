@@ -1,10 +1,9 @@
 #include "widget.hpp"
-#include "logindialog.hpp"
-
 #include <QApplication>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QMessageBox>
+
 
 int main(int argc, char *argv[])
 {
@@ -26,18 +25,22 @@ int main(int argc, char *argv[])
 //fin conexion base de datos
 
 
+
+//  LogInDialog login_;
+//  login_.setWindowTitle(a.applicationName().append(" - LogIn"));
+
+
+//  if(login_.exec() == QDialog::Accepted){
+//   Widget *w = new Widget();
+////    qInfo() <<LogInDialog::userid_;
+//    w->setUserId(LogInDialog::userid_);
+//    w->setWindowTitle(a.applicationName());
+//    w->show();
+//  }else{
+//    return 2;
+//  }
   Widget w;
-  LogInDialog login_;
-  login_.setWindowTitle(a.applicationName().append(" - LogIn"));
-
-
-  if(login_.exec() == QDialog::Accepted){
-
-    w.setWindowTitle(a.applicationName());
-    w.show();
-  }else{
-    return 2;
-  }
-
+  w.setWindowTitle(a.applicationName());
+  w.show();
   return a.exec();
 }

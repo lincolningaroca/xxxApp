@@ -13,5 +13,7 @@
         <file>img/7278151.png</file>
         <file>img/down.png</file>
         <file>img/up.png</file>
+        <file>img/login.png</file>
+        <file>img/logout.png</file>
     </qresource>
 </RCC>
