@@ -55,7 +55,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
   });
 
   //coneccion de combo box metodo de recuperacion
-  QObject::connect(ui->cboRestoreType, &QComboBox::activated, this, LogInDialog::setOptionsToComboBox);
+  QObject::connect(ui->cboRestoreType, &QComboBox::activated, this, &LogInDialog::setOptionsToComboBox);
   ui->widget->hide();
 
 }
@@ -65,7 +65,7 @@ LogInDialog::~LogInDialog()
   delete ui;
 }
 
-uint32_t LogInDialog::getUser_id() noexcept
+[[nodiscard]]uint32_t LogInDialog::getUser_id() noexcept
 {
   QSqlQuery qry{db_};
 
