@@ -165,13 +165,6 @@ void LogInDialog::setUp_Form() noexcept{
                                   "restablecer clave o password!"
                                   "</span>"
                                   "</p>");
-  ui->btnPublic->setToolTip("<p>"
-                            "<cite> Ingressar sin usuario:<br>"
-                            "ver direcciones publicas."
-                            "</cite>"
-                            "</p>");
-
-//  ui->btnCreateUser->setShortcut(QKeySequence("Ctrl+U"));
 
 
   //new user section
@@ -196,7 +189,6 @@ void LogInDialog::setStateControls(bool op) noexcept{
   ui->txtUser->setDisabled(op);
   ui->pbCancel->setDisabled(op);
   ui->pbLogIn->setDisabled(op);
-  ui->btnPublic->setDisabled(op);
 
 }
 
