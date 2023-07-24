@@ -10,19 +10,23 @@
 #include <QAction>
 #include <QSqlTableModel>
 #include "dlgnewcategory.hpp"
-//#include <QDebug>
+#include "logindialog.hpp"
+#include <QDebug>
 
 
 Widget::Widget(QWidget *parent)
-  : QWidget(parent), ui(new Ui::Widget), db{QSqlDatabase::database("xxxConection")}
+  : QWidget(parent), ui(new Ui::Widget),
+    db_{QSqlDatabase::database("xxxConection")}
 {
   ui->setupUi(this);
+  userId_ = getUser_id("public");
   initFrm();
-  loadListCategory();
+  loadListCategory(userId_);
   setUpTable(categoryList.key(ui->cboCategory->currentText()));
 
 
   readSettings();
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   /// ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   //context menu implementation
@@ -30,6 +34,8 @@ Widget::Widget(QWidget *parent)
   setUptvUrlContextMenu();
   verifyContextMenu();
 
+
+//  qInfo() <<userId_;
 
   //action delete category
   QObject::connect(delCategory, &QAction::triggered, this, [&](){
@@ -48,7 +54,7 @@ Widget::Widget(QWidget *parent)
     if(deleteAll()){
       QMessageBox::information(this, qApp->applicationName(),"Datos eliminados.");
       ui->cboCategory->clear();
-      loadListCategory();
+      loadListCategory(userId_);
 
     }
   });
@@ -89,13 +95,13 @@ Widget::Widget(QWidget *parent)
     if(deleteCategory()){
       QMessageBox::information(this, qApp->applicationName(), "Categoría eliminada!");
       ui->cboCategory->clear();
-      loadListCategory();
+      loadListCategory(userId_);
 
     }
   });
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-  //connect to slots to btnAdd
+  //connect to slots to btnAdd new url
   QObject::connect(ui->btnAdd,&QPushButton::clicked, this, [&](){
 
     if(ui->btnAdd->text().compare("&Add") == 0){
@@ -104,10 +110,10 @@ Widget::Widget(QWidget *parent)
                              QString("<p><cite>La dirección: <strong>\"%1\"</strong>, no es válida!<br>"
                                      "una dirección url válida debe tener una de las siguiente formas:"
                                      "<ol>"
-                                     "<strong><li>http://www.url.dominio</li></strong>"
-                                     "<strong><li>https://www.url.dominio</li></strong>"
-                                     "<strong><li>www.url.dominio</li></strong>"
-                                     "</ol><br>"
+                                     "<li><strong>http://www.url.dominio</strong></li>"
+                                     "<li><strong>https://www.url.dominio</strong></li>"
+                                     "<li><strong>www.url.dominio</strong></li>"
+                                     "</ol>"
                                      "Tenga en cuenta que para éste sistema:<br>"
                                      "http:// o https:// son opcionales.<br>"
                                      "Lo mínimo que se espera es <strong>www.url.domino</strong><br>"
@@ -130,13 +136,15 @@ Widget::Widget(QWidget *parent)
       }
     }else{
 
-      QSqlQuery qry(db);
-      [[maybe_unused]] auto res=qry.prepare("UPDATE  urls SET url=?, desc=? WHERE id=?");
+      QSqlQuery qry(db_);
+      [[maybe_unused]] auto res=qry.prepare("UPDATE  urls SET url=?, desc=? WHERE url_id=? AND categoryid=?");
       qry.addBindValue(ui->txtUrl->text(), QSql::In);
       qry.addBindValue(ui->pteDesc->toPlainText().simplified().toUpper(), QSql::In);
       auto currentRow = ui->tvUrl->currentIndex().row();
       auto id = ui->tvUrl->model()->index(currentRow,0).data().toInt();
       qry.addBindValue(id, QSql::In);
+      auto categoryId = categoryList.key(ui->cboCategory->currentText());
+      qry.addBindValue(categoryId, QSql::In);
       if(!qry.exec()){
         QMessageBox::critical(this, qApp->applicationName(), "Fallo la ejecución de la sentencia!\n"
                               +qry.lastError().text());
@@ -157,17 +165,18 @@ Widget::Widget(QWidget *parent)
 
   //btnAddNewCategory
   QObject::connect(ui->btnNewCategory, &QPushButton::clicked, this, [&](){
-    QStringList l=categoryList.values();
-    dlgNewCategory newCategory(dlgNewCategory::OpenMode::New, l, this);
+//    QStringList l{};
+    dlgNewCategory newCategory(dlgNewCategory::OpenMode::New, QStringList{}, this);
 
     if(newCategory.exec() == QDialog::Rejected)
       return;
-    if(!saveCategoryData(newCategory.category(), newCategory.description())){
+//    user_id = getUser_id("public");
+    if(!saveCategoryData(newCategory.category(), newCategory.description(), userId_)){
       QMessageBox::critical(this, qApp->applicationName(), "Error alguardar los datos!\n");
       return;
     }
     ui->cboCategory->clear();
-    loadListCategory();
+    loadListCategory(userId_);
 
   });
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -181,10 +190,10 @@ Widget::Widget(QWidget *parent)
     if(editCategory.exec() == QDialog::Rejected){
       return;
     }
-    if(updateCategory(editCategory.category(), editCategory.description(), id)){
+    if(updateCategory(editCategory.category(), editCategory.description(), id, userId_)){
       QMessageBox::information(this, qApp->applicationName(), "Datos actualizados!\n");
       ui->cboCategory->clear();
-      loadListCategory();
+      loadListCategory(userId_);
     }
 
 
@@ -264,7 +273,36 @@ Widget::Widget(QWidget *parent)
 
   //  setUpTableHeaders();
 
+//conect btn login
+  QObject::connect(ui->btnLogIn, &QToolButton::clicked, this, [&](){
+    LogInDialog logDialog;
+    if(logDialog.exec() == QDialog::Accepted){
+//      Widget::userid_=logDialog.getUser_id();
+      userId_ = getUser_id(logDialog.userName(),"USER");
 
+//      qInfo() <<"desde form principal: id de usuario recibido = " << userId_ << logDialog.userName();
+      ui->cboCategory->clear();
+      loadListCategory(userId_);
+
+      (ui->cboTheme->currentText() == "Modo Oscuro" ) ? setLabelInfo(darkModeColor, logDialog.userName()) : setLabelInfo(lightModeColor, logDialog.userName());
+      ui->btnLogOut->setEnabled(true);
+      ui->btnLogIn->setDisabled(true);
+      setWindowTitle(QApplication::applicationName().append(" - Sesión inicada como: "+logDialog.userName()));
+      sessionStatus_ = SessionStatus::Session_start;
+    }
+  });
+
+  //connect to button logout
+  QObject::connect(ui->btnLogOut, &QToolButton::clicked, this, [&](){
+    userId_ = getUser_id("public");
+    (ui->cboTheme->currentText() == "Modo Oscuro" ) ? setLabelInfo(darkModeColor) : setLabelInfo(lightModeColor);
+    ui->btnLogOut->setDisabled(true);
+    ui->btnLogIn->setEnabled(true);
+    setWindowTitle(QApplication::applicationName());
+    ui->cboCategory->clear();
+    loadListCategory(userId_);
+    sessionStatus_ = SessionStatus::Session_closed;
+  });
 
 }//Fin del constructor
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -277,21 +315,22 @@ Widget::~Widget()
 
 bool Widget::saveData(const QString& url, const QString& desc, std::uint32_t id) const noexcept
 {
-  QSqlQuery qry(db);
-  [[maybe_unused]] auto res = qry.prepare("INSERT INTO urls(url,desc,category_id) VALUES(?,?,?)");
+  QSqlQuery qry(db_);
+  [[maybe_unused]] auto res = qry.prepare("INSERT INTO urls(url,desc,categoryid) VALUES(?,?,?)");
   qry.addBindValue(url.simplified(), QSql::In);
   qry.addBindValue(desc.simplified().simplified().toUpper(), QSql::In);
   qry.addBindValue(id, QSql::In);
   return qry.exec();
 }
 
-bool Widget::updateCategory(const QString &url, const QString &desc, uint32_t category_id) const noexcept
+bool Widget::updateCategory(const QString &url, const QString &desc, uint32_t category_id, uint32_t user_id) const noexcept
 {
-  QSqlQuery qry(db);
-  [[ maybe_unused ]] auto res = qry.prepare("UPDATE category SET category_name=?, desc=? WHERE id=? ");
+  QSqlQuery qry(db_);
+  [[ maybe_unused ]] auto res = qry.prepare("UPDATE category SET category_name=?, desc=? WHERE category_id=? AND userid=? ");
   qry.addBindValue(url, QSql::In);
   qry.addBindValue(desc, QSql::In);
   qry.addBindValue(category_id, QSql::In);
+  qry.addBindValue(user_id, QSql::In);
   if(!qry.exec()){
     return false;
   }
@@ -300,12 +339,13 @@ bool Widget::updateCategory(const QString &url, const QString &desc, uint32_t ca
 
 }
 
-bool Widget::saveCategoryData(const QString &catName, const QString &desc) const noexcept
+bool Widget::saveCategoryData(const QString &catName, const QString &desc, uint32_t userid) const noexcept
 {
-  QSqlQuery qry(db);
-  [[maybe_unused]] auto res = qry.prepare("INSERT INTO category(category_name, desc) VALUES(?,?)");
+  QSqlQuery qry(db_);
+  [[maybe_unused]] auto res = qry.prepare("INSERT INTO category(category_name, desc, userid) VALUES(?,?,?)");
   qry.addBindValue(catName.simplified().toUpper(), QSql::In);
   qry.addBindValue(desc.simplified().toUpper(), QSql::In);
+  qry.addBindValue(userid, QSql::In);
   return qry.exec();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -320,6 +360,9 @@ void Widget::initFrm() noexcept
   ui->btnEditCategory->setToolTip("Edit Category Data!");
   //btnAdd disabled
   ui->btnAdd->setDisabled(true);
+  ui->btnLogIn->setShortcut(QKeySequence("Ctrl+L"));
+  ui->btnLogOut->setDisabled(true);
+  ui->btnLogOut->setShortcut(QKeySequence("Ctrl+Q"));
 
 
 }
@@ -354,9 +397,10 @@ bool Widget::validateSelectedRow() noexcept
 void Widget::setUpTable(uint32_t categoryId) noexcept
 {
 
-  xxxModel_ = new QSqlTableModel(this, db);
+  xxxModel_ = new QSqlTableModel(this, db_);
   xxxModel_->setTable("urls");
-  xxxModel_->setFilter(QString("category_id=%1").arg(categoryId));
+  xxxModel_->setFilter(QString("categoryid=%1").arg(categoryId));
+
   xxxModel_->select();
 
   ui->tvUrl->setModel(xxxModel_);
@@ -399,6 +443,17 @@ void Widget::btnEdit() noexcept
   ui->btnAdd->setText("&Update");
 
 }
+
+//void Widget::userId()
+//{
+//  QSqlQuery userqry(db);
+//  [[maybe_unused]] auto res = qry.prepare("INSERT INTO urls(url,desc,categoryid) VALUES(?,?,?)");
+//  qry.addBindValue(url.simplified(), QSql::In);
+//  qry.addBindValue(desc.simplified().simplified().toUpper(), QSql::In);
+//  qry.addBindValue(id, QSql::In);
+//  return qry.exec();
+
+//}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Widget::setTheme(Theme theme) const noexcept
@@ -486,11 +541,15 @@ bool Widget::urlValidate(const QString &url) const noexcept
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Widget::setLabelInfo(const QString& color) noexcept
+void Widget::setLabelInfo(const QString& color, const QString &userName) noexcept
 {
-  ui->lblState->setText(QString("<span style='color:%1;'>"
+  ui->lblInfo->setText(QString("<span style='color:%1;'>"
                                 "<strong>SWSystem's - Lincoln Ingaroca"
                                 "</strong></span>").arg(color));
+  ui->lblState->setText(QString("<span style='color:%1'>"
+                                "<Strong>User:%2</strong>"
+                                "</span>").arg(color).arg(" "+userName));
+
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -519,11 +578,13 @@ QString Widget::getColorReg(QByteArray dataColor) noexcept
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Widget::loadListCategory() noexcept
+void Widget::loadListCategory(uint32_t user_id) noexcept
 {
   categoryList.clear();
-  QSqlQuery qryCategory(db);
-  [[maybe_unused]] auto res=qryCategory.prepare("SELECT id, category_name FROM category");
+  QSqlQuery qryCategory(db_);
+  [[maybe_unused]] auto res=qryCategory.prepare("SELECT category_id, category_name FROM category WHERE userid = ?");
+
+  qryCategory.addBindValue(user_id);
   if(!qryCategory.exec()){
     QMessageBox::critical(this, qApp->applicationName(), "Error al ejecutar la sentencia!\n"+
                           qryCategory.lastError().text());
@@ -541,9 +602,9 @@ void Widget::loadListCategory() noexcept
 
 QStringList Widget::dataCategory(uint32_t category_id) noexcept
 {
-  QSqlQuery dataQuery(db);
+  QSqlQuery dataQuery(db_);
   QStringList dataCategory{};
-  [[maybe_unused]] auto res=dataQuery.prepare("SELECT category_name, desc FROM category WHERE id=?");
+  [[maybe_unused]] auto res=dataQuery.prepare("SELECT category_name, desc FROM category WHERE category_id=?");
   dataQuery.addBindValue(category_id);
   if(!dataQuery.exec()){
     QMessageBox::critical(this, qApp->applicationName(), "Error al ejecutar la sentencia!\n"+
@@ -563,11 +624,11 @@ QStringList Widget::dataCategory(uint32_t category_id) noexcept
 std::tuple<bool, QString>
 Widget::verifyDeleteCategory() noexcept
 {
-  QSqlQuery qry(db);
+  QSqlQuery qry(db_);
   bool ret{false};
 
   QString errMessage{};
-  [[maybe_unused]] auto res=qry.prepare("SELECT COUNT (*) FROM urls WHERE category_id=?");
+  [[maybe_unused]] auto res=qry.prepare("SELECT COUNT (*) FROM urls WHERE categoryid=?");
   auto categoryId=categoryList.key(ui->cboCategory->currentText());
   qry.addBindValue(categoryId, QSql::In);
   if(!qry.exec()){
@@ -615,8 +676,8 @@ void Widget::setUptvUrlContextMenu() noexcept
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool Widget::deleteCategory() const noexcept
 {
-  QSqlQuery qry(db);
-  [[maybe_unused]] auto res=qry.prepare("DELETE FROM category WHERE id=?");
+  QSqlQuery qry(db_);
+  [[maybe_unused]] auto res=qry.prepare("DELETE FROM category WHERE category_id=?");
   auto categoryId=categoryList.key(ui->cboCategory->currentText());
   qry.addBindValue(categoryId, QSql::In);
   return qry.exec();
@@ -627,15 +688,15 @@ bool Widget::deleteCategory() const noexcept
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool Widget::deleteUrls(std::uint8_t op) const noexcept
 {
-  QSqlQuery qry(db);
+  QSqlQuery qry(db_);
   if(op == 1){
-    [[maybe_unused]] auto res=qry.prepare("DELETE FROM urls WHERE category_id=?");
+    [[maybe_unused]] auto res=qry.prepare("DELETE FROM urls WHERE categoryid=?");
     auto categoryId=categoryList.key(ui->cboCategory->currentText());
     qry.addBindValue(categoryId, QSql::In);
     return qry.exec();
 
   }else{
-    [[maybe_unused]] auto res=qry.prepare("DELETE FROM urls WHERE id=?");
+    [[maybe_unused]] auto res=qry.prepare("DELETE FROM urls WHERE url_id=?");
     auto currentRow = ui->tvUrl->currentIndex().row();
     auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
     auto urlId=urlList.key(url);
@@ -732,7 +793,34 @@ void Widget::hastvUrlData() noexcept
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Widget::closeEvent(QCloseEvent *event)
 {
+  if(sessionStatus_ == SessionStatus::Session_start){
+    QMessageBox::warning(this, qApp->applicationName(),
+                         "<cite>Hay una sesión activa en este momento.<br>"
+                         "Necesita cerrar sesión primero antes de salir, "
+                         "haciendo click en el boton:<br>"
+                         "<cite><strong style='background:#FFFF00;color:#FF5500;'>Cerrar sesión</strong></cite><br>"
+                         "O presionando la combinación de teclas Ctrl+Q.</cite>");
+    event->ignore();
+    return;
+  }
   writeSettings();
   event->accept();
 }
 
+//get user id
+[[nodiscard]]uint32_t Widget::getUser_id(const QString& user, const QString& user_profile) noexcept
+{
+  QSqlQuery qry{db_};
+
+  uint32_t ret_value{0};
+  [[maybe_unused]] auto res = qry.prepare("SELECT user_id FROM users WHERE user = ? AND user_profile = ?");
+  qry.addBindValue(user);
+  qry.addBindValue(user_profile);
+  if(!qry.exec())
+    return ret_value;
+  qry.first();
+  ret_value= qry.value(0).toUInt();
+//  Widget::userid_ = ret_value;
+  return ret_value;
+//  id=1;
+}

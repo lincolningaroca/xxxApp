@@ -14,7 +14,8 @@ class dlgNewCategory : public QDialog
 public:
   enum class OpenMode{ New, Edit};
 
-  explicit dlgNewCategory(OpenMode mode, const QStringList& list={}, QWidget *parent = nullptr);
+  explicit dlgNewCategory(OpenMode mode, const QStringList& list, QWidget *parent = nullptr);
+
   ~dlgNewCategory();
 
   QString category() const noexcept;

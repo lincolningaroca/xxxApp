@@ -26,6 +26,10 @@ set(PROJECT_SOURCES
         dlgnewcategory.cpp
         dlgnewcategory.hpp
         dlgnewcategory.ui
+        logindialog.hpp
+        logindialog.cpp
+        logindialog.ui
+
         ${APP_ICON}
 
 )

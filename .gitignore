@@ -7,3 +7,7 @@ db/xxx.sql
 ..gitignore.un~
 QtProjectsxxxapp-Debugdbxxx.db
 rsc.qrc.autosave
+InstallationLog.txt
+db/diagrama.mwb
+db/publicuser.txt
+db/xxxdb.db

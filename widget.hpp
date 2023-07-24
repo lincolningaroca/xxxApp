@@ -18,35 +18,39 @@ public:
     explicit Widget(QWidget *parent = nullptr);
     ~Widget();
     enum class Theme{ Modo_Claro, Modo_Oscuro };
+    enum class SessionStatus{ Session_start, Session_closed };
+//    inline static uint32_t userid_{0};
     //slots
-
+    [[nodiscard]]uint32_t getUser_id(const QString &user, const QString &user_profile = "PUBLIC") noexcept;
 
 private:
     Ui::Widget *ui;
-    const QSqlDatabase db{};
-    QAction* delCategory{};
-    QAction* openUrl_{};
-    QAction* editUrl_{};
-    QAction* quittUrl_{};
-    QSqlTableModel* xxxModel_{};
+    const QSqlDatabase db_{};
+    QAction* delCategory{ nullptr };
+    QAction* openUrl_{ nullptr };
+    QAction* editUrl_{ nullptr };
+    QAction* quittUrl_{ nullptr };
+    QSqlTableModel* xxxModel_{ nullptr };
+    inline static uint32_t userId_{0};
+    SessionStatus sessionStatus_{SessionStatus::Session_closed};
 
     //custom functions
     void initFrm() noexcept;
     void editAction(bool op) noexcept;
     bool validateSelectedRow() noexcept;
 
-    void setUpTable(uint32_t categoryId) noexcept;
+    void setUpTable(uint32_t categoryId = 1) noexcept;
     void setUpTableHeaders() const noexcept;
     void setTheme(Theme theme) const noexcept;
     void writeSettings() const noexcept;
     void readSettings() noexcept;
     bool urlValidate(const QString& url) const noexcept;
 
-    void setLabelInfo(const QString &color) noexcept;
+    void setLabelInfo(const QString &color, const QString& userName="PUBLIC") noexcept;
     QByteArray setColorReg(const QString &color) const noexcept;
     QString getColorReg(QByteArray dataColor) noexcept;
 
-    void loadListCategory() noexcept;
+    void loadListCategory(uint32_t user_id) noexcept;
     QStringList dataCategory(uint32_t category_id) noexcept;
 
     //menbers var
@@ -69,9 +73,10 @@ private:
     void hastvUrlData() noexcept;
 
     bool saveData(const QString &url, const QString &desc, uint32_t id) const noexcept;
-    bool updateCategory(const QString &url, const QString &desc, uint32_t category_id) const noexcept;
-    bool saveCategoryData(const QString &catName, const QString& desc) const noexcept;
+    bool updateCategory(const QString&, const QString&, uint32_t, uint32_t) const noexcept;
+    bool saveCategoryData(const QString &catName, const QString& desc, uint32_t userid) const noexcept;
     void btnEdit() noexcept;
+//    void userId();
 
 
 
