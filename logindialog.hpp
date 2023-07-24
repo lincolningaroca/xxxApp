@@ -36,6 +36,7 @@ private:
   bool Validate_hasNoEmpty() const noexcept;
   bool verifyPassword() const noexcept;
   bool verifyPinNumber() const noexcept;
+  bool userExists(const QString&) const noexcept;
 
 
 
