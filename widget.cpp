@@ -822,5 +822,7 @@ void Widget::closeEvent(QCloseEvent *event)
   ret_value= qry.value(0).toUInt();
 //  Widget::userid_ = ret_value;
   return ret_value;
-//  id=1;
+  //  id=1;
 }
+
+

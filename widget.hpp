@@ -23,6 +23,8 @@ public:
     //slots
     [[nodiscard]]uint32_t getUser_id(const QString &user, const QString &user_profile = "PUBLIC") noexcept;
 
+
+
 private:
     Ui::Widget *ui;
     const QSqlDatabase db_{};

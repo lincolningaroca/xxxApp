@@ -4,6 +4,9 @@
 #include <QSqlQuery>
 #include <QMessageBox>
 #include <QDebug>
+#include <QCryptographicHash>
+#include <memory>
+
 
 
 LogInDialog::LogInDialog(QWidget *parent) :
@@ -14,7 +17,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
 
   QObject::connect(ui->pbCancel, &QPushButton::clicked, this, &LogInDialog::reject);
-//  QObject::connect(ui->pbLogIn, &QPushButton::clicked, this, &QDialog::accept);
+  //  QObject::connect(ui->pbLogIn, &QPushButton::clicked, this, &QDialog::accept);
   QObject::connect(ui->pbLogIn, &QPushButton::clicked, this, [&](){
 
     if(!logIn()){
@@ -22,18 +25,24 @@ LogInDialog::LogInDialog(QWidget *parent) :
                                                           "vuelva a intentarlo.");
       ui->txtUser->selectAll();
       ui->txtUser->setFocus(Qt::OtherFocusReason);
+      //      qInfo()<<hashGenerator(ui->txtPassword->text().toLatin1());
+      //      QSqlQuery qry{db_};
+      //      qry.prepare("SELECT  user, password FROM users WHERE user_id=7");
+      //      qry.exec();
+      //      qry.first();
 
+      //      qInfo()<< qry.value(0).toString() << " " << qry.value(1).toString();
       return;
     }
 
-//    qInfo() << getUser_id();
+    //    qInfo() << getUser_id();
     userName_ = ui->txtUser->text();
     accept();
   });
 
   //coneccion del boton de mas opciones
   ui->btnOtherOptions->setCheckable(true);
-  setOptionsToComboBox(0);
+
   QObject::connect(ui->btnOtherOptions, &QToolButton::toggled, ui->widget, [&](){
     if(ui->btnOtherOptions->isChecked()){
       ui->btnOtherOptions->setIcon(QIcon(":/img/up.png"));
@@ -61,8 +70,54 @@ LogInDialog::LogInDialog(QWidget *parent) :
   //coneccion de combo box metodo de recuperacion
   QObject::connect(ui->cboRestoreType, &QComboBox::activated, this, &LogInDialog::setOptionsToComboBox);
   ui->widget->hide();
+  //connect to create user button
+  QObject::connect(ui->btnCreateUser, &QAbstractButton::clicked, this, [&](){
+    if(Validate_hasNoEmpty()){
+      QMessageBox::warning(this, qApp->applicationName(), "<span><em>Todos los campos son requeridos!</em></span>");
+      ui->txtNewUser->setFocus();
+      return;
+    }
+    if(!verifyPassword()){
+      QMessageBox::warning(this, qApp->applicationName(), "<span><em>El password o clave de confirmación no coincide!</em></span>");
+      ui->txtRePassword->selectAll();
+      ui->txtRePassword->setFocus();
+      return;
+    }
+    if(ui->cboRestoreType->currentText() == "Pin numérico"){
+      if(!verifyPinNumber()){
+        QMessageBox::warning(this, qApp->applicationName(), "<span><em>El número de confirmación no coincide!</em></span>");
+        ui->txtConfirmValue->selectAll();
+        ui->txtConfirmValue->setFocus();
+        return;
+      }
+    }
+    if(!ui->checkBox->isChecked()){
+      QMessageBox::warning(this, qApp->applicationName(), "<span><em>Debe marcar siempre el perfil de usuario!</em></span>");
+      return;
+    }
+    auto password = hashGenerator(ui->txtRePassword->text().toLatin1());
+    QString first_value{};
+    QString confirm_value{};
+    if(ui->cboRestoreType->currentText() == "Pin numérico"){
 
-}
+      first_value = hashGenerator(ui->txtfirstValue->text().toLatin1());
+      confirm_value = hashGenerator(ui->txtConfirmValue->text().toLatin1());
+    }else{
+      first_value = ui->txtfirstValue->text();
+      confirm_value = hashGenerator(ui->txtConfirmValue->text().toLatin1());
+    }
+
+
+    if(createUser(ui->txtNewUser->text(), password, ui->checkBox->text(), ui->cboRestoreType->currentText(), first_value, confirm_value)){
+      QMessageBox::information(this, qApp->applicationName(), "<span><em>El nuevo usuario fue creado con éxito!</em></span>");
+      clearControls();
+      ui->btnOtherOptions->toggle();
+    }
+
+
+  });
+
+}//end constructor
 
 LogInDialog::~LogInDialog()
 {
@@ -95,12 +150,17 @@ void LogInDialog::setUp_Form() noexcept
   //new user section
   ui->txtNewPassword->setPlaceholderText("Ingrese clave o password");
   ui->txtNewPassword->setEchoMode(QLineEdit::Password);
+  ui->txtRePassword->setEchoMode(QLineEdit::Password);
   ui->txtNewUser->setPlaceholderText("Ingrese un nombre de usuario");
   ui->txtRePassword->setPlaceholderText("Vuelva a ingresar su clave o password");
+
+  ui->txtfirstValue->setPlaceholderText("Ingrese una pregunta!");
+  ui->txtConfirmValue->setPlaceholderText("Ingrese su respuesta!");
 
   //set the combo box options
   ui->cboRestoreType->addItem("Pregunta secreta");
   ui->cboRestoreType->addItem("Pin numérico");
+  ui->checkBox->setChecked(true);
 
 }
 
@@ -116,30 +176,86 @@ void LogInDialog::setStateControls(bool op) noexcept
 
 void LogInDialog::setOptionsToComboBox(int index) noexcept
 {
+
   if(index == 0){
-    ui->lineEdit->setPlaceholderText("Ingrese una pregunta!");
-    ui->lineEdit_2->setPlaceholderText("Ingrese su respuesta!");
-    //    ui->lineEdit->setFocus(Qt::OtherFocusReason);
+    ui->txtfirstValue->clear();
+    ui->txtConfirmValue->clear();
+    ui->txtfirstValue->setPlaceholderText("Ingrese una pregunta!");
+    ui->txtConfirmValue->setPlaceholderText("Ingrese su respuesta!");
+    ui->txtfirstValue->setValidator(nullptr);
+    ui->txtConfirmValue->setValidator(nullptr);
+    ui->txtfirstValue->setFocus(Qt::OtherFocusReason);
 
   }else{
-    ui->lineEdit->setPlaceholderText("Ingrese PIN numérico de 4 cifras!");
-    ui->lineEdit_2->setPlaceholderText("Vuelva a ingresar el el número");
-    //    ui->lineEdit->setFocus(Qt::OtherFocusReason);
+    ui->txtfirstValue->clear();
+    ui->txtConfirmValue->clear();
+    ui->txtfirstValue->setPlaceholderText("Ingrese PIN numérico de 4 cifras!");
+    ui->txtConfirmValue->setPlaceholderText("Vuelva a ingresar el número");
+    auto* validator = new QRegularExpressionValidator(QRegularExpression("^\\d{4}$"), this);
+    ui->txtfirstValue->setValidator(validator);
+    ui->txtConfirmValue->setValidator(validator);
+    ui->txtfirstValue->setFocus(Qt::OtherFocusReason);
+
   }
 }
 
-bool LogInDialog::logIn() const noexcept
-{
+bool LogInDialog::logIn() const noexcept{
   QSqlQuery qry{db_};
-  [[maybe_unused]] auto res = qry.prepare("SELECT COUNT(*) FROM users WHERE user = ? AND password = ?");
+  [[maybe_unused]]
+      auto res = qry.prepare("SELECT COUNT(*) FROM users WHERE user = ? AND password = ?");
   qry.addBindValue(ui->txtUser->text());
-  qry.addBindValue(ui->txtPassword->text());
+  qry.addBindValue(hashGenerator(ui->txtPassword->text().toLatin1()));
   if(!qry.exec())
     return false;
-  if(qry.first() && qry.value(0).toInt() == 1)
-    return true;
-  return false;
+  qry.first();
 
+  return(qry.value(0).toInt() == 1);
+
+
+
+}
+
+void LogInDialog::clearControls() noexcept
+{
+  ui->txtNewUser->clear();
+  ui->txtNewPassword->clear();
+  ui->txtRePassword->clear();
+  ui->txtfirstValue->clear();
+  ui->txtConfirmValue->clear();
+  ui->checkBox->setChecked(true);
+
+}
+
+bool LogInDialog::createUser(const QString &user, const QString &password, const QString &user_prof,
+                             const QString &rescue_type, const QString &val1, const QString &val2) noexcept{
+
+  QSqlQuery newUserQry{db_};
+  [[maybe_unused]]
+      auto res = newUserQry.prepare("INSERT INTO users(user,password,user_profile,rescue_type,first_value,confirm_value) "
+                                    "VALUES(?,?,?,?,?,?)");
+  newUserQry.addBindValue(user);
+  newUserQry.addBindValue(password);
+  newUserQry.addBindValue(user_prof);
+  newUserQry.addBindValue(rescue_type);
+  newUserQry.addBindValue(val1);
+  newUserQry.addBindValue(val2);
+  return newUserQry.exec();
+
+}
+
+bool LogInDialog::Validate_hasNoEmpty() const noexcept
+{
+  return ui->txtNewUser->text().isEmpty() || ui->txtNewPassword->text().isEmpty() || ui->txtRePassword->text().isEmpty() ||
+      ui->txtfirstValue->text().isEmpty() || ui->txtConfirmValue->text().isEmpty();
+}
+
+bool LogInDialog::verifyPassword() const noexcept{return (ui->txtNewPassword->text() == ui->txtRePassword->text());}
+bool LogInDialog::verifyPinNumber() const noexcept{return (ui->txtfirstValue->text() == ui->txtConfirmValue->text());}
+QString LogInDialog::hashGenerator(const QByteArray &data) noexcept
+{
+  QCryptographicHash crypto(QCryptographicHash::Sha3_256);
+  crypto.addData(data);
+  return QString{crypto.result().toHex()};
 
 }
 
