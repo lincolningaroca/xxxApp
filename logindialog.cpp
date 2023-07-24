@@ -1,5 +1,6 @@
 #include "logindialog.hpp"
 #include "ui_logindialog.h"
+//#include "widget.hpp"
 #include <QSqlQuery>
 #include <QMessageBox>
 #include <QDebug>
@@ -13,6 +14,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
 
   QObject::connect(ui->pbCancel, &QPushButton::clicked, this, &LogInDialog::reject);
+//  QObject::connect(ui->pbLogIn, &QPushButton::clicked, this, &QDialog::accept);
   QObject::connect(ui->pbLogIn, &QPushButton::clicked, this, [&](){
 
     if(!logIn()){
@@ -25,8 +27,10 @@ LogInDialog::LogInDialog(QWidget *parent) :
     }
 
 //    qInfo() << getUser_id();
+    userName_ = ui->txtUser->text();
     accept();
   });
+
   //coneccion del boton de mas opciones
   ui->btnOtherOptions->setCheckable(true);
   setOptionsToComboBox(0);
@@ -65,20 +69,7 @@ LogInDialog::~LogInDialog()
   delete ui;
 }
 
-[[nodiscard]]uint32_t LogInDialog::getUser_id() noexcept
-{
-  QSqlQuery qry{db_};
 
-  uint32_t ret_value{0};
-  [[maybe_unused]] auto res = qry.prepare("SELECT user_id FROM users WHERE user = ?");
-  qry.addBindValue(ui->txtUser->text());
-  if(!qry.exec())
-    return ret_value;
-  qry.first();
-  ret_value= qry.value(0).toUInt();
-  return ret_value;
-//  id=1;
-}
 
 void LogInDialog::setUp_Form() noexcept
 {

@@ -16,12 +16,12 @@ public:
   ~LogInDialog();
 
 
-  [[nodiscard]] uint32_t getUser_id()  noexcept;
+  [[nodiscard]] QString userName() const  noexcept{ return userName_;}
 
 private:
   Ui::LogInDialog *ui;
   const QSqlDatabase db_{};
-//  uint32_t userid_{0};
+  QString userName_{};
 
   void setUp_Form() noexcept;
   void setStateControls(bool op) noexcept;
