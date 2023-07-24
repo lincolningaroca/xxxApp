@@ -185,8 +185,8 @@ void LogInDialog::setUp_Form() noexcept{
   ui->txtConfirmValue->setPlaceholderText("Ingrese su respuesta!");
 
   //set the combo box options
-  ui->cboRestoreType->addItem("Pregunta secreta");
-  ui->cboRestoreType->addItem("Pin numérico");
+  ui->cboRestoreType->addItem(QIcon(":/img/paper_pin.png"), "Pregunta secreta");
+  ui->cboRestoreType->addItem(QIcon(":/img/paper_pin.png"), "Pin numérico");
   ui->checkBox->setChecked(true);
 
 }

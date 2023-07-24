@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>381</width>
-    <height>445</height>
+    <height>425</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -89,7 +89,7 @@
            <string>...</string>
           </property>
           <property name="icon">
-           <iconset resource="rsc.qrc">
+           <iconset>
             <normaloff>:/img/7278151.png</normaloff>:/img/7278151.png</iconset>
           </property>
          </widget>
@@ -262,8 +262,6 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="rsc.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
