@@ -20,6 +20,7 @@ Widget::Widget(QWidget *parent)
 {
   ui->setupUi(this);
   userId_ = getUser_id("public");
+  ui->lblIcon->setPixmap(QPixmap(":/img/7278151.png").scaled(16,16));
   initFrm();
   loadListCategory(userId_);
   setUpTable(categoryList.key(ui->cboCategory->currentText()));
@@ -288,6 +289,7 @@ Widget::Widget(QWidget *parent)
       ui->btnLogOut->setEnabled(true);
       ui->btnLogIn->setDisabled(true);
       setWindowTitle(QApplication::applicationName().append(" - Sesión inicada como: "+logDialog.userName()));
+      ui->lblIcon->setPixmap(QPixmap(":/img/user.png").scaled(16,16));
       sessionStatus_ = SessionStatus::Session_start;
     }
   });
@@ -301,6 +303,7 @@ Widget::Widget(QWidget *parent)
     setWindowTitle(QApplication::applicationName());
     ui->cboCategory->clear();
     loadListCategory(userId_);
+    ui->lblIcon->setPixmap(QPixmap(":/img/7278151.png").scaled(16,16));
     sessionStatus_ = SessionStatus::Session_closed;
   });
 
