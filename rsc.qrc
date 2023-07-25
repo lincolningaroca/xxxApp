@@ -15,5 +15,7 @@
         <file>img/login.png</file>
         <file>img/logout.png</file>
         <file>img/paper_pin.png</file>
+        <file>img/user.png</file>
+        <file>img/7278151.png</file>
     </qresource>
 </RCC>
