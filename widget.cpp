@@ -254,10 +254,10 @@ Widget::Widget(QWidget *parent)
   QObject::connect(ui->cboTheme, &QComboBox::currentTextChanged, this, [&](const QString& text){
     if(text.compare("Modo Oscuro") == 0){
       setTheme(Theme::Modo_Oscuro);
-      setLabelInfo(darkModeColor);
+      setLabelInfo(darkModeColor.data());
     }else{
       setTheme(Theme::Modo_Claro);
-      setLabelInfo(lightModeColor);
+      setLabelInfo(lightModeColor.data());
     }
 
   });
@@ -285,7 +285,7 @@ Widget::Widget(QWidget *parent)
       ui->cboCategory->clear();
       loadListCategory(userId_);
 
-      (ui->cboTheme->currentText() == "Modo Oscuro" ) ? setLabelInfo(darkModeColor, logDialog.userName()) : setLabelInfo(lightModeColor, logDialog.userName());
+      (ui->cboTheme->currentText() == "Modo Oscuro" ) ? setLabelInfo(darkModeColor.data(), logDialog.userName()) : setLabelInfo(lightModeColor.data(), logDialog.userName());
       ui->btnLogOut->setEnabled(true);
       ui->btnLogIn->setDisabled(true);
       setWindowTitle(QApplication::applicationName().append(" - Sesión inicada como: "+logDialog.userName()));
@@ -297,7 +297,7 @@ Widget::Widget(QWidget *parent)
   //connect to button logout
   QObject::connect(ui->btnLogOut, &QToolButton::clicked, this, [&](){
     userId_ = getUser_id("public");
-    (ui->cboTheme->currentText() == "Modo Oscuro" ) ? setLabelInfo(darkModeColor) : setLabelInfo(lightModeColor);
+    (ui->cboTheme->currentText() == "Modo Oscuro" ) ? setLabelInfo(darkModeColor.data()) : setLabelInfo(lightModeColor.data());
     ui->btnLogOut->setDisabled(true);
     ui->btnLogIn->setEnabled(true);
     setWindowTitle(QApplication::applicationName());
@@ -502,10 +502,10 @@ void Widget::writeSettings() const noexcept
   QString color;
   if(ui->cboTheme->currentText().compare("Modo Claro") == 0){
     theme=Theme::Modo_Claro;
-    color=lightModeColor;
+    color=Widget::lightModeColor.data();
   }else{
     theme=Theme::Modo_Oscuro;
-    color=darkModeColor;
+    color=Widget::darkModeColor.data();
   }
 
 

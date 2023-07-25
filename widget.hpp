@@ -3,6 +3,7 @@
 #include <QWidget>
 #include <QSqlDatabase>
 #include <QHash>
+#include <string_view>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -58,8 +59,8 @@ private:
     //menbers var
     QHash<uint32_t, QString> categoryList{};
     QHash<uint32_t, QString> urlList{};
-    const QString darkModeColor{"#2e8b57"};
-    const QString lightModeColor{"#ff7e00"};
+    static constexpr std::string_view darkModeColor{"#2e8b57"};
+    static constexpr std::string_view lightModeColor{"#ff7e00"};
 
     std::tuple<bool, QString> verifyDeleteCategory() noexcept;
     void setUpCboCategoryContextMenu() noexcept;
