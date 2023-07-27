@@ -32,6 +32,8 @@ set(PROJECT_SOURCES
 
         ${APP_ICON}
 
+
+
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -39,6 +41,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
          rsc.qrc
+util/helper.cpp util/helper.hpp
+
     )
 
 # Define target properties for Android with Qt 6 as:
