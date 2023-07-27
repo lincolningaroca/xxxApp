@@ -14,7 +14,7 @@ class LogInDialog : public QDialog
 public:
   explicit LogInDialog(QWidget *parent = nullptr);
   ~LogInDialog();
-  static QString hashGenerator(const QByteArray&) noexcept;
+
 
   [[nodiscard]]
   QString userName() const  noexcept{ return userName_;}

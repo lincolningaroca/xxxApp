@@ -9,6 +9,7 @@
 #include <QRegularExpression>
 #include <QAction>
 #include <QSqlTableModel>
+#include <util/helper.hpp>
 #include "dlgnewcategory.hpp"
 #include "logindialog.hpp"
 #include <QDebug>
@@ -254,10 +255,10 @@ Widget::Widget(QWidget *parent)
   QObject::connect(ui->cboTheme, &QComboBox::currentTextChanged, this, [&](const QString& text){
     if(text.compare("Modo Oscuro") == 0){
       setTheme(Theme::Modo_Oscuro);
-      setLabelInfo(darkModeColor.data());
+      setLabelInfo(SW::Helper_t::darkModeColor.data());
     }else{
       setTheme(Theme::Modo_Claro);
-      setLabelInfo(lightModeColor.data());
+      setLabelInfo(SW::Helper_t::lightModeColor.data());
     }
 
   });
@@ -285,7 +286,7 @@ Widget::Widget(QWidget *parent)
       ui->cboCategory->clear();
       loadListCategory(userId_);
 
-      (ui->cboTheme->currentText() == "Modo Oscuro" ) ? setLabelInfo(darkModeColor.data(), logDialog.userName()) : setLabelInfo(lightModeColor.data(), logDialog.userName());
+      (ui->cboTheme->currentText() == "Modo Oscuro" ) ? setLabelInfo(SW::Helper_t::darkModeColor.data(), logDialog.userName()) : setLabelInfo(SW::Helper_t::lightModeColor.data(), logDialog.userName());
       ui->btnLogOut->setEnabled(true);
       ui->btnLogIn->setDisabled(true);
       setWindowTitle(QApplication::applicationName().append(" - Sesión inicada como: "+logDialog.userName()));
@@ -297,7 +298,7 @@ Widget::Widget(QWidget *parent)
   //connect to button logout
   QObject::connect(ui->btnLogOut, &QToolButton::clicked, this, [&](){
     userId_ = getUser_id("public");
-    (ui->cboTheme->currentText() == "Modo Oscuro" ) ? setLabelInfo(darkModeColor.data()) : setLabelInfo(lightModeColor.data());
+    (ui->cboTheme->currentText() == "Modo Oscuro" ) ? setLabelInfo(SW::Helper_t::darkModeColor.data()) : setLabelInfo(SW::Helper_t::lightModeColor.data());
     ui->btnLogOut->setDisabled(true);
     ui->btnLogIn->setEnabled(true);
     setWindowTitle(QApplication::applicationName());
@@ -502,10 +503,10 @@ void Widget::writeSettings() const noexcept
   QString color;
   if(ui->cboTheme->currentText().compare("Modo Claro") == 0){
     theme=Theme::Modo_Claro;
-    color=Widget::lightModeColor.data();
+    color=SW::Helper_t::lightModeColor.data();
   }else{
     theme=Theme::Modo_Oscuro;
-    color=Widget::darkModeColor.data();
+    color=SW::Helper_t::darkModeColor.data();
   }
 
 

@@ -1,6 +1,6 @@
 #include "logindialog.hpp"
 #include "ui_logindialog.h"
-//#include "widget.hpp"
+#include <util/helper.hpp>
 #include <QSqlQuery>
 #include <QMessageBox>
 #include <QDebug>
@@ -119,16 +119,16 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
 
 
-    auto password = hashGenerator(ui->txtRePassword->text().toLatin1());
+    auto password = SW::Helper_t::hashGenerator(ui->txtRePassword->text().toLatin1());
     QString first_value{};
     QString confirm_value{};
     if(ui->cboRestoreType->currentText() == "Pin numérico"){
 
-      first_value = hashGenerator(ui->txtfirstValue->text().toLatin1());
-      confirm_value = hashGenerator(ui->txtConfirmValue->text().toLatin1());
+      first_value = SW::Helper_t::hashGenerator(ui->txtfirstValue->text().toLatin1());
+      confirm_value = SW::Helper_t::hashGenerator(ui->txtConfirmValue->text().toLatin1());
     }else{
       first_value = ui->txtfirstValue->text();
-      confirm_value = hashGenerator(ui->txtConfirmValue->text().toLatin1());
+      confirm_value = SW::Helper_t::hashGenerator(ui->txtConfirmValue->text().toLatin1());
     }
 
 
@@ -221,7 +221,7 @@ bool LogInDialog::logIn() const noexcept{
   [[maybe_unused]]
   auto res = qry.prepare("SELECT COUNT(*) FROM users WHERE user = ? AND password = ?");
   qry.addBindValue(ui->txtUser->text());
-  qry.addBindValue(hashGenerator(ui->txtPassword->text().toLatin1()));
+  qry.addBindValue(SW::Helper_t::hashGenerator(ui->txtPassword->text().toLatin1()));
   if(!qry.exec())
     return false;
   qry.first();
@@ -278,12 +278,5 @@ bool LogInDialog::userExists(const QString &user) const noexcept
     return false;
   userQry.first();
   return (userQry.value(0).toUInt() == 1);
-}
-
-QString LogInDialog::hashGenerator(const QByteArray &data) noexcept{
-  QCryptographicHash crypto(QCryptographicHash::Sha3_256);
-  crypto.addData(data);
-  return QString{crypto.result().toHex()};
-
 }
 
