@@ -31,11 +31,9 @@ set(PROJECT_SOURCES
         logindialog.ui
          util/helper.cpp
          util/helper.hpp
+         helperdatabase/helperdb.cpp
+         helperdatabase/helperdb.hpp
         ${APP_ICON}
-
-
-
-
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
