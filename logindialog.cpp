@@ -1,11 +1,10 @@
 #include "logindialog.hpp"
 #include "ui_logindialog.h"
-//#include "widget.hpp"
+#include <util/helper.hpp>
 #include <QSqlQuery>
 #include <QMessageBox>
 #include <QDebug>
-#include <QCryptographicHash>
-#include <memory>
+
 
 
 
@@ -19,7 +18,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
 
   QObject::connect(ui->pbCancel, &QPushButton::clicked, this, &LogInDialog::reject);
-  //  QObject::connect(ui->pbLogIn, &QPushButton::clicked, this, &QDialog::accept);
+
   QObject::connect(ui->pbLogIn, &QPushButton::clicked, this, [&](){
 
     if(!logIn()){
@@ -27,13 +26,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
                                                           "vuelva a intentarlo.");
       ui->txtUser->selectAll();
       ui->txtUser->setFocus(Qt::OtherFocusReason);
-      //      qInfo()<<hashGenerator(ui->txtPassword->text().toLatin1());
-      //      QSqlQuery qry{db_};
-      //      qry.prepare("SELECT  user, password FROM users WHERE user_id=7");
-      //      qry.exec();
-      //      qry.first();
 
-      //      qInfo()<< qry.value(0).toString() << " " << qry.value(1).toString();
       return;
     }
 
@@ -81,7 +74,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
       ui->txtNewUser->setFocus();
       return;
     }
-    if(!verifyPassword()){
+    if(!SW::Helper_t::verify_Values(ui->txtNewPassword->text(), ui->txtRePassword->text())){
       QMessageBox::warning(this, qApp->applicationName(), "<span><em>El password o clave de confirmación no coincide!</em></span>");
       ui->txtRePassword->selectAll();
       ui->txtRePassword->setFocus();
@@ -89,12 +82,12 @@ LogInDialog::LogInDialog(QWidget *parent) :
     }
     if(ui->cboRestoreType->currentText() == "Pin numérico"){
       if(ui->txtfirstValue->text().count() < 4 || ui->txtConfirmValue->text().count() <4){
-        QMessageBox::warning(this, qApp->applicationName(), "<span><em>El PIN numérico de contener 4 digitos!</em></span>");
+        QMessageBox::warning(this, qApp->applicationName(), "<span><em>El PIN numérico debe contener 4 digitos!</em></span>");
         ui->txtfirstValue->selectAll();
         ui->txtfirstValue->setFocus();
         return;
       }
-      if(!verifyPinNumber()){
+      if(!SW::Helper_t::verify_Values(ui->txtfirstValue->text(), ui->txtConfirmValue->text())){
         QMessageBox::warning(this, qApp->applicationName(), "<span><em>El número de confirmación no coincide!</em></span>");
         ui->txtConfirmValue->selectAll();
         ui->txtConfirmValue->setFocus();
@@ -119,16 +112,16 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
 
 
-    auto password = hashGenerator(ui->txtRePassword->text().toLatin1());
+    auto password = SW::Helper_t::hashGenerator(ui->txtRePassword->text().toLatin1());
     QString first_value{};
     QString confirm_value{};
     if(ui->cboRestoreType->currentText() == "Pin numérico"){
 
-      first_value = hashGenerator(ui->txtfirstValue->text().toLatin1());
-      confirm_value = hashGenerator(ui->txtConfirmValue->text().toLatin1());
+      first_value = SW::Helper_t::hashGenerator(ui->txtfirstValue->text().toLatin1());
+      confirm_value = SW::Helper_t::hashGenerator(ui->txtConfirmValue->text().toLatin1());
     }else{
       first_value = ui->txtfirstValue->text();
-      confirm_value = hashGenerator(ui->txtConfirmValue->text().toLatin1());
+      confirm_value = SW::Helper_t::hashGenerator(ui->txtConfirmValue->text().toLatin1());
     }
 
 
@@ -221,7 +214,7 @@ bool LogInDialog::logIn() const noexcept{
   [[maybe_unused]]
   auto res = qry.prepare("SELECT COUNT(*) FROM users WHERE user = ? AND password = ?");
   qry.addBindValue(ui->txtUser->text());
-  qry.addBindValue(hashGenerator(ui->txtPassword->text().toLatin1()));
+  qry.addBindValue(SW::Helper_t::hashGenerator(ui->txtPassword->text().toLatin1()));
   if(!qry.exec())
     return false;
   qry.first();
@@ -264,9 +257,6 @@ bool LogInDialog::Validate_hasNoEmpty() const noexcept{
       ui->txtfirstValue->text().isEmpty() || ui->txtConfirmValue->text().isEmpty();
 }
 
-bool LogInDialog::verifyPassword() const noexcept{return (ui->txtNewPassword->text() == ui->txtRePassword->text());}
-bool LogInDialog::verifyPinNumber() const noexcept{return (ui->txtfirstValue->text() == ui->txtConfirmValue->text());}
-
 bool LogInDialog::userExists(const QString &user) const noexcept
 {
   QSqlQuery userQry{db_};
@@ -278,12 +268,5 @@ bool LogInDialog::userExists(const QString &user) const noexcept
     return false;
   userQry.first();
   return (userQry.value(0).toUInt() == 1);
-}
-
-QString LogInDialog::hashGenerator(const QByteArray &data) noexcept{
-  QCryptographicHash crypto(QCryptographicHash::Sha3_256);
-  crypto.addData(data);
-  return QString{crypto.result().toHex()};
-
 }
 

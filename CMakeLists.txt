@@ -29,8 +29,12 @@ set(PROJECT_SOURCES
         logindialog.hpp
         logindialog.cpp
         logindialog.ui
-
+         util/helper.cpp
+         util/helper.hpp
         ${APP_ICON}
+
+
+
 
 )
 
@@ -39,6 +43,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
          rsc.qrc
+
+
     )
 
 # Define target properties for Android with Qt 6 as:

@@ -14,7 +14,7 @@ class LogInDialog : public QDialog
 public:
   explicit LogInDialog(QWidget *parent = nullptr);
   ~LogInDialog();
-  static QString hashGenerator(const QByteArray&) noexcept;
+
 
   [[nodiscard]]
   QString userName() const  noexcept{ return userName_;}
@@ -34,8 +34,6 @@ private:
                   const QString&, const QString&, const QString&) noexcept;
 
   bool Validate_hasNoEmpty() const noexcept;
-  bool verifyPassword() const noexcept;
-  bool verifyPinNumber() const noexcept;
   bool userExists(const QString&) const noexcept;
 
 
