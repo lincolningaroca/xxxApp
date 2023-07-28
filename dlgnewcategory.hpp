@@ -24,9 +24,7 @@ public:
 
 private:
   Ui::dlgNewCategory *ui;
-//  const QStringList list_{};
 
-//  void loadData() noexcept;
   bool validateData() const noexcept;
 
 };
