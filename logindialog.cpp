@@ -4,8 +4,7 @@
 #include <QSqlQuery>
 #include <QMessageBox>
 #include <QDebug>
-#include <QCryptographicHash>
-#include <memory>
+
 
 
 
@@ -19,7 +18,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
 
   QObject::connect(ui->pbCancel, &QPushButton::clicked, this, &LogInDialog::reject);
-  //  QObject::connect(ui->pbLogIn, &QPushButton::clicked, this, &QDialog::accept);
+
   QObject::connect(ui->pbLogIn, &QPushButton::clicked, this, [&](){
 
     if(!logIn()){
@@ -27,13 +26,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
                                                           "vuelva a intentarlo.");
       ui->txtUser->selectAll();
       ui->txtUser->setFocus(Qt::OtherFocusReason);
-      //      qInfo()<<hashGenerator(ui->txtPassword->text().toLatin1());
-      //      QSqlQuery qry{db_};
-      //      qry.prepare("SELECT  user, password FROM users WHERE user_id=7");
-      //      qry.exec();
-      //      qry.first();
 
-      //      qInfo()<< qry.value(0).toString() << " " << qry.value(1).toString();
       return;
     }
 
@@ -81,7 +74,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
       ui->txtNewUser->setFocus();
       return;
     }
-    if(!verifyPassword()){
+    if(!SW::Helper_t::verify_Values(ui->txtNewPassword->text(), ui->txtRePassword->text())){
       QMessageBox::warning(this, qApp->applicationName(), "<span><em>El password o clave de confirmación no coincide!</em></span>");
       ui->txtRePassword->selectAll();
       ui->txtRePassword->setFocus();
@@ -89,12 +82,12 @@ LogInDialog::LogInDialog(QWidget *parent) :
     }
     if(ui->cboRestoreType->currentText() == "Pin numérico"){
       if(ui->txtfirstValue->text().count() < 4 || ui->txtConfirmValue->text().count() <4){
-        QMessageBox::warning(this, qApp->applicationName(), "<span><em>El PIN numérico de contener 4 digitos!</em></span>");
+        QMessageBox::warning(this, qApp->applicationName(), "<span><em>El PIN numérico debe contener 4 digitos!</em></span>");
         ui->txtfirstValue->selectAll();
         ui->txtfirstValue->setFocus();
         return;
       }
-      if(!verifyPinNumber()){
+      if(!SW::Helper_t::verify_Values(ui->txtfirstValue->text(), ui->txtConfirmValue->text())){
         QMessageBox::warning(this, qApp->applicationName(), "<span><em>El número de confirmación no coincide!</em></span>");
         ui->txtConfirmValue->selectAll();
         ui->txtConfirmValue->setFocus();
@@ -263,9 +256,6 @@ bool LogInDialog::Validate_hasNoEmpty() const noexcept{
   return ui->txtNewUser->text().isEmpty() || ui->txtNewPassword->text().isEmpty() || ui->txtRePassword->text().isEmpty() ||
       ui->txtfirstValue->text().isEmpty() || ui->txtConfirmValue->text().isEmpty();
 }
-
-bool LogInDialog::verifyPassword() const noexcept{return (ui->txtNewPassword->text() == ui->txtRePassword->text());}
-bool LogInDialog::verifyPinNumber() const noexcept{return (ui->txtfirstValue->text() == ui->txtConfirmValue->text());}
 
 bool LogInDialog::userExists(const QString &user) const noexcept
 {

@@ -4,12 +4,9 @@
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QMessageBox>
-#include <QDesktopServices>
 #include <QSettings>
-#include <QRegularExpression>
 #include <QAction>
 #include <QSqlTableModel>
-#include <util/helper.hpp>
 #include "dlgnewcategory.hpp"
 #include "logindialog.hpp"
 #include <QDebug>
@@ -17,8 +14,7 @@
 
 Widget::Widget(QWidget *parent)
   : QWidget(parent), ui(new Ui::Widget),
-    db_{QSqlDatabase::database("xxxConection")}
-{
+    db_{QSqlDatabase::database("xxxConection")}{
   ui->setupUi(this);
   userId_ = getUser_id("public");
   ui->lblIcon->setPixmap(QPixmap(":/img/7278151.png").scaled(16,16));
@@ -37,7 +33,7 @@ Widget::Widget(QWidget *parent)
   verifyContextMenu();
 
 
-//  qInfo() <<userId_;
+  //  qInfo() <<userId_;
 
   //action delete category
   QObject::connect(delCategory, &QAction::triggered, this, [&](){
@@ -107,7 +103,7 @@ Widget::Widget(QWidget *parent)
   QObject::connect(ui->btnAdd,&QPushButton::clicked, this, [&](){
 
     if(ui->btnAdd->text().compare("&Add") == 0){
-      if(!urlValidate(ui->txtUrl->text())){
+      if(!SW::Helper_t::urlValidate(ui->txtUrl->text())){
         QMessageBox::warning(this, qApp->applicationName(),
                              QString("<p><cite>La dirección: <strong>\"%1\"</strong>, no es válida!<br>"
                                      "una dirección url válida debe tener una de las siguiente formas:"
@@ -167,12 +163,12 @@ Widget::Widget(QWidget *parent)
 
   //btnAddNewCategory
   QObject::connect(ui->btnNewCategory, &QPushButton::clicked, this, [&](){
-//    QStringList l{};
+    //    QStringList l{};
     dlgNewCategory newCategory(dlgNewCategory::OpenMode::New, QStringList{}, this);
 
     if(newCategory.exec() == QDialog::Rejected)
       return;
-//    user_id = getUser_id("public");
+    //    user_id = getUser_id("public");
     if(!saveCategoryData(newCategory.category(), newCategory.description(), userId_)){
       QMessageBox::critical(this, qApp->applicationName(), "Error alguardar los datos!\n");
       return;
@@ -254,10 +250,10 @@ Widget::Widget(QWidget *parent)
   //cboTheme
   QObject::connect(ui->cboTheme, &QComboBox::currentTextChanged, this, [&](const QString& text){
     if(text.compare("Modo Oscuro") == 0){
-      setTheme(Theme::Modo_Oscuro);
+      setTheme(SW::Theme::Modo_Oscuro);
       setLabelInfo(SW::Helper_t::darkModeColor.data());
     }else{
-      setTheme(Theme::Modo_Claro);
+      setTheme(SW::Theme::Modo_Claro);
       setLabelInfo(SW::Helper_t::lightModeColor.data());
     }
 
@@ -275,14 +271,14 @@ Widget::Widget(QWidget *parent)
 
   //  setUpTableHeaders();
 
-//conect btn login
+  //conect btn login
   QObject::connect(ui->btnLogIn, &QToolButton::clicked, this, [&](){
     LogInDialog logDialog;
     if(logDialog.exec() == QDialog::Accepted){
-//      Widget::userid_=logDialog.getUser_id();
+      //      Widget::userid_=logDialog.getUser_id();
       userId_ = getUser_id(logDialog.userName(),"USER");
 
-//      qInfo() <<"desde form principal: id de usuario recibido = " << userId_ << logDialog.userName();
+      //      qInfo() <<"desde form principal: id de usuario recibido = " << userId_ << logDialog.userName();
       ui->cboCategory->clear();
       loadListCategory(userId_);
 
@@ -291,7 +287,7 @@ Widget::Widget(QWidget *parent)
       ui->btnLogIn->setDisabled(true);
       setWindowTitle(QApplication::applicationName().append(" - Sesión inicada como: "+logDialog.userName()));
       ui->lblIcon->setPixmap(QPixmap(":/img/user.png").scaled(16,16));
-      sessionStatus_ = SessionStatus::Session_start;
+      sessionStatus_ = SW::SessionStatus::Session_start;
     }
   });
 
@@ -305,7 +301,7 @@ Widget::Widget(QWidget *parent)
     ui->cboCategory->clear();
     loadListCategory(userId_);
     ui->lblIcon->setPixmap(QPixmap(":/img/7278151.png").scaled(16,16));
-    sessionStatus_ = SessionStatus::Session_closed;
+    sessionStatus_ = SW::SessionStatus::Session_closed;
   });
 
 }//Fin del constructor
@@ -317,8 +313,7 @@ Widget::~Widget()
   delete ui;
 }
 
-bool Widget::saveData(const QString& url, const QString& desc, std::uint32_t id) const noexcept
-{
+bool Widget::saveData(const QString& url, const QString& desc, std::uint32_t id) const noexcept{
   QSqlQuery qry(db_);
   [[maybe_unused]] auto res = qry.prepare("INSERT INTO urls(url,desc,categoryid) VALUES(?,?,?)");
   qry.addBindValue(url.simplified(), QSql::In);
@@ -327,8 +322,7 @@ bool Widget::saveData(const QString& url, const QString& desc, std::uint32_t id)
   return qry.exec();
 }
 
-bool Widget::updateCategory(const QString &url, const QString &desc, uint32_t category_id, uint32_t user_id) const noexcept
-{
+bool Widget::updateCategory(const QString &url, const QString &desc, uint32_t category_id, uint32_t user_id) const noexcept{
   QSqlQuery qry(db_);
   [[ maybe_unused ]] auto res = qry.prepare("UPDATE category SET category_name=?, desc=? WHERE category_id=? AND userid=? ");
   qry.addBindValue(url, QSql::In);
@@ -343,8 +337,7 @@ bool Widget::updateCategory(const QString &url, const QString &desc, uint32_t ca
 
 }
 
-bool Widget::saveCategoryData(const QString &catName, const QString &desc, uint32_t userid) const noexcept
-{
+bool Widget::saveCategoryData(const QString &catName, const QString &desc, uint32_t userid) const noexcept{
   QSqlQuery qry(db_);
   [[maybe_unused]] auto res = qry.prepare("INSERT INTO category(category_name, desc, userid) VALUES(?,?,?)");
   qry.addBindValue(catName.simplified().toUpper(), QSql::In);
@@ -354,8 +347,7 @@ bool Widget::saveCategoryData(const QString &catName, const QString &desc, uint3
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Widget::initFrm() noexcept
-{
+void Widget::initFrm() noexcept{
   //  setWindowFlags(windowFlags() ^Qt::MSWindowsFixedSizeDialogHint);
   //placeholder
   ui->txtUrl->setPlaceholderText("(http | https://)www.url.com");
@@ -372,8 +364,7 @@ void Widget::initFrm() noexcept
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Widget::editAction(bool op) noexcept
-{
+void Widget::editAction(bool op) noexcept{
 
   ui->btnEdit->setDisabled(op);
   ui->btnQuit->setDisabled(op);
@@ -384,8 +375,7 @@ void Widget::editAction(bool op) noexcept
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Widget::validateSelectedRow() noexcept
-{
+bool Widget::validateSelectedRow() noexcept{
   if(!ui->tvUrl->selectionModel()->hasSelection()){
     QMessageBox::warning(this, qApp->applicationName(), "Seleccione una fila!\n");
     return false;
@@ -398,8 +388,7 @@ bool Widget::validateSelectedRow() noexcept
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void Widget::setUpTable(uint32_t categoryId) noexcept
-{
+void Widget::setUpTable(uint32_t categoryId) noexcept{
 
   xxxModel_ = new QSqlTableModel(this, db_);
   xxxModel_->setTable("urls");
@@ -421,8 +410,7 @@ void Widget::setUpTable(uint32_t categoryId) noexcept
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Widget::setUpTableHeaders() const noexcept
-{
+void Widget::setUpTableHeaders() const noexcept{
   ui->tvUrl->hideColumn(0);
   ui->tvUrl->hideColumn(3);
   ui->tvUrl->model()->setHeaderData(1,Qt::Horizontal, "Dirección URL");
@@ -434,8 +422,7 @@ void Widget::setUpTableHeaders() const noexcept
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Widget::btnEdit() noexcept
-{
+void Widget::btnEdit() noexcept{
   if( !validateSelectedRow() ) return;
 
   auto currentRow = ui->tvUrl->currentIndex().row();
@@ -447,71 +434,31 @@ void Widget::btnEdit() noexcept
   ui->btnAdd->setText("&Update");
 
 }
-
-//void Widget::userId()
-//{
-//  QSqlQuery userqry(db);
-//  [[maybe_unused]] auto res = qry.prepare("INSERT INTO urls(url,desc,categoryid) VALUES(?,?,?)");
-//  qry.addBindValue(url.simplified(), QSql::In);
-//  qry.addBindValue(desc.simplified().simplified().toUpper(), QSql::In);
-//  qry.addBindValue(id, QSql::In);
-//  return qry.exec();
-
-//}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Widget::setTheme(Theme theme) const noexcept
-{
-  QPalette mPalette;
-  //  qApp->setStyle("Fusion");
-  if(theme == Theme::Modo_Claro)
-    mPalette = qApp->style()->standardPalette();
-  else{
-    mPalette.setColor(QPalette::Window, QColor(53, 53, 53));
-    mPalette.setColor(QPalette::WindowText, Qt::white);
-    mPalette.setColor(QPalette::Base, QColor(25, 25, 25));
-    mPalette.setColor(QPalette::AlternateBase, QColor(53, 53, 53));
-    mPalette.setColor(QPalette::ToolTipBase, QColor(53, 53, 53));
-    mPalette.setColor(QPalette::ToolTipText, Qt::white);
-    mPalette.setColor(QPalette::Text, Qt::white);
-    mPalette.setColor(QPalette::PlaceholderText,QColor(127,127,127));
-    mPalette.setColor(QPalette::Button, QColor(53, 53, 53));
-    mPalette.setColor(QPalette::ButtonText, Qt::white);
-    mPalette.setColor(QPalette::BrightText, Qt::red);
-    mPalette.setColor(QPalette::Link, QColor(42, 130, 218));
-    mPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
-    mPalette.setColor(QPalette::HighlightedText, Qt::black);
-    mPalette.setColor(QPalette::Disabled, QPalette::Text, QColor(164, 166, 168));
-    mPalette.setColor(QPalette::Disabled, QPalette::WindowText, QColor(164, 166, 168));
-    mPalette.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(164, 166, 168));
-    mPalette.setColor(QPalette::Disabled, QPalette::HighlightedText, QColor(164, 166, 168));
-    mPalette.setColor(QPalette::Disabled, QPalette::Base, QColor(68, 68, 68));
-    mPalette.setColor(QPalette::Disabled, QPalette::Window, QColor(68, 68, 68));
-    mPalette.setColor(QPalette::Disabled, QPalette::Highlight, QColor(68, 68, 68));
-  }
+void Widget::setTheme(SW::Theme theme) const noexcept{
 
-  qApp->setPalette(mPalette);
+  qApp->setPalette(SW::Helper_t::set_Theme(theme));
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Widget::writeSettings() const noexcept
-{
+void Widget::writeSettings() const noexcept{
   QSettings settings(qApp->organizationName(), qApp->applicationName());
   settings.beginGroup("Theme");
-  Theme theme;
+  SW::Theme theme;
   QString color;
   if(ui->cboTheme->currentText().compare("Modo Claro") == 0){
-    theme=Theme::Modo_Claro;
+    theme=SW::Theme::Modo_Claro;
     color=SW::Helper_t::lightModeColor.data();
   }else{
-    theme=Theme::Modo_Oscuro;
+    theme=SW::Theme::Modo_Oscuro;
     color=SW::Helper_t::darkModeColor.data();
   }
 
 
   settings.setValue("theme Value", static_cast<uint32_t>(theme));
-  settings.setValue("lblColor", setColorReg(color));
+  settings.setValue("lblColor", SW::Helper_t::setColorReg(color));
   settings.endGroup();
   settings.setValue("position", saveGeometry());
 }
@@ -522,11 +469,11 @@ void Widget::readSettings() noexcept
   QSettings settings(qApp->organizationName(), qApp->applicationName());
   settings.beginGroup("Theme");
   auto theme = settings.value("theme Value").toUInt();
-  setLabelInfo(getColorReg(settings.value("lblColor").toByteArray()));
+  setLabelInfo(SW::Helper_t::getColorReg(settings.value("lblColor").toByteArray()));
 
   //  qDebug()<<"color: "<<getColorReg(settings.value("lblColor").toByteArray());
 
-  setTheme(static_cast<Theme>(theme));
+  setTheme(static_cast<SW::Theme>(theme));
   settings.endGroup();
 
   ui->cboTheme->setCurrentIndex(static_cast<int>(theme));
@@ -534,51 +481,18 @@ void Widget::readSettings() noexcept
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Widget::urlValidate(const QString &url) const noexcept
-{
-  //  static QRegularExpression regex("^(http|https:\\/\\/)?[\\w\\-]+(\\.[\\w\\-]+)+[/#?]?.*$");
-  //  static QRegularExpression regex(R"(^(http:\/\/|https:\/\/)?[w]{3}(\.\w+)+[.\w]{2,3}[.\w]?[/#?]?.*$)");
-  //  static QRegularExpression regex(R"(^((http|https):\/\/)?(www\.([\w+]))+\.([\w])?)");
-  static QRegularExpression regex(R"(^(:?(http|https)://)?(:?www\..+\.\w{2,4})(:?\.\w)?(:?.+)?$)");
-  auto match = regex.match(url);
-  return match.hasMatch();
-}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Widget::setLabelInfo(const QString& color, const QString &userName) noexcept
 {
   ui->lblInfo->setText(QString("<span style='color:%1;'>"
-                                "<strong>SWSystem's - Lincoln Ingaroca"
-                                "</strong></span>").arg(color));
+                               "<strong>SWSystem's - Lincoln Ingaroca"
+                               "</strong></span>").arg(color));
   ui->lblState->setText(QString("<span style='color:%1'>"
                                 "<Strong>User:%2</strong>"
                                 "</span>").arg(color).arg(" "+userName));
 
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-QByteArray Widget::setColorReg(const QString& color) const noexcept
-{
-  QByteArray data;
-  QDataStream dataStream(&data, QIODevice::WriteOnly);
-  dataStream << color;
-  return data;
 
-}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-QString Widget::getColorReg(QByteArray dataColor) noexcept
-{
-  //  QByteArray data(dataColor);
-  QDataStream dataStream(&dataColor, QIODevice::ReadOnly);
-  QString color;
-  dataStream >> color;
-
-  return color;
-
-}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -748,7 +662,7 @@ void Widget::openUrl() noexcept
 {
   auto currentRow = ui->tvUrl->currentIndex().row();
   auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
-  if(!QDesktopServices::openUrl(QUrl(url))){
+  if(!SW::Helper_t::open_Url(QUrl(url))){
     QMessageBox::critical(this, qApp->applicationName(), "Fallo al intentar abrir dirección url!\n");
     return;
   }
@@ -797,7 +711,7 @@ void Widget::hastvUrlData() noexcept
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Widget::closeEvent(QCloseEvent *event)
 {
-  if(sessionStatus_ == SessionStatus::Session_start){
+  if(sessionStatus_ == SW::SessionStatus::Session_start){
     QMessageBox::warning(this, qApp->applicationName(),
                          "<cite>Hay una sesión activa en este momento.<br>"
                          "Necesita cerrar sesión primero antes de salir, "
@@ -824,7 +738,7 @@ void Widget::closeEvent(QCloseEvent *event)
     return ret_value;
   qry.first();
   ret_value= qry.value(0).toUInt();
-//  Widget::userid_ = ret_value;
+  //  Widget::userid_ = ret_value;
   return ret_value;
   //  id=1;
 }
