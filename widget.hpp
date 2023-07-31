@@ -4,6 +4,7 @@
 #include <QSqlDatabase>
 #include <QHash>
 #include <util/helper.hpp>
+#include <helperdatabase/helperdb.hpp>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -20,10 +21,6 @@ public:
   explicit Widget(QWidget *parent = nullptr);
   ~Widget();
 
-  //slots
-  [[nodiscard]]uint32_t getUser_id(const QString &user, const QString &user_profile = "PUBLIC") noexcept;
-
-
 
 private:
   Ui::Widget *ui;
@@ -35,6 +32,7 @@ private:
   QSqlTableModel* xxxModel_{ nullptr };
   inline static uint32_t userId_{0};
   SW::SessionStatus sessionStatus_{SW::SessionStatus::Session_closed};
+  SW::HelperDataBase_t helperdb_{};
 
   //custom functions
   void initFrm() noexcept;
@@ -50,18 +48,16 @@ private:
 
   void setLabelInfo(const QString &color, const QString& userName="PUBLIC") noexcept;
   void loadListCategory(uint32_t user_id) noexcept;
-  QStringList dataCategory(uint32_t category_id) noexcept;
 
   //menbers var
   QHash<uint32_t, QString> categoryList{};
   QHash<uint32_t, QString> urlList{};
 
-  std::tuple<bool, QString> verifyDeleteCategory() noexcept;
   void setUpCboCategoryContextMenu() noexcept;
   void setUptvUrlContextMenu() noexcept;
-  bool deleteCategory() const noexcept;
-  bool deleteUrls(uint8_t op) const noexcept;
-  bool deleteAll()const noexcept;
+
+
+  bool deleteAll() noexcept;
   void verifyContextMenu() noexcept;
   void setCboCategoryToolTip() noexcept;
 
@@ -69,9 +65,6 @@ private:
   void quitUrl() noexcept;
   void hastvUrlData() noexcept;
 
-  bool saveData(const QString &url, const QString &desc, uint32_t id) const noexcept;
-  bool updateCategory(const QString&, const QString&, uint32_t, uint32_t) const noexcept;
-  bool saveCategoryData(const QString &catName, const QString& desc, uint32_t userid) const noexcept;
   void btnEdit() noexcept;
   //    void userId();
 

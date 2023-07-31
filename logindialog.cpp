@@ -1,17 +1,14 @@
 #include "logindialog.hpp"
 #include "ui_logindialog.h"
 #include <util/helper.hpp>
-#include <QSqlQuery>
 #include <QMessageBox>
+#include "resetpassworddialog.hpp"
 #include <QDebug>
 
 
-
-
 LogInDialog::LogInDialog(QWidget *parent) :
-  QDialog(parent),
-  ui(new Ui::LogInDialog),
-  db_{QSqlDatabase::database("xxxConection")}{
+  QDialog(parent), ui(new Ui::LogInDialog)
+  {
 
   ui->setupUi(this);
   setUp_Form();
@@ -21,118 +18,125 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
   QObject::connect(ui->pbLogIn, &QPushButton::clicked, this, [&](){
 
-    if(!logIn()){
-      QMessageBox::warning(this, qApp->applicationName(), "Los datos que ingreso son incorrectos\n"
-                                                          "vuelva a intentarlo.");
-      ui->txtUser->selectAll();
-      ui->txtUser->setFocus(Qt::OtherFocusReason);
+      if(!helperdb_.logIn(ui->txtUser->text().simplified(), ui->txtPassword->text().simplified())){
+          QMessageBox::warning(this, qApp->applicationName(), "Los datos que ingreso son incorrectos\n"
+                                                              "vuelva a intentarlo.");
+          ui->txtUser->selectAll();
+          ui->txtUser->setFocus(Qt::OtherFocusReason);
 
-      return;
-    }
+          return;
+        }
 
-    //    qInfo() << getUser_id();
-    userName_ = ui->txtUser->text();
-    accept();
-  });
+      //    qInfo() << getUser_id();
+      userName_ = ui->txtUser->text();
+      accept();
+    });
 
   //coneccion del boton de mas opciones
   ui->btnOtherOptions->setCheckable(true);
 
   QObject::connect(ui->btnOtherOptions, &QToolButton::toggled, ui->widget, [&](){
-    if(ui->btnOtherOptions->isChecked()){
-      ui->btnOtherOptions->setIcon(QIcon(":/img/up.png"));
-      ui->widget->setVisible(true);
-      setStateControls(true);
-      ui->txtNewUser->setFocus(Qt::OtherFocusReason);
-      ui->btnOtherOptions->setToolTip("<p>"
-                                      "<span> Volver a Inicio de sesión!"
-                                      "</span>"
-                                      "</p>");
-      ui->btnCreateUser->setDefault(true);
-    }else{
-      ui->btnOtherOptions->setIcon(QIcon(":/img/down.png"));
-      ui->widget->setVisible(false);
-      ui->groupBox->setEnabled(true);
-      setStateControls(false);
-      ui->txtUser->setFocus(Qt::OtherFocusReason);
-      ui->btnOtherOptions->setToolTip("<p>"
-                                      "<span> Crear un nuevo usuario y/o<br>"
-                                      "restablecer clave o password!"
-                                      "</span>"
-                                      "</p>");
-      ui->pbLogIn->setDefault(true);
-    }
-  });
+      if(ui->btnOtherOptions->isChecked()){
+          ui->btnOtherOptions->setIcon(QIcon(":/img/up.png"));
+          ui->widget->setVisible(true);
+          setStateControls(true);
+          ui->txtNewUser->setFocus(Qt::OtherFocusReason);
+          ui->btnOtherOptions->setToolTip("<p>"
+                                          "<span> Volver a Inicio de sesión!"
+                                          "</span>"
+                                          "</p>");
+          ui->btnCreateUser->setDefault(true);
+        }else{
+          ui->btnOtherOptions->setIcon(QIcon(":/img/down.png"));
+          ui->widget->setVisible(false);
+          ui->groupBox->setEnabled(true);
+          setStateControls(false);
+          ui->txtUser->setFocus(Qt::OtherFocusReason);
+          ui->btnOtherOptions->setToolTip("<p>"
+                                          "<span> Crear un nuevo usuario y/o<br>"
+                                          "restablecer clave o password!"
+                                          "</span>"
+                                          "</p>");
+          ui->pbLogIn->setDefault(true);
+        }
+    });
 
   //coneccion de combo box metodo de recuperacion
   QObject::connect(ui->cboRestoreType, &QComboBox::activated, this, &LogInDialog::setOptionsToComboBox);
   ui->widget->hide();
   //connect to create user button
   QObject::connect(ui->btnCreateUser, &QAbstractButton::clicked, this, [&](){
-    if(Validate_hasNoEmpty()){
-      QMessageBox::warning(this, qApp->applicationName(), "<span><em>Todos los campos son requeridos!</em></span>");
-      ui->txtNewUser->setFocus();
-      return;
-    }
-    if(!SW::Helper_t::verify_Values(ui->txtNewPassword->text(), ui->txtRePassword->text())){
-      QMessageBox::warning(this, qApp->applicationName(), "<span><em>El password o clave de confirmación no coincide!</em></span>");
-      ui->txtRePassword->selectAll();
-      ui->txtRePassword->setFocus();
-      return;
-    }
-    if(ui->cboRestoreType->currentText() == "Pin numérico"){
-      if(ui->txtfirstValue->text().count() < 4 || ui->txtConfirmValue->text().count() <4){
-        QMessageBox::warning(this, qApp->applicationName(), "<span><em>El PIN numérico debe contener 4 digitos!</em></span>");
-        ui->txtfirstValue->selectAll();
-        ui->txtfirstValue->setFocus();
-        return;
-      }
-      if(!SW::Helper_t::verify_Values(ui->txtfirstValue->text(), ui->txtConfirmValue->text())){
-        QMessageBox::warning(this, qApp->applicationName(), "<span><em>El número de confirmación no coincide!</em></span>");
-        ui->txtConfirmValue->selectAll();
-        ui->txtConfirmValue->setFocus();
-        return;
-      }
+      if(Validate_hasNoEmpty()){
+          QMessageBox::warning(this, qApp->applicationName(), "<span><em>Todos los campos son requeridos!</em></span>");
+          ui->txtNewUser->setFocus();
+          return;
+        }
+      if(!SW::Helper_t::verify_Values(ui->txtNewPassword->text(), ui->txtRePassword->text())){
+          QMessageBox::warning(this, qApp->applicationName(), "<span><em>El password o clave de confirmación no coincide!</em></span>");
+          ui->txtRePassword->selectAll();
+          ui->txtRePassword->setFocus();
+          return;
+        }
+      if(ui->cboRestoreType->currentText() == "Pin numérico"){
+          if(ui->txtfirstValue->text().count() < 4 || ui->txtConfirmValue->text().count() <4){
+              QMessageBox::warning(this, qApp->applicationName(), "<span><em>El PIN numérico debe contener 4 digitos!</em></span>");
+              ui->txtfirstValue->selectAll();
+              ui->txtfirstValue->setFocus();
+              return;
+            }
+          if(!SW::Helper_t::verify_Values(ui->txtfirstValue->text(), ui->txtConfirmValue->text())){
+              QMessageBox::warning(this, qApp->applicationName(), "<span><em>El número de confirmación no coincide!</em></span>");
+              ui->txtConfirmValue->selectAll();
+              ui->txtConfirmValue->setFocus();
+              return;
+            }
 
-    }
-    if(!ui->checkBox->isChecked()){
-      QMessageBox::warning(this, qApp->applicationName(), "<span><em>Debe marcar siempre el perfil de usuario!</em></span>");
-      return;
-    }
+        }
+      if(!ui->checkBox->isChecked()){
+          QMessageBox::warning(this, qApp->applicationName(), "<span><em>Debe marcar siempre el perfil de usuario!</em></span>");
+          return;
+        }
 
-    if(userExists(ui->txtNewUser->text())){
-      QMessageBox::warning(this, qApp->applicationName(), tr("<span><em>El nombre de usuario: <strong>%1</strong> ya esta registrado.<br>"
-                                                             "Vuelva a intentarlo con otro nombre porfavor!"
-                                                             "</em></span>").arg(ui->txtNewUser->text()));
-      ui->txtNewUser->selectAll();
-      ui->txtNewUser->setFocus(Qt::OtherFocusReason);
-      return;
-    }
-
-
+      if(helperdb_.userExists(ui->txtNewUser->text())){
+          QMessageBox::warning(this, qApp->applicationName(), tr("<span><em>El nombre de usuario: <strong>%1</strong> ya esta registrado.<br>"
+                                                                 "Vuelva a intentarlo con otro nombre porfavor!"
+                                                                 "</em></span>").arg(ui->txtNewUser->text()));
+          ui->txtNewUser->selectAll();
+          ui->txtNewUser->setFocus(Qt::OtherFocusReason);
+          return;
+        }
 
 
-    auto password = SW::Helper_t::hashGenerator(ui->txtRePassword->text().toLatin1());
-    QString first_value{};
-    QString confirm_value{};
-    if(ui->cboRestoreType->currentText() == "Pin numérico"){
-
-      first_value = SW::Helper_t::hashGenerator(ui->txtfirstValue->text().toLatin1());
-      confirm_value = SW::Helper_t::hashGenerator(ui->txtConfirmValue->text().toLatin1());
-    }else{
-      first_value = ui->txtfirstValue->text();
-      confirm_value = SW::Helper_t::hashGenerator(ui->txtConfirmValue->text().toLatin1());
-    }
 
 
-    if(createUser(ui->txtNewUser->text(), password, ui->checkBox->text(), ui->cboRestoreType->currentText(), first_value, confirm_value)){
-      QMessageBox::information(this, qApp->applicationName(), "<span><em>El nuevo usuario fue creado con éxito!</em></span>");
-      clearControls();
-      ui->btnOtherOptions->toggle();
-    }
+      auto password = SW::Helper_t::hashGenerator(ui->txtRePassword->text().toLatin1());
+      QString first_value{};
+      QString confirm_value{};
+      if(ui->cboRestoreType->currentText() == "Pin numérico"){
+
+          first_value = SW::Helper_t::hashGenerator(ui->txtfirstValue->text().toLatin1());
+          confirm_value = SW::Helper_t::hashGenerator(ui->txtConfirmValue->text().toLatin1());
+        }else{
+          first_value = ui->txtfirstValue->text();
+          confirm_value = SW::Helper_t::hashGenerator(ui->txtConfirmValue->text().toLatin1());
+        }
 
 
-  });
+      if(helperdb_.createUser(ui->txtNewUser->text(), password, ui->checkBox->text(),
+                              ui->cboRestoreType->currentText(), first_value, confirm_value)){
+          QMessageBox::information(this, qApp->applicationName(), "<span><em>El nuevo usuario fue creado con éxito!</em></span>");
+          clearControls();
+          ui->btnOtherOptions->toggle();
+        }
+
+
+    });
+
+  QObject::connect(ui->btnResetPassword, &QPushButton::clicked, this, [&](){
+      ResetPasswordDialog resetPassword{this};
+      resetPassword.exec();
+
+    });
 
 }//end constructor
 
@@ -188,42 +192,27 @@ void LogInDialog::setStateControls(bool op) noexcept{
 void LogInDialog::setOptionsToComboBox(int index) noexcept{
 
   if(index == 0){
-    ui->txtfirstValue->clear();
-    ui->txtConfirmValue->clear();
-    ui->txtfirstValue->setPlaceholderText("Ingrese una pregunta!");
-    ui->txtConfirmValue->setPlaceholderText("Ingrese su respuesta!");
-    ui->txtfirstValue->setValidator(nullptr);
-    ui->txtConfirmValue->setValidator(nullptr);
-    ui->txtfirstValue->setFocus(Qt::OtherFocusReason);
+      ui->txtfirstValue->clear();
+      ui->txtConfirmValue->clear();
+      ui->txtfirstValue->setPlaceholderText("Ingrese una pregunta!");
+      ui->txtConfirmValue->setPlaceholderText("Ingrese su respuesta!");
+      ui->txtfirstValue->setValidator(nullptr);
+      ui->txtConfirmValue->setValidator(nullptr);
+      ui->txtfirstValue->setFocus(Qt::OtherFocusReason);
 
-  }else{
-    ui->txtfirstValue->clear();
-    ui->txtConfirmValue->clear();
-    ui->txtfirstValue->setPlaceholderText("Ingrese PIN numérico de 4 cifras!");
-    ui->txtConfirmValue->setPlaceholderText("Vuelva a ingresar el número");
-    auto* validator = new QRegularExpressionValidator(QRegularExpression("^\\d{4}$"), this);
-    ui->txtfirstValue->setValidator(validator);
-    ui->txtConfirmValue->setValidator(validator);
-    ui->txtfirstValue->setFocus(Qt::OtherFocusReason);
+    }else{
+      ui->txtfirstValue->clear();
+      ui->txtConfirmValue->clear();
+      ui->txtfirstValue->setPlaceholderText("Ingrese PIN numérico de 4 cifras!");
+      ui->txtConfirmValue->setPlaceholderText("Vuelva a ingresar el número");
+      auto* validator = new QRegularExpressionValidator(QRegularExpression("^\\d{4}$"), this);
+      ui->txtfirstValue->setValidator(validator);
+      ui->txtConfirmValue->setValidator(validator);
+      ui->txtfirstValue->setFocus(Qt::OtherFocusReason);
 
-  }
+    }
 }
 
-bool LogInDialog::logIn() const noexcept{
-  QSqlQuery qry{db_};
-  [[maybe_unused]]
-  auto res = qry.prepare("SELECT COUNT(*) FROM users WHERE user = ? AND password = ?");
-  qry.addBindValue(ui->txtUser->text());
-  qry.addBindValue(SW::Helper_t::hashGenerator(ui->txtPassword->text().toLatin1()));
-  if(!qry.exec())
-    return false;
-  qry.first();
-
-  return(qry.value(0).toInt() == 1);
-
-
-
-}
 
 void LogInDialog::clearControls() noexcept{
   ui->txtNewUser->clear();
@@ -235,38 +224,8 @@ void LogInDialog::clearControls() noexcept{
 
 }
 
-bool LogInDialog::createUser(const QString &user, const QString &password, const QString &user_prof,
-                             const QString &rescue_type, const QString &val1, const QString &val2) noexcept{
-
-  QSqlQuery newUserQry{db_};
-  [[maybe_unused]]
-      auto res = newUserQry.prepare("INSERT INTO users(user,password,user_profile,rescue_type,first_value,confirm_value) "
-                                    "VALUES(?,?,?,?,?,?)");
-  newUserQry.addBindValue(user);
-  newUserQry.addBindValue(password);
-  newUserQry.addBindValue(user_prof);
-  newUserQry.addBindValue(rescue_type);
-  newUserQry.addBindValue(val1);
-  newUserQry.addBindValue(val2);
-  return newUserQry.exec();
-
-}
 
 bool LogInDialog::Validate_hasNoEmpty() const noexcept{
   return ui->txtNewUser->text().isEmpty() || ui->txtNewPassword->text().isEmpty() || ui->txtRePassword->text().isEmpty() ||
       ui->txtfirstValue->text().isEmpty() || ui->txtConfirmValue->text().isEmpty();
 }
-
-bool LogInDialog::userExists(const QString &user) const noexcept
-{
-  QSqlQuery userQry{db_};
-  [[maybe_unused]]
-  auto res = userQry.prepare("SELECT COUNT(*) FROM users WHERE user = ?");
-  userQry.addBindValue(user);
-
-  if(!userQry.exec())
-    return false;
-  userQry.first();
-  return (userQry.value(0).toUInt() == 1);
-}
-

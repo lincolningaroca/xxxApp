@@ -208,7 +208,7 @@
              <item>
               <widget class="QPushButton" name="btnResetPassword">
                <property name="text">
-                <string>Resetear password</string>
+                <string>Reset password</string>
                </property>
               </widget>
              </item>

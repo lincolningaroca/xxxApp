@@ -12,6 +12,12 @@ struct Helper_t{
 
   explicit Helper_t() = default;
 
+  Helper_t(const Helper_t&) = delete;
+  Helper_t(Helper_t&&) = delete;
+  Helper_t& operator=(const Helper_t&) = delete;
+  Helper_t& operator=(Helper_t&&) = delete;
+
+
 
 
   static bool verify_Values(const QStringView text1, const QStringView text2) noexcept{return (text1.toString() == text2.toString());}
