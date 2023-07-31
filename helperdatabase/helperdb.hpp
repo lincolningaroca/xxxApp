@@ -1,15 +1,46 @@
 #pragma once
 
+#include <QSqlDatabase>
+#include <QStringView>
+#include <QSqlQuery>
+
 namespace SW {
+
+//  class QStringView;
 
 struct HelperDataBase_t{
 
-  explicit HelperDataBase_t() = default;
+  explicit HelperDataBase_t();
 
   HelperDataBase_t(const HelperDataBase_t&) = delete;
   HelperDataBase_t(HelperDataBase_t&&) = delete;
   HelperDataBase_t& operator=(const HelperDataBase_t&) = delete;
   HelperDataBase_t& operator=(HelperDataBase_t&&) = delete;
+
+  bool userExists(QStringView user) noexcept;
+  bool createUser(QStringView, QStringView, QStringView user_prof,
+                  QStringView rescue_type, QStringView val1, QStringView val2) noexcept;
+  bool logIn(QStringView user, QStringView password) noexcept;
+  ///////////******************///////////////////////////////////////////////////////////////////////////////////////
+  //funciones del formulario principal
+  bool saveCategoryData(QStringView catName, QStringView desc, uint32_t userid) noexcept;
+  bool updateCategory( QStringView url,  QStringView desc, uint32_t category_id, uint32_t user_id) noexcept;
+  bool saveData_url(QStringView url, QStringView desc, std::uint32_t id) noexcept;
+  bool deleteUrls(std::uint8_t op, uint32_t categoryId=0, uint32_t urlId=0) noexcept;
+  bool deleteCategory(uint32_t categoryId) noexcept;
+
+
+
+  QHash<uint32_t, QString> loadList_Category(uint32_t user_id) noexcept;
+
+  uint32_t getUser_id(const QString &user, const QString &user_profile = "PUBLIC") noexcept;
+  QStringList dataCategory(uint32_t category_id) noexcept;
+  std::tuple<bool, QString> verifyDeleteCategory(uint32_t categoryId) noexcept;
+
+private:
+  const QSqlDatabase db_{};
+  QSqlQuery qry_{};
+
 
 };
 
