@@ -9,6 +9,8 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
 
   ui->setupUi(this);
 
+  ui->stackedWidget->setCurrentIndex(0);
+
   QObject::connect(ui->btnValidarUsuario, &QPushButton::clicked, this, [&](){
       SW::HelperDataBase_t helper;
       if(helper.userExists(ui->txtUser->text().simplified())){
