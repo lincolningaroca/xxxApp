@@ -207,8 +207,14 @@
              </item>
              <item>
               <widget class="QPushButton" name="btnResetPassword">
+               <property name="toolTip">
+                <string>(Ctrl +Shift + P)</string>
+               </property>
                <property name="text">
                 <string>Reset password</string>
+               </property>
+               <property name="shortcut">
+                <string>Ctrl+Shift+P</string>
                </property>
               </widget>
              </item>

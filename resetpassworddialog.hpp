@@ -1,7 +1,11 @@
 #pragma once
 
 #include <QDialog>
+#include <helperdatabase/helperdb.hpp>
 
+
+class QLineEdit;
+class QCheckBox;
 namespace Ui {
   class ResetPasswordDialog;
 }
@@ -16,5 +20,13 @@ public:
 
 private:
   Ui::ResetPasswordDialog *ui;
+  SW::HelperDataBase_t helper;
+
+  uint32_t userId{0};
+
+  void setFeatures(QLineEdit* w, QCheckBox* b, bool checked) noexcept;
+
+
+  void setInit_Form() noexcept;
 };
 

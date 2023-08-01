@@ -134,6 +134,18 @@ namespace SW {
 
   }
 
+  bool HelperDataBase_t::validateAnswer(QStringView respuesta, uint32_t userId) noexcept{
+    [[maybe_unused]]
+        auto res = qry_.prepare("SELECT COUNT(*) FROM users WHERE confirm_value = ? AND user_id = ?");
+    qry_.addBindValue(SW::Helper_t::hashGenerator(respuesta.toString().simplified().toLatin1()));
+    qry_.addBindValue(userId);
+    if(qry_.exec())
+      qry_.first();
+
+    return(qry_.value(0).toUInt() == 1);
+
+  }
+
   uint32_t HelperDataBase_t::getUser_id(const QString& user, const QString& user_profile) noexcept  {
 
     uint32_t ret_value{0};
@@ -171,7 +183,7 @@ namespace SW {
 
     [[maybe_unused]]
         auto res=qry_.prepare("SELECT COUNT (*) FROM urls WHERE categoryid=?");
-//    auto categoryId=categoryList.key(ui->cboCategory->currentText());
+
     qry_.addBindValue(categoryId, QSql::In);
     if(!qry_.exec()){
         errMessage=qry_.lastError().text();
@@ -185,6 +197,31 @@ namespace SW {
 
 
     return std::tuple{ret, errMessage};
+
+  }
+
+  QString HelperDataBase_t::validateRescueType(uint32_t userId) noexcept{
+
+    [[maybe_unused]]
+        auto res=qry_.prepare("SELECT rescue_type FROM users WHERE user_id = ?");
+
+    qry_.addBindValue(userId, QSql::In);
+    if(qry_.exec())
+      qry_.first();
+
+    return qry_.value(0).toString();
+
+  }
+
+  QString HelperDataBase_t::getQuestion(uint32_t userId) noexcept{
+    [[maybe_unused]]
+        auto res=qry_.prepare("SELECT first_value FROM users WHERE user_id = ?");
+
+    qry_.addBindValue(userId, QSql::In);
+    if(qry_.exec())
+      qry_.first();
+
+    return qry_.value(0).toString();
 
   }
 
