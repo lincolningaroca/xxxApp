@@ -17,5 +17,7 @@
         <file>img/paper_pin.png</file>
         <file>img/user.png</file>
         <file>img/7278151.png</file>
+        <file>img/close.png</file>
+        <file>img/open.png</file>
     </qresource>
 </RCC>

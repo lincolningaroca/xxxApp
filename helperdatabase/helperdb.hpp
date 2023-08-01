@@ -28,6 +28,7 @@ struct HelperDataBase_t{
   bool saveData_url(QStringView url, QStringView desc, std::uint32_t id) noexcept;
   bool deleteUrls(std::uint8_t op, uint32_t categoryId=0, uint32_t urlId=0) noexcept;
   bool deleteCategory(uint32_t categoryId) noexcept;
+  bool validateAnswer(QStringView respuesta, uint32_t userId) noexcept;
 
 
 
@@ -36,6 +37,8 @@ struct HelperDataBase_t{
   uint32_t getUser_id(const QString &user, const QString &user_profile = "PUBLIC") noexcept;
   QStringList dataCategory(uint32_t category_id) noexcept;
   std::tuple<bool, QString> verifyDeleteCategory(uint32_t categoryId) noexcept;
+  QString validateRescueType(uint32_t userId) noexcept;
+  QString getQuestion(uint32_t userId) noexcept;
 
 private:
   const QSqlDatabase db_{};
