@@ -17,7 +17,7 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
 
       if(!helper.userExists(ui->txtUser->text().simplified())){
           QMessageBox::warning(this, qApp->applicationName(),
-                               "<p><cite>Nombre de usuario incorrecto.</p></cite>");
+                               "<p><cite>Nombre de usuario incorrecto.</cite></p>");
           ui->txtUser->selectAll();
           ui->txtUser->setFocus(Qt::OtherFocusReason);
           return;
@@ -67,7 +67,7 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
         }
       if(!helper.validateAnswer(ui->txtPIN->text(), userId_)){
           QMessageBox::warning(this, qApp->applicationName(),
-                               "<p><cite>El número que ingreso es incorrecto.</cite></p>");
+                               "<p><em>El número que ingreso es incorrecto.</em></p>");
           ui->txtPIN->selectAll();
           ui->txtPIN->setFocus(Qt::OtherFocusReason);
           return;
@@ -97,24 +97,24 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
   //btn reset password
   QObject::connect(ui->btnReset, &QPushButton::clicked, this, [&](){
       if(ui->txtNewPassword->text().isEmpty()){
-          QMessageBox::warning(this, qApp->applicationName(), "Este campo es requerido.");
+          QMessageBox::warning(this, qApp->applicationName(), "<span><em>Este campo es requerido.</em></span>");
           ui->txtNewPassword->setFocus(Qt::OtherFocusReason);
           return;
         }
       if(ui->txtRePassword->text().isEmpty()){
-          QMessageBox::warning(this, qApp->applicationName(), "Este campo es requerido.");
+          QMessageBox::warning(this, qApp->applicationName(), "<span><em>Este campo es requerido.</em></span>");
           ui->txtRePassword->setFocus(Qt::OtherFocusReason);
           return;
         }
       if(ui->txtRePassword->text().simplified() != ui->txtNewPassword->text().simplified()){
-          QMessageBox::warning(this, qApp->applicationName(), "La clave o password de confirmación no coincide.");
+          QMessageBox::warning(this, qApp->applicationName(), "<span><strong><em>La clave o password de confirmación no coincide.</em></strong></span>");
           ui->txtRePassword->selectAll();
           ui->txtRePassword->setFocus(Qt::OtherFocusReason);
           return;
         }
       if(helper.resetPassword(ui->txtRePassword->text(), userId_)){
-          QMessageBox::information(this, qApp->applicationName(), "Su clave o password de acceso fue cambiada con éxito!");
-//          ui->btnAtras->click();
+          QMessageBox::information(this, qApp->applicationName(), "<span><em>Su clave o password de acceso fue cambiado con éxito!</em></strong></span>");
+          //          ui->btnAtras->click();
           accept();
         }
     });
