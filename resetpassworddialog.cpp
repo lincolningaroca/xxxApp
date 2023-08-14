@@ -22,12 +22,12 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
           ui->txtUser->setFocus(Qt::OtherFocusReason);
           return;
         }
-      userId = helper.getUser_id(ui->txtUser->text().simplified(), "USER");
-      auto rescue_type = helper.validateRescueType(userId);
+      userId_ = helper.getUser_id(ui->txtUser->text().simplified(), "USER");
+      auto rescue_type = helper.validateRescueType(userId_);
 
       if(rescue_type == "Pregunta secreta"){
           ui->stackedWidget->setCurrentIndex(1);
-          ui->txtPregunta->setPlainText(helper.getQuestion(userId));
+          ui->txtPregunta->setPlainText(helper.getQuestion(userId_));
           ui->btnRespuesta->setDefault(true);
           ui->txtRespuesta->setFocus(Qt::OtherFocusReason);
 
@@ -43,7 +43,7 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
 
   //btn pregunta secreta
   QObject::connect(ui->btnRespuesta, &QAbstractButton::clicked, this, [&](){
-      if(!helper.validateAnswer(ui->txtRespuesta->text(), userId)){
+      if(!helper.validateAnswer(ui->txtRespuesta->text(), userId_)){
           QMessageBox::warning(this, qApp->applicationName(),
                                "<p><cite>Su respuesta es incorrecta.</cite></p>");
           ui->txtRespuesta->selectAll();
@@ -52,6 +52,7 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
         }
 
       ui->stackedWidget->setCurrentIndex(3);
+      ui->txtNewPassword->setFocus(Qt::OtherFocusReason);
       ui->btnReset->setDefault(true);
     });
 
@@ -64,7 +65,7 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
           ui->txtPIN->setFocus(Qt::OtherFocusReason);
           return;
         }
-      if(!helper.validateAnswer(ui->txtPIN->text(), userId)){
+      if(!helper.validateAnswer(ui->txtPIN->text(), userId_)){
           QMessageBox::warning(this, qApp->applicationName(),
                                "<p><cite>El número que ingreso es incorrecto.</cite></p>");
           ui->txtPIN->selectAll();
@@ -73,6 +74,7 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
         }
 
       ui->stackedWidget->setCurrentIndex(3);
+      ui->txtNewPassword->setFocus(Qt::OtherFocusReason);
       ui->btnReset->setDefault(true);
     });
 
@@ -91,7 +93,32 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
       ui->btnValidarUsuario->setDefault(true);
       ui->txtUser->setFocus(Qt::OtherFocusReason);
     });
-}
+
+  //btn reset password
+  QObject::connect(ui->btnReset, &QPushButton::clicked, this, [&](){
+      if(ui->txtNewPassword->text().isEmpty()){
+          QMessageBox::warning(this, qApp->applicationName(), "Este campo es requerido.");
+          ui->txtNewPassword->setFocus(Qt::OtherFocusReason);
+          return;
+        }
+      if(ui->txtRePassword->text().isEmpty()){
+          QMessageBox::warning(this, qApp->applicationName(), "Este campo es requerido.");
+          ui->txtRePassword->setFocus(Qt::OtherFocusReason);
+          return;
+        }
+      if(ui->txtRePassword->text().simplified() != ui->txtNewPassword->text().simplified()){
+          QMessageBox::warning(this, qApp->applicationName(), "La clave o password de confirmación no coincide.");
+          ui->txtRePassword->selectAll();
+          ui->txtRePassword->setFocus(Qt::OtherFocusReason);
+          return;
+        }
+      if(helper.resetPassword(ui->txtRePassword->text(), userId_)){
+          QMessageBox::information(this, qApp->applicationName(), "Su clave o password de acceso fue cambiada con éxito!");
+//          ui->btnAtras->click();
+          accept();
+        }
+    });
+}// fin del constructor
 
 ResetPasswordDialog::~ResetPasswordDialog(){
   delete ui;
