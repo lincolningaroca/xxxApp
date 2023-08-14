@@ -19,8 +19,12 @@ LogInDialog::LogInDialog(QWidget *parent) :
   QObject::connect(ui->pbLogIn, &QPushButton::clicked, this, [&](){
 
       if(!helperdb_.logIn(ui->txtUser->text().simplified(), ui->txtPassword->text().simplified())){
-          QMessageBox::warning(this, qApp->applicationName(), "Los datos que ingreso son incorrectos\n"
-                                                              "vuelva a intentarlo.");
+          QMessageBox::warning(this, qApp->applicationName(), "<span>"
+                                                              "<strong>"
+                                                              "Los datos que ingreso son incorrectos\n"
+                                                              "vuelva a intentarlo."
+                                                              "</strong>"
+                                                              "</span>");
           ui->txtUser->selectAll();
           ui->txtUser->setFocus(Qt::OtherFocusReason);
 
@@ -41,10 +45,9 @@ LogInDialog::LogInDialog(QWidget *parent) :
           ui->widget->setVisible(true);
           setStateControls(true);
           ui->txtNewUser->setFocus(Qt::OtherFocusReason);
-          ui->btnOtherOptions->setToolTip("<p>"
-                                          "<span> Volver a Inicio de sesión!"
-                                          "</span>"
-                                          "</p>");
+          ui->btnOtherOptions->setToolTip("<span>"
+                                          "Volver a Inicio de sesión!"
+                                          "</span>");
           ui->btnCreateUser->setDefault(true);
         }else{
           ui->btnOtherOptions->setIcon(QIcon(":/img/down.png"));
@@ -52,11 +55,10 @@ LogInDialog::LogInDialog(QWidget *parent) :
           ui->groupBox->setEnabled(true);
           setStateControls(false);
           ui->txtUser->setFocus(Qt::OtherFocusReason);
-          ui->btnOtherOptions->setToolTip("<p>"
-                                          "<span> Crear un nuevo usuario y/o<br>"
+          ui->btnOtherOptions->setToolTip("<span>"
+                                          "Crear un nuevo usuario y/o<br>"
                                           "restablecer clave o password!"
-                                          "</span>"
-                                          "</p>");
+                                          "</span>");
           ui->pbLogIn->setDefault(true);
         }
     });
@@ -72,7 +74,14 @@ LogInDialog::LogInDialog(QWidget *parent) :
           return;
         }
       if(!SW::Helper_t::verify_Values(ui->txtNewPassword->text(), ui->txtRePassword->text())){
-          QMessageBox::warning(this, qApp->applicationName(), "<span><em>El password o clave de confirmación no coincide!</em></span>");
+          QMessageBox::warning(this, qApp->applicationName(),
+                               "<span>"
+                               "<strong>"
+                               "<em>"
+                               "El password o clave de confirmación no coincide!"
+                               "</em>"
+                               "</strong>"
+                               "</span>");
           ui->txtRePassword->selectAll();
           ui->txtRePassword->setFocus();
           return;
@@ -85,7 +94,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
               return;
             }
           if(!SW::Helper_t::verify_Values(ui->txtfirstValue->text(), ui->txtConfirmValue->text())){
-              QMessageBox::warning(this, qApp->applicationName(), "<span><em>El número de confirmación no coincide!</em></span>");
+              QMessageBox::warning(this, qApp->applicationName(), "<span><strong><em>El número de confirmación no coincide!</em></strong></span>");
               ui->txtConfirmValue->selectAll();
               ui->txtConfirmValue->setFocus();
               return;

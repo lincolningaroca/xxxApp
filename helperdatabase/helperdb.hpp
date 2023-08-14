@@ -29,6 +29,7 @@ struct HelperDataBase_t{
   bool deleteUrls(std::uint8_t op, uint32_t categoryId=0, uint32_t urlId=0) noexcept;
   bool deleteCategory(uint32_t categoryId) noexcept;
   bool validateAnswer(QStringView respuesta, uint32_t userId) noexcept;
+  bool resetPassword(QStringView password, uint32_t userId) noexcept;
 
 
 

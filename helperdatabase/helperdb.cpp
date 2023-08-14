@@ -146,6 +146,18 @@ namespace SW {
 
   }
 
+  bool HelperDataBase_t::resetPassword(QStringView password, uint32_t userId) noexcept
+  {
+    [[ maybe_unused ]]
+    auto res = qry_.prepare("UPDATE users SET password=? WHERE user_id=?");
+    auto pass = password.toString();
+    qry_.addBindValue(SW::Helper_t::hashGenerator(pass.simplified().toLatin1()), QSql::In);
+    qry_.addBindValue(userId, QSql::In);
+
+    return qry_.exec();
+
+  }
+
   uint32_t HelperDataBase_t::getUser_id(const QString& user, const QString& user_profile) noexcept  {
 
     uint32_t ret_value{0};
