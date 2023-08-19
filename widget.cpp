@@ -427,8 +427,7 @@ void Widget::writeSettings() const noexcept{
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Widget::readSettings() noexcept
-{
+void Widget::readSettings() noexcept{
   QSettings settings(qApp->organizationName(), qApp->applicationName());
   settings.beginGroup("Theme");
   auto theme = settings.value("theme Value").toUInt();
@@ -443,8 +442,7 @@ void Widget::readSettings() noexcept
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void Widget::setLabelInfo(const QString& color, const QString& userName) noexcept
-{
+void Widget::setLabelInfo(const QString& color, const QString& userName) noexcept{
   ui->lblInfo->setText(QString("<span style='color:%1;'>"
                                "<strong>SWSystem's - Lincoln Ingaroca"
                                "</strong></span>").arg(color));
@@ -469,8 +467,7 @@ void Widget::loadListCategory(uint32_t user_id) noexcept{
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Widget::setUpCboCategoryContextMenu() noexcept
-{
+void Widget::setUpCboCategoryContextMenu() noexcept{
   QIcon icon(":/img/118277.png");
   ui->cboCategory->setContextMenuPolicy(Qt::ActionsContextMenu);
   delCategory = new QAction(icon, "Forzar eliminación de categoría",this);
@@ -479,8 +476,7 @@ void Widget::setUpCboCategoryContextMenu() noexcept
 
 }
 
-void Widget::setUptvUrlContextMenu() noexcept
-{
+void Widget::setUptvUrlContextMenu() noexcept{
 
   ui->tvUrl->setContextMenuPolicy(Qt::ActionsContextMenu);
 
@@ -501,8 +497,7 @@ void Widget::setUptvUrlContextMenu() noexcept
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-bool Widget::deleteAll() noexcept
-{
+bool Widget::deleteAll() noexcept{
   auto categoryId=categoryList.key(ui->cboCategory->currentText());
   if(helperdb_.deleteUrls(1, categoryId)){
       if(helperdb_.deleteCategory(categoryId))
@@ -518,8 +513,7 @@ void Widget::verifyContextMenu() noexcept{
   (res) ? delCategory->setDisabled(true) : delCategory->setEnabled(true);
 }
 
-void Widget::setCboCategoryToolTip() noexcept
-{
+void Widget::setCboCategoryToolTip() noexcept{
   auto id = categoryList.key(ui->cboCategory->currentText());
   QStringList categoryData = helperdb_.dataCategory(id);
   auto desc=categoryData.value(1);
@@ -536,8 +530,7 @@ void Widget::setCboCategoryToolTip() noexcept
 
 }
 
-void Widget::openUrl() noexcept
-{
+void Widget::openUrl() noexcept{
   auto currentRow = ui->tvUrl->currentIndex().row();
   auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
   if(!SW::Helper_t::open_Url(QUrl(url))){
@@ -546,8 +539,7 @@ void Widget::openUrl() noexcept
     }
 }
 
-void Widget::quitUrl() noexcept
-{
+void Widget::quitUrl() noexcept{
   auto currentRow = ui->tvUrl->currentIndex().row();
   auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
 
@@ -558,8 +550,8 @@ void Widget::quitUrl() noexcept
   msgBox.addButton("Eliminar",QMessageBox::AcceptRole);
   msgBox.addButton("Cancelar",QMessageBox::RejectRole);
   if(msgBox.exec() == QMessageBox::AcceptRole){
-      auto currentRow = ui->tvUrl->currentIndex().row();
-      auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
+      //      auto currentRow = ui->tvUrl->currentIndex().row();
+      //      auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
       auto urlId=urlList.key(url);
       if(helperdb_.deleteUrls(2, 0, urlId)){
           ui->tvUrl->model()->removeRow(ui->tvUrl->currentIndex().row());
@@ -569,8 +561,7 @@ void Widget::quitUrl() noexcept
     }
 }
 
-void Widget::hastvUrlData() noexcept
-{
+void Widget::hastvUrlData() noexcept{
   if(ui->tvUrl->model()->rowCount() == 0){
       openUrl_->setDisabled(true);
       ui->btnopen->setDisabled(true);
@@ -590,8 +581,7 @@ void Widget::hastvUrlData() noexcept
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Widget::closeEvent(QCloseEvent *event)
-{
+void Widget::closeEvent(QCloseEvent *event){
   if(sessionStatus_ == SW::SessionStatus::Session_start){
       QMessageBox::warning(this, qApp->applicationName(),
                            "<cite>Hay una sesión activa en este momento.<br>"

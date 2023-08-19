@@ -146,8 +146,7 @@ namespace SW {
 
   }
 
-  bool HelperDataBase_t::resetPassword(QStringView password, uint32_t userId) noexcept
-  {
+  bool HelperDataBase_t::resetPassword(QStringView password, uint32_t userId) noexcept{
     [[ maybe_unused ]]
     auto res = qry_.prepare("UPDATE users SET password=? WHERE user_id=?");
     auto pass = password.toString();
@@ -155,6 +154,11 @@ namespace SW {
     qry_.addBindValue(userId, QSql::In);
 
     return qry_.exec();
+
+  }
+
+  bool HelperDataBase_t::dataBase_exists(QStringView db_name) {
+    return (db_.isValid() && QFile::exists(db_name.toString()));
 
   }
 

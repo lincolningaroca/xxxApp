@@ -4,8 +4,7 @@
 
 
 dlgNewCategory::dlgNewCategory(OpenMode mode, const QStringList &list, QWidget *parent) :
-  QDialog(parent), ui(new Ui::dlgNewCategory)
-{
+  QDialog(parent), ui(new Ui::dlgNewCategory){
   ui->setupUi(this);
   setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
 
@@ -58,26 +57,22 @@ dlgNewCategory::~dlgNewCategory()
   delete ui;
 }
 
-QString dlgNewCategory::category() const noexcept
-{
+QString dlgNewCategory::category() const noexcept{
   return ui->txtCategory->text().toUpper().simplified();
 
 }
 
-QString dlgNewCategory::description() const noexcept
-{
+QString dlgNewCategory::description() const noexcept{
   return ui->pteDesc->toPlainText().toUpper().simplified();
 
 }
 
-QString dlgNewCategory::descriptionToolTip() const noexcept
-{
+QString dlgNewCategory::descriptionToolTip() const noexcept{
   return ui->pteDesc->toPlainText();
 }
 
 
-bool dlgNewCategory::validateData() const noexcept
-{
+bool dlgNewCategory::validateData() const noexcept{
   if(ui->txtCategory->text().simplified().isEmpty()){
     QMessageBox::warning(nullptr, qApp->applicationName(), "Debe ingresar un nombre de categoría!\n");
     ui->txtCategory->setFocus(Qt::OtherFocusReason);
