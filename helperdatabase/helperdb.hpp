@@ -31,6 +31,9 @@ struct HelperDataBase_t{
   bool validateAnswer(QStringView respuesta, uint32_t userId) noexcept;
   bool resetPassword(QStringView password, uint32_t userId) noexcept;
 
+  //verificar si la base d edatos existe
+  bool dataBase_exists(QStringView db_name);
+
 
 
   QHash<uint32_t, QString> loadList_Category(uint32_t user_id) noexcept;

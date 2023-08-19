@@ -24,6 +24,8 @@ struct Helper_t{
   static bool open_Url(const QUrl& url) noexcept{return QDesktopServices::openUrl(url);}
   static bool urlValidate(QStringView url) noexcept;
 
+  static bool createDataBase_dir() noexcept;
+
 
   static QByteArray setColorReg(const QString &color) noexcept;
   static QString getColorReg(QByteArray dataColor) noexcept;
@@ -37,6 +39,10 @@ struct Helper_t{
 
   static constexpr std::string_view darkModeColor{"#2e8b57"};
   static constexpr std::string_view lightModeColor{"#ff7e00"};
+  static QString appLocation(){return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation).append(dbDir_name);}
+
+private:
+  inline static const QString dbDir_name{"/xxxdatabase"};
 };
 
 } // namespace SW

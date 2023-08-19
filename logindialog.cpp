@@ -7,8 +7,7 @@
 
 
 LogInDialog::LogInDialog(QWidget *parent) :
-  QDialog(parent), ui(new Ui::LogInDialog)
-  {
+  QDialog(parent), ui(new Ui::LogInDialog){
 
   ui->setupUi(this);
   setUp_Form();
