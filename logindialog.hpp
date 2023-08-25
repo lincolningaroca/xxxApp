@@ -34,7 +34,7 @@ private:
   void clearControls() noexcept;
   bool Validate_hasNoEmpty() const noexcept;
 
-  void writeSettings();
+  void writeSettings() const noexcept;
   void readSettings();
   void reject_form() noexcept;
 

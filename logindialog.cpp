@@ -238,7 +238,7 @@ bool LogInDialog::Validate_hasNoEmpty() const noexcept{
       ui->txtfirstValue->text().isEmpty() || ui->txtConfirmValue->text().isEmpty();
 }
 
-void LogInDialog::writeSettings(){
+void LogInDialog::writeSettings() const noexcept{
   QSettings settings(qApp->organizationName(), qApp->applicationName());
 
   settings.setValue("pos_login_form", saveGeometry());
