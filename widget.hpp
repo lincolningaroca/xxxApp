@@ -66,6 +66,8 @@ private:
   void hastvUrlData() noexcept;
 
   void btnEdit() noexcept;
+
+  void has_data() noexcept;
   //    void userId();
 
 
