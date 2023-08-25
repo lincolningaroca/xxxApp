@@ -4,6 +4,8 @@
 #include <QMessageBox>
 #include "resetpassworddialog.hpp"
 #include <QDebug>
+#include <QLineEdit>
+#include <QCheckBox>
 
 
 LogInDialog::LogInDialog(QWidget *parent) :
@@ -146,6 +148,20 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
     });
 
+
+  QObject::connect(ui->checkBox_2, &QCheckBox::clicked, this, [&](bool checked){
+      setFeatures(ui->txtNewPassword, ui->checkBox_2, checked);
+    });
+  QObject::connect(ui->checkBox_3, &QCheckBox::clicked, this, [&](bool checked){
+      setFeatures(ui->txtRePassword, ui->checkBox_3, checked);
+    });
+  QObject::connect(ui->checkBox_4, &QCheckBox::clicked, this, [&](bool checked){
+      setFeatures(ui->txtfirstValue, ui->checkBox_4, checked);
+    });
+  QObject::connect(ui->checkBox_5, &QCheckBox::clicked, this, [&](bool checked){
+      setFeatures(ui->txtConfirmValue, ui->checkBox_5, checked);
+    });
+
 }//end constructor
 
 LogInDialog::~LogInDialog()
@@ -158,9 +174,13 @@ LogInDialog::~LogInDialog()
 void LogInDialog::setUp_Form() noexcept{
 
   setWindowTitle(QApplication::applicationName().append(" - inicio de sesión"));
-  ui->txtPassword->setEchoMode(QLineEdit::Password);
+
   ui->txtUser->setPlaceholderText("Usuario");
+  ui->txtUser->setClearButtonEnabled(true);
+
+  ui->txtPassword->setEchoMode(QLineEdit::Password);
   ui->txtPassword->setPlaceholderText("Clave o password");
+  ui->txtPassword->setClearButtonEnabled(true);
 
   ui->btnOtherOptions->setIcon(QIcon(":/img/down.png"));
   layout()->setSizeConstraint(QLayout::SetFixedSize);
@@ -174,13 +194,25 @@ void LogInDialog::setUp_Form() noexcept{
 
   //new user section
   ui->txtNewPassword->setPlaceholderText("Ingrese clave o password");
+  ui->txtNewPassword->setClearButtonEnabled(true);
   ui->txtNewPassword->setEchoMode(QLineEdit::Password);
-  ui->txtRePassword->setEchoMode(QLineEdit::Password);
-  ui->txtNewUser->setPlaceholderText("Ingrese un nombre de usuario");
+
   ui->txtRePassword->setPlaceholderText("Vuelva a ingresar su clave o password");
+  ui->txtRePassword->setEchoMode(QLineEdit::Password);
+  ui->txtRePassword->setClearButtonEnabled(true);
+
+  ui->txtNewUser->setPlaceholderText("Ingrese un nombre de usuario");
+  ui->txtNewUser->setClearButtonEnabled(true);
+
 
   ui->txtfirstValue->setPlaceholderText("Ingrese una pregunta!");
+  ui->txtfirstValue->setClearButtonEnabled(true);
+  ui->txtfirstValue->setEchoMode(QLineEdit::Password);
+
+
   ui->txtConfirmValue->setPlaceholderText("Ingrese su respuesta!");
+  ui->txtConfirmValue->setClearButtonEnabled(true);
+  ui->txtConfirmValue->setEchoMode(QLineEdit::Password);
 
   //set the combo box options
   ui->cboRestoreType->addItem(QIcon(":/img/paper_pin.png"), "Pregunta secreta");
@@ -255,6 +287,22 @@ void LogInDialog::readSettings(){
 void LogInDialog::reject_form() noexcept{
   writeSettings();
   reject();
+}
+
+void LogInDialog::setFeatures(QLineEdit *w, QCheckBox *b, bool checked) noexcept{
+
+  if(checked){
+      w->setEchoMode(QLineEdit::Normal);
+      b->setIcon(QIcon(":/img/open.png"));
+      b->setToolTip("Ocultar los caracteres.");
+    }
+  else{
+      w->setEchoMode(QLineEdit::Password);
+      b->setIcon(QIcon(":/img/close.png"));
+      b->setToolTip("Mostrar los caracteres.");
+
+    }
+
 }
 
 void LogInDialog::closeEvent(QCloseEvent *event){

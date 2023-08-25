@@ -7,6 +7,8 @@
 namespace Ui {
 class LogInDialog;
 }
+class QLineEdit;
+class QCheckBox;
 
 class LogInDialog : public QDialog
 {
@@ -15,8 +17,6 @@ class LogInDialog : public QDialog
 public:
   explicit LogInDialog(QWidget *parent = nullptr);
   ~LogInDialog();
-
-
 
   QString userName() const  noexcept{ return userName_;}
 
@@ -38,8 +38,7 @@ private:
   void readSettings();
   void reject_form() noexcept;
 
-
-
+  void setFeatures(QLineEdit *w, QCheckBox *b, bool checked) noexcept;
 
   // QWidget interface
 protected:

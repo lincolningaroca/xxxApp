@@ -128,12 +128,12 @@ void ResetPasswordDialog::setFeatures(QLineEdit *w, QCheckBox *b, bool checked) 
 
   if(checked){
       w->setEchoMode(QLineEdit::Normal);
-      b->setIcon(QIcon(":/img/close.png"));
+      b->setIcon(QIcon(":/img/open.png"));
       b->setToolTip("Ocultar los caracteres.");
     }
   else{
       w->setEchoMode(QLineEdit::Password);
-      b->setIcon(QIcon(":/img/open.png"));
+      b->setIcon(QIcon(":/img/close.png"));
       b->setToolTip("Mostrar los caracteres.");
 
     }
