@@ -19,9 +19,11 @@ Widget::Widget(QWidget *parent)
   userId_ = helperdb_.getUser_id("public");
   ui->lblIcon->setPixmap(QPixmap(":/img/7278151.png").scaled(16,16));
   initFrm();
+
   loadListCategory(userId_);
   setUpTable(categoryList.key(ui->cboCategory->currentText()));
 
+  has_data();
 
   readSettings();
 
@@ -51,7 +53,7 @@ Widget::Widget(QWidget *parent)
           QMessageBox::information(this, qApp->applicationName(),"Datos eliminados.");
           ui->cboCategory->clear();
           loadListCategory(userId_);
-
+          has_data();
         }
     });
 
@@ -93,7 +95,7 @@ Widget::Widget(QWidget *parent)
           QMessageBox::information(this, qApp->applicationName(), "Categoría eliminada!");
           ui->cboCategory->clear();
           loadListCategory(userId_);
-
+          has_data();
         }
     });
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -173,6 +175,7 @@ Widget::Widget(QWidget *parent)
         }
       ui->cboCategory->clear();
       loadListCategory(userId_);
+      has_data();
 
     });
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -262,6 +265,7 @@ Widget::Widget(QWidget *parent)
       verifyContextMenu();
       setCboCategoryToolTip();
       hastvUrlData();
+//      has_data();
     });
 
   setCboCategoryToolTip();
@@ -283,6 +287,7 @@ Widget::Widget(QWidget *parent)
           setWindowTitle(QApplication::applicationName().append(" - Sesión inicada como: "+logDialog.userName()));
           ui->lblIcon->setPixmap(QPixmap(":/img/user.png").scaled(16,16));
           sessionStatus_ = SW::SessionStatus::Session_start;
+          has_data();
         }
     });
 
@@ -297,6 +302,7 @@ Widget::Widget(QWidget *parent)
       loadListCategory(userId_);
       ui->lblIcon->setPixmap(QPixmap(":/img/7278151.png").scaled(16,16));
       sessionStatus_ = SW::SessionStatus::Session_closed;
+      has_data();
     });
 
 }//Fin del constructor
@@ -397,6 +403,22 @@ void Widget::btnEdit() noexcept{
   ui->btnAdd->setText("&Update");
 
 }
+
+void  Widget::has_data() noexcept{
+  if(categoryList.isEmpty()){
+      ui->btnEditCategory->setDisabled(true);
+      ui->btnDeleteCategory->setDisabled(true);
+      ui->txtUrl->setDisabled(true);
+      ui->pteDesc->setDisabled(true);
+
+    }else{
+      ui->btnEditCategory->setEnabled(true);
+      ui->btnDeleteCategory->setEnabled(true);
+      ui->txtUrl->setEnabled(true);
+      ui->pteDesc->setEnabled(true);
+    }
+
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Widget::setTheme(SW::Theme theme) const noexcept{
@@ -461,7 +483,6 @@ void Widget::loadListCategory(uint32_t user_id) noexcept{
 
   categoryList = helperdb_.loadList_Category(user_id);
   ui->cboCategory->addItems(categoryList.values());
-
 }
 
 

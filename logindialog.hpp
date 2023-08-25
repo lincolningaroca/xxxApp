@@ -2,6 +2,7 @@
 
 #include <QDialog>
 #include <helperdatabase/helperdb.hpp>
+#include <QCloseEvent>
 
 namespace Ui {
 class LogInDialog;
@@ -33,7 +34,15 @@ private:
   void clearControls() noexcept;
   bool Validate_hasNoEmpty() const noexcept;
 
+  void writeSettings() const noexcept;
+  void readSettings();
+  void reject_form() noexcept;
 
 
+
+
+  // QWidget interface
+protected:
+  void closeEvent(QCloseEvent *event) override;
 };
 

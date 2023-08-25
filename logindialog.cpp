@@ -11,9 +11,9 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
   ui->setupUi(this);
   setUp_Form();
+  readSettings();
 
-
-  QObject::connect(ui->pbCancel, &QPushButton::clicked, this, &LogInDialog::reject);
+  QObject::connect(ui->pbCancel, &QPushButton::clicked, this, &LogInDialog::reject_form);
 
   QObject::connect(ui->pbLogIn, &QPushButton::clicked, this, [&](){
 
@@ -236,4 +236,28 @@ void LogInDialog::clearControls() noexcept{
 bool LogInDialog::Validate_hasNoEmpty() const noexcept{
   return ui->txtNewUser->text().isEmpty() || ui->txtNewPassword->text().isEmpty() || ui->txtRePassword->text().isEmpty() ||
       ui->txtfirstValue->text().isEmpty() || ui->txtConfirmValue->text().isEmpty();
+}
+
+void LogInDialog::writeSettings() const noexcept{
+  QSettings settings(qApp->organizationName(), qApp->applicationName());
+
+  settings.setValue("pos_login_form", saveGeometry());
+
+}
+
+void LogInDialog::readSettings(){
+  QSettings settings(qApp->organizationName(), qApp->applicationName());
+
+  restoreGeometry(settings.value("pos_login_form").toByteArray());
+
+}
+
+void LogInDialog::reject_form() noexcept{
+  writeSettings();
+  reject();
+}
+
+void LogInDialog::closeEvent(QCloseEvent *event){
+  writeSettings();
+  event->accept();
 }
