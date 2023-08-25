@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>381</width>
-    <height>425</height>
+    <height>443</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -119,26 +119,50 @@
          <string>Nuevo usuario</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
-         <property name="leftMargin">
-          <number>4</number>
-         </property>
-         <property name="topMargin">
-          <number>4</number>
-         </property>
-         <property name="rightMargin">
-          <number>4</number>
-         </property>
-         <property name="bottomMargin">
-          <number>4</number>
-         </property>
          <item>
           <widget class="QLineEdit" name="txtNewUser"/>
          </item>
          <item>
-          <widget class="QLineEdit" name="txtNewPassword"/>
+          <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <item>
+            <widget class="QLineEdit" name="txtNewPassword"/>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBox_2">
+             <property name="toolTip">
+              <string>Mostrar los caracteres</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="rsc.qrc">
+               <normaloff>:/img/close.png</normaloff>:/img/close.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
-          <widget class="QLineEdit" name="txtRePassword"/>
+          <layout class="QHBoxLayout" name="horizontalLayout_7">
+           <item>
+            <widget class="QLineEdit" name="txtRePassword"/>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBox_3">
+             <property name="toolTip">
+              <string>Mostrar los caracteres</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="rsc.qrc">
+               <normaloff>:/img/close.png</normaloff>:/img/close.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -155,10 +179,46 @@
           </layout>
          </item>
          <item>
-          <widget class="QLineEdit" name="txtfirstValue"/>
+          <layout class="QHBoxLayout" name="horizontalLayout_6">
+           <item>
+            <widget class="QLineEdit" name="txtfirstValue"/>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBox_4">
+             <property name="toolTip">
+              <string>Mostrar los caracteres</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="rsc.qrc">
+               <normaloff>:/img/close.png</normaloff>:/img/close.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
-          <widget class="QLineEdit" name="txtConfirmValue"/>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QLineEdit" name="txtConfirmValue"/>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBox_5">
+             <property name="toolTip">
+              <string>Mostrar los caracteres</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="rsc.qrc">
+               <normaloff>:/img/close.png</normaloff>:/img/close.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -244,6 +304,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="rsc.qrc"/>
+ </resources>
  <connections/>
 </ui>
