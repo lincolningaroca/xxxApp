@@ -16,7 +16,7 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
   QObject::connect(ui->btnValidarUsuario, &QPushButton::clicked, this, [&](){
 
       if(!helper.userExists(ui->txtUser->text().simplified())){
-          QMessageBox::warning(this, qApp->applicationName(),
+          QMessageBox::warning(this, SW::Helper_t::appName(),
                                "<p><cite>Nombre de usuario incorrecto.</cite></p>");
           ui->txtUser->selectAll();
           ui->txtUser->setFocus(Qt::OtherFocusReason);
@@ -44,7 +44,7 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
   //btn pregunta secreta
   QObject::connect(ui->btnRespuesta, &QAbstractButton::clicked, this, [&](){
       if(!helper.validateAnswer(ui->txtRespuesta->text(), userId_)){
-          QMessageBox::warning(this, qApp->applicationName(),
+          QMessageBox::warning(this, SW::Helper_t::appName(),
                                "<p><cite>Su respuesta es incorrecta.</cite></p>");
           ui->txtRespuesta->selectAll();
           ui->txtRespuesta->setFocus(Qt::OtherFocusReason);
@@ -60,13 +60,13 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
   QObject::connect(ui->btnClaveNumerica, &QPushButton::clicked, this, [&](){
 
       if(ui->txtPIN->text().count() < 4){
-          QMessageBox::warning(this, qApp->applicationName(), "<span><em>El PIN numérico debe contener 4 digitos!</em></span>");
+          QMessageBox::warning(this, SW::Helper_t::appName(), "<span><em>El PIN numérico debe contener 4 digitos!</em></span>");
           ui->txtPIN->selectAll();
           ui->txtPIN->setFocus(Qt::OtherFocusReason);
           return;
         }
       if(!helper.validateAnswer(ui->txtPIN->text(), userId_)){
-          QMessageBox::warning(this, qApp->applicationName(),
+          QMessageBox::warning(this, SW::Helper_t::appName(),
                                "<p><em>El número que ingreso es incorrecto.</em></p>");
           ui->txtPIN->selectAll();
           ui->txtPIN->setFocus(Qt::OtherFocusReason);
@@ -97,23 +97,23 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
   //btn reset password
   QObject::connect(ui->btnReset, &QPushButton::clicked, this, [&](){
       if(ui->txtNewPassword->text().isEmpty()){
-          QMessageBox::warning(this, qApp->applicationName(), "<span><em>Este campo es requerido.</em></span>");
+          QMessageBox::warning(this, SW::Helper_t::appName(), "<span><em>Este campo es requerido.</em></span>");
           ui->txtNewPassword->setFocus(Qt::OtherFocusReason);
           return;
         }
       if(ui->txtRePassword->text().isEmpty()){
-          QMessageBox::warning(this, qApp->applicationName(), "<span><em>Este campo es requerido.</em></span>");
+          QMessageBox::warning(this, SW::Helper_t::appName(), "<span><em>Este campo es requerido.</em></span>");
           ui->txtRePassword->setFocus(Qt::OtherFocusReason);
           return;
         }
       if(ui->txtRePassword->text().simplified() != ui->txtNewPassword->text().simplified()){
-          QMessageBox::warning(this, qApp->applicationName(), "<span><strong><em>La clave o password de confirmación no coincide.</em></strong></span>");
+          QMessageBox::warning(this, SW::Helper_t::appName(), "<span><strong><em>La clave o password de confirmación no coincide.</em></strong></span>");
           ui->txtRePassword->selectAll();
           ui->txtRePassword->setFocus(Qt::OtherFocusReason);
           return;
         }
       if(helper.resetPassword(ui->txtRePassword->text(), userId_)){
-          QMessageBox::information(this, qApp->applicationName(), "<span><em>Su clave o password de acceso fue cambiado con éxito!</em></strong></span>");
+          QMessageBox::information(this, SW::Helper_t::appName(), "<span><em>Su clave o password de acceso fue cambiado con éxito!</em></strong></span>");
           //          ui->btnAtras->click();
           accept();
         }

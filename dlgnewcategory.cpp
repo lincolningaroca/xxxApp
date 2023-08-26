@@ -1,6 +1,7 @@
 #include "dlgnewcategory.hpp"
 #include "ui_dlgnewcategory.h"
 #include <QMessageBox>
+#include "util/helper.hpp"
 
 
 dlgNewCategory::dlgNewCategory(OpenMode mode, const QStringList &list, QWidget *parent) :
@@ -9,11 +10,11 @@ dlgNewCategory::dlgNewCategory(OpenMode mode, const QStringList &list, QWidget *
   setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
 
   if(mode == OpenMode::Edit){
-    setWindowTitle(qApp->applicationName().append(" - Edit category data."));
+    setWindowTitle(SW::Helper_t::appName().append(" - Edit category data."));
     ui->txtCategory->setText(list.value(0));
     ui->pteDesc->setPlainText(list.value(1));
   }else{
-    setWindowTitle(qApp->applicationName().append(" - New category."));
+    setWindowTitle(SW::Helper_t::appName().append(" - New category."));
   }
 
 
@@ -24,7 +25,7 @@ dlgNewCategory::dlgNewCategory(OpenMode mode, const QStringList &list, QWidget *
         if(std::any_of(list1.begin(), list1.end(), [&](const QString& l){
                        return l.compare(ui->txtCategory->text().toUpper()) == 0;
       })){
-          QMessageBox::warning(this, qApp->applicationName(),
+          QMessageBox::warning(this, SW::Helper_t::appName(),
                                QString("<p><cite>La categoría: "
                                        "<strong style='color:#ff0800;'>\"%1\""
                                        "</strong>, ya esta registrada en la base de datos.<br>"
@@ -74,7 +75,7 @@ QString dlgNewCategory::descriptionToolTip() const noexcept{
 
 bool dlgNewCategory::validateData() const noexcept{
   if(ui->txtCategory->text().simplified().isEmpty()){
-    QMessageBox::warning(nullptr, qApp->applicationName(), "Debe ingresar un nombre de categoría!\n");
+    QMessageBox::warning(nullptr, SW::Helper_t::appName(), "Debe ingresar un nombre de categoría!\n");
     ui->txtCategory->setFocus(Qt::OtherFocusReason);
     return false;
   }

@@ -2,6 +2,7 @@
 #include <QtCore>
 #include <QStringView>
 #include <QDesktopServices>
+#include <QApplication>
 
 namespace SW {
 
@@ -39,7 +40,9 @@ struct Helper_t{
 
   static constexpr std::string_view darkModeColor{"#2e8b57"};
   static constexpr std::string_view lightModeColor{"#ff7e00"};
-  static QString appLocation(){return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation).append(dbDir_name);}
+  static QString AppLocalDataLocation(){return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation).append(dbDir_name);}
+  static QString app_pathLocation(){return QApplication::applicationDirPath();}
+  static QString appName(){return QApplication::applicationName();}
 
 private:
   inline static const QString dbDir_name{"/xxxdatabase"};

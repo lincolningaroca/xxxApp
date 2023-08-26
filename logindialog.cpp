@@ -20,7 +20,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
   QObject::connect(ui->pbLogIn, &QPushButton::clicked, this, [&](){
 
       if(!helperdb_.logIn(ui->txtUser->text().simplified(), ui->txtPassword->text().simplified())){
-          QMessageBox::warning(this, qApp->applicationName(), "<span>"
+          QMessageBox::warning(this, SW::Helper_t::appName(), "<span>"
                                                               "<strong>"
                                                               "Los datos que ingreso son incorrectos\n"
                                                               "vuelva a intentarlo."
@@ -70,12 +70,12 @@ LogInDialog::LogInDialog(QWidget *parent) :
   //connect to create user button
   QObject::connect(ui->btnCreateUser, &QAbstractButton::clicked, this, [&](){
       if(Validate_hasNoEmpty()){
-          QMessageBox::warning(this, qApp->applicationName(), "<span><em>Todos los campos son requeridos!</em></span>");
+          QMessageBox::warning(this, SW::Helper_t::appName(), "<span><em>Todos los campos son requeridos!</em></span>");
           ui->txtNewUser->setFocus();
           return;
         }
       if(!SW::Helper_t::verify_Values(ui->txtNewPassword->text(), ui->txtRePassword->text())){
-          QMessageBox::warning(this, qApp->applicationName(),
+          QMessageBox::warning(this, SW::Helper_t::appName(),
                                "<span>"
                                "<strong>"
                                "<em>"
@@ -89,13 +89,13 @@ LogInDialog::LogInDialog(QWidget *parent) :
         }
       if(ui->cboRestoreType->currentText() == "Pin numérico"){
           if(ui->txtfirstValue->text().count() < 4 || ui->txtConfirmValue->text().count() <4){
-              QMessageBox::warning(this, qApp->applicationName(), "<span><em>El PIN numérico debe contener 4 digitos!</em></span>");
+              QMessageBox::warning(this, SW::Helper_t::appName(), "<span><em>El PIN numérico debe contener 4 digitos!</em></span>");
               ui->txtfirstValue->selectAll();
               ui->txtfirstValue->setFocus();
               return;
             }
           if(!SW::Helper_t::verify_Values(ui->txtfirstValue->text(), ui->txtConfirmValue->text())){
-              QMessageBox::warning(this, qApp->applicationName(), "<span><strong><em>El número de confirmación no coincide!</em></strong></span>");
+              QMessageBox::warning(this, SW::Helper_t::appName(), "<span><strong><em>El número de confirmación no coincide!</em></strong></span>");
               ui->txtConfirmValue->selectAll();
               ui->txtConfirmValue->setFocus();
               return;
@@ -103,12 +103,12 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
         }
       if(!ui->checkBox->isChecked()){
-          QMessageBox::warning(this, qApp->applicationName(), "<span><em>Debe marcar siempre el perfil de usuario!</em></span>");
+          QMessageBox::warning(this, SW::Helper_t::appName(), "<span><em>Debe marcar siempre el perfil de usuario!</em></span>");
           return;
         }
 
       if(helperdb_.userExists(ui->txtNewUser->text())){
-          QMessageBox::warning(this, qApp->applicationName(), tr("<span><em>El nombre de usuario: <strong>%1</strong> ya esta registrado.<br>"
+          QMessageBox::warning(this, SW::Helper_t::appName(), tr("<span><em>El nombre de usuario: <strong>%1</strong> ya esta registrado.<br>"
                                                                  "Vuelva a intentarlo con otro nombre porfavor!"
                                                                  "</em></span>").arg(ui->txtNewUser->text()));
           ui->txtNewUser->selectAll();
@@ -134,7 +134,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
       if(helperdb_.createUser(ui->txtNewUser->text(), password, ui->checkBox->text(),
                               ui->cboRestoreType->currentText(), first_value, confirm_value)){
-          QMessageBox::information(this, qApp->applicationName(), "<span><em>El nuevo usuario fue creado con éxito!</em></span>");
+          QMessageBox::information(this, SW::Helper_t::appName(), "<span><em>El nuevo usuario fue creado con éxito!</em></span>");
           clearControls();
           ui->btnOtherOptions->toggle();
         }
@@ -173,7 +173,7 @@ LogInDialog::~LogInDialog()
 
 void LogInDialog::setUp_Form() noexcept{
 
-  setWindowTitle(QApplication::applicationName().append(" - inicio de sesión"));
+  setWindowTitle(SW::Helper_t::appName().append(" - inicio de sesión"));
 
   ui->txtUser->setPlaceholderText("Usuario");
   ui->txtUser->setClearButtonEnabled(true);
@@ -271,14 +271,14 @@ bool LogInDialog::Validate_hasNoEmpty() const noexcept{
 }
 
 void LogInDialog::writeSettings() const noexcept{
-  QSettings settings(qApp->organizationName(), qApp->applicationName());
+  QSettings settings(qApp->organizationName(), SW::Helper_t::appName());
 
   settings.setValue("pos_login_form", saveGeometry());
 
 }
 
 void LogInDialog::readSettings(){
-  QSettings settings(qApp->organizationName(), qApp->applicationName());
+  QSettings settings(qApp->organizationName(), SW::Helper_t::appName());
 
   restoreGeometry(settings.value("pos_login_form").toByteArray());
 
