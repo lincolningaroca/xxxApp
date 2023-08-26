@@ -7,11 +7,11 @@ bool validate{false};
 
 bool createDataBase(){
   QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "xxxConection");
-  db.setDatabaseName(SW::Helper_t::appLocation().append("/xdatabase.db"));
+  db.setDatabaseName(SW::Helper_t::AppLocalDataLocation().append("/xdatabase.db"));
   return db.open();
 }
 bool dataBaseExists(){
-  const auto path = SW::Helper_t::appLocation().append("/xdatabase.db");
+  const auto path = SW::Helper_t::AppLocalDataLocation().append("/xdatabase.db");
   QFile file(path);
   return file.exists();
 }
@@ -49,8 +49,8 @@ int main(int argc, char *argv[]){
   a.setStyle("Fusion");
 
 
-  //Creacion de lacarpeta de la aplicación
-  QDir dir(SW::Helper_t::appLocation());
+  //Creacion de la carpeta de la aplicación
+  QDir dir(SW::Helper_t::AppLocalDataLocation());
   if(!dir.exists()){
       SW::Helper_t::createDataBase_dir();
       qInfo() << "Carpeta del sistema creado!";

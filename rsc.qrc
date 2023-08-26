@@ -19,5 +19,6 @@
         <file>img/7278151.png</file>
         <file>img/close.png</file>
         <file>img/open.png</file>
+        <file>img/backup.png</file>
     </qresource>
 </RCC>
