@@ -78,6 +78,20 @@
           </property>
          </spacer>
         </item>
+        <item>
+         <widget class="QToolButton" name="btnBackUp">
+          <property name="toolTip">
+           <string>Crear una copia de seguridad</string>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+          <property name="icon">
+           <iconset resource="rsc.qrc">
+            <normaloff>:/img/backup.png</normaloff>:/img/backup.png</iconset>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
      </layout>
