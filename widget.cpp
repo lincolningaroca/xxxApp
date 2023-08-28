@@ -114,12 +114,13 @@ Widget::Widget(QWidget *parent)
                                            "<ol>"
                                            "<li><strong>http://www.url.dominio</strong></li>"
                                            "<li><strong>https://www.url.dominio</strong></li>"
-                                           "<li><strong>www.url.dominio</strong></li>"
+                                           "<li><strong>http://www.url.dominio</strong></li>"
+                                           "<li><strong>https://www.url.dominio</strong></li>"
                                            "</ol>"
                                            "Tenga en cuenta que para éste sistema:<br>"
-                                           "http:// o https:// son opcionales.<br>"
-                                           "Lo mínimo que se espera es <strong>www.url.domino</strong><br>"
-                                           "<strong>Siendo (www.)</strong> requerida!"
+                                           "http:// o https:// son requeridos.<br>"
+                                           "Lo mínimo que se espera es <strong>(http | https)://www.url.domino</strong><br>"
+                                           "<strong>Siendo (www.)</strong> opcional!"
                                            "</cite></p>").arg(ui->txtUrl->text()));
               ui->txtUrl->selectAll();
               ui->txtUrl->setFocus(Qt::OtherFocusReason);
