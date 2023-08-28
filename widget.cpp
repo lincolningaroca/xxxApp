@@ -375,7 +375,15 @@ void Widget::initFrm() noexcept{
 
   ui->btnCancel->setDisabled(true);
 
-  //set shortcuts,
+  //set shortcuts, to button box url
+  ui->btnAdd->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_A));
+  ui->btnEdit->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_E));
+  ui->btnQuit->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Q));
+  ui->btnopen->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_O));
+  ui->btnCancel->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_C));
+
+  //set the focus to txturl control
+  ui->txtUrl->setFocus(Qt::OtherFocusReason);
 
 
 }
