@@ -287,7 +287,7 @@
         <item>
          <widget class="QPushButton" name="btnAdd">
           <property name="text">
-           <string>&amp;Add</string>
+           <string>Agregar</string>
           </property>
           <property name="icon">
            <iconset theme="edit-paste">
@@ -298,28 +298,28 @@
         <item>
          <widget class="QPushButton" name="btnEdit">
           <property name="text">
-           <string>&amp;Edit</string>
+           <string>Editar</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QPushButton" name="btnQuit">
           <property name="text">
-           <string>&amp;Quit</string>
+           <string>Quitar</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QPushButton" name="btnopen">
           <property name="text">
-           <string>&amp;Open Url</string>
+           <string>Abrir en el navegador</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QPushButton" name="btnCancel">
           <property name="text">
-           <string>&amp;Cancelar</string>
+           <string>Cancelar</string>
           </property>
          </widget>
         </item>

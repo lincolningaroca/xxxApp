@@ -106,7 +106,7 @@ Widget::Widget(QWidget *parent)
   //connect to slots to btnAdd new url
   QObject::connect(ui->btnAdd,&QPushButton::clicked, this, [&](){
 
-      if(ui->btnAdd->text().compare("&Add") == 0){
+      if(ui->btnAdd->text().compare("Agregar") == 0){
           if(!SW::Helper_t::urlValidate(ui->txtUrl->text())){
               QMessageBox::warning(this, SW::Helper_t::appName(),
                                    QString("<p><cite>La dirección: <strong>\"%1\"</strong>, no es válida!<br>"
@@ -155,7 +155,7 @@ Widget::Widget(QWidget *parent)
 
             }
           setUpTable(categoryList.key(ui->cboCategory->currentText()));
-          ui->btnAdd->setText("&Add");
+          ui->btnAdd->setText("Agregar");
           editAction(false);
           ui->txtUrl->clear();
           ui->pteDesc->clear();
@@ -345,7 +345,7 @@ Widget::Widget(QWidget *parent)
       ui->btnCancel->setDisabled(true);
       ui->txtUrl->setFocus();
       editAction(false);
-      ui->btnAdd->setText("&Add");
+      ui->btnAdd->setText("Agregar");
 
     });
 
@@ -374,6 +374,8 @@ void Widget::initFrm() noexcept{
   ui->btnLogOut->setShortcut(QKeySequence("Ctrl+Q"));
 
   ui->btnCancel->setDisabled(true);
+
+  //set shortcuts,
 
 
 }
@@ -448,7 +450,7 @@ void Widget::btnEdit() noexcept{
   editAction(true);
   ui->txtUrl->selectAll();
   ui->txtUrl->setFocus(Qt::OtherFocusReason);
-  ui->btnAdd->setText("&Update");
+  ui->btnAdd->setText("Actualizar");
 
 }
 
@@ -549,9 +551,9 @@ void Widget::setUptvUrlContextMenu() noexcept{
 
   ui->tvUrl->setContextMenuPolicy(Qt::ActionsContextMenu);
 
-  openUrl_ = new QAction(QIcon(":/img/openurl.png"), "Open Url", this);
-  editUrl_ = new QAction(QIcon(":/img/editurl.png"), "Edit url", this);
-  quittUrl_ = new QAction(QIcon(":/img/quiturl.png"), "Quit url", this);
+  openUrl_ = new QAction(QIcon(":/img/openurl.png"), "Abrir url en el navegador", this);
+  editUrl_ = new QAction(QIcon(":/img/editurl.png"), "Editar url", this);
+  quittUrl_ = new QAction(QIcon(":/img/quiturl.png"), "Quitar url", this);
 
   ui->tvUrl->addAction(openUrl_);
   ui->tvUrl->addAction(editUrl_);
