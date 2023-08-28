@@ -230,7 +230,7 @@ Widget::Widget(QWidget *parent)
     });
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-  //btn edit
+  //btn edit url
   QObject::connect(ui->btnEdit, &QPushButton::clicked, this, &Widget::btnEdit);
 
   QObject::connect(editUrl_, &QAction::triggered, this, &Widget::btnEdit);
@@ -309,7 +309,7 @@ Widget::Widget(QWidget *parent)
       has_data();
     });
 
-  //boton crear copia de seguridad
+  //connect boton crear copia de seguridad
   QObject::connect(ui->btnBackUp, &QToolButton::clicked, this, [&](){
       auto databasePath = SW::Helper_t::AppLocalDataLocation().append("/xdatabase.db");
       auto filePath = QFileDialog::getSaveFileName(this, "Crear una copia de seguridad", QDir::rootPath(),
@@ -337,6 +337,18 @@ Widget::Widget(QWidget *parent)
 
     });
 
+  //connect boton cancelar
+  QObject::connect(ui->btnCancel, &QAbstractButton::clicked, this, [&](){
+
+      ui->txtUrl->clear();
+      ui->pteDesc->clear();
+      ui->btnCancel->setDisabled(true);
+      ui->txtUrl->setFocus();
+      editAction(false);
+      ui->btnAdd->setText("&Add");
+
+    });
+
 }//Fin del constructor
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -361,6 +373,8 @@ void Widget::initFrm() noexcept{
   ui->btnLogOut->setDisabled(true);
   ui->btnLogOut->setShortcut(QKeySequence("Ctrl+Q"));
 
+  ui->btnCancel->setDisabled(true);
+
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -371,6 +385,8 @@ void Widget::editAction(bool op) noexcept{
   ui->btnQuit->setDisabled(op);
   ui->btnopen->setDisabled(op);
   ui->tvUrl->setDisabled(op);
+
+  ui->btnCancel->setEnabled(op);
 
 
 }
