@@ -100,7 +100,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox_3">
      <property name="title">
-      <string>Category</string>
+      <string>Categoría</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
@@ -241,7 +241,7 @@
         </sizepolicy>
        </property>
        <property name="title">
-        <string>Url Data</string>
+        <string>Datos de la dirección url</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
@@ -352,7 +352,7 @@
       </sizepolicy>
      </property>
      <property name="title">
-      <string>Url's</string>
+      <string>Lista de direcciones url</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
