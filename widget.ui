@@ -286,6 +286,9 @@
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QPushButton" name="btnAdd">
+          <property name="toolTip">
+           <string>Agregar dirección url (Ctrl+Shift+A)</string>
+          </property>
           <property name="text">
            <string>Agregar</string>
           </property>
@@ -297,6 +300,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="btnEdit">
+          <property name="toolTip">
+           <string>Editar dirección url (Ctrl+Shift+E)</string>
+          </property>
           <property name="text">
            <string>Editar</string>
           </property>
@@ -304,6 +310,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="btnQuit">
+          <property name="toolTip">
+           <string>Quitar dirección url (Ctrl+Shift+Q)</string>
+          </property>
           <property name="text">
            <string>Quitar</string>
           </property>
@@ -311,6 +320,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="btnopen">
+          <property name="toolTip">
+           <string>Abrir dirección url en el navegador (Ctrl+Shift+O)</string>
+          </property>
           <property name="text">
            <string>Abrir en el navegador</string>
           </property>
@@ -318,6 +330,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="btnCancel">
+          <property name="toolTip">
+           <string>Cancelar editar dirección url (Ctrl+Shift+C)</string>
+          </property>
           <property name="text">
            <string>Cancelar</string>
           </property>
