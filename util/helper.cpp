@@ -39,7 +39,8 @@ namespace SW {
     //  static QRegularExpression regex("^(http|https:\\/\\/)?[\\w\\-]+(\\.[\\w\\-]+)+[/#?]?.*$");
     //  static QRegularExpression regex(R"(^(http:\/\/|https:\/\/)?[w]{3}(\.\w+)+[.\w]{2,3}[.\w]?[/#?]?.*$)");
     //  static QRegularExpression regex(R"(^((http|https):\/\/)?(www\.([\w+]))+\.([\w])?)");
-    static QRegularExpression regex(R"(^(:?(http|https)://)?(:?www\..+\.\w{2,4})(:?\.\w)?(:?.+)?$)");
+//    static QRegularExpression regex(R"(^(:?(http|https)://)?(:?www\..+\.\w{2,4})(:?\.\w)?(:?.+)?$)");
+    static QRegularExpression regex(R"(^(https?|ftp)://[^\s/$.?#].[^\s]*$)");
     auto match = regex.match(url);
     return match.hasMatch();
   }
