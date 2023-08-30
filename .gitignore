@@ -14,3 +14,4 @@ db/xxxdb.db
 db/xdatabase.db
 img/*
 resetpassworddialog.ui.autosave
+.gitignore.swp
