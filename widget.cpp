@@ -311,20 +311,33 @@ Widget::Widget(QWidget *parent)
 
   //connect boton crear copia de seguridad
   QObject::connect(ui->btnBackUp, &QToolButton::clicked, this, [&](){
+      QProcess process;
+      auto path_app = ("sqlite3.exe");
+      QStringList argv{};
       auto databasePath = SW::Helper_t::AppLocalDataLocation().append("/xdatabase.db");
       auto filePath = QFileDialog::getSaveFileName(this, "Crear una copia de seguridad", QDir::rootPath(),
                                                    "Archivos de copia de seguridad (*.bak)");
       if(filePath.isEmpty())
         return;
 
-      auto path_app = SW::Helper_t::app_pathLocation().append("/exec/.dump.bat");
-      if(path_app.isEmpty())
-        return;
+      if(filePath.contains(' ')){
+          QMessageBox::warning(this, SW::Helper_t::appName(), "El nombre del archivo no puede contener espacios.");
+          return;
+        }
+      QFileInfo fileInfo(filePath);
 
-      QStringList argv{};
-      argv << databasePath << filePath;
 
-      QProcess process;
+      auto absolutePath{fileInfo.absolutePath()};
+      auto baseName{fileInfo.baseName()};
+      auto extension{fileInfo.completeSuffix()};
+
+      auto fecha{QDate::currentDate().toString("yyyy-MM-dd")};
+      QString path{".backup %1/%2-%3.%4"};
+
+
+      argv << databasePath << path.arg(absolutePath,baseName,fecha,extension);
+
+
 
       if(!process.startDetached(path_app, argv)){
           QMessageBox::critical(this, SW::Helper_t::appName(), "Error en la ejecución.\n"+
