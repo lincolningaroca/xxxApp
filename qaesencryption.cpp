@@ -380,7 +380,7 @@ void QAESEncryption::invShiftRows()
 
     //Shift 1 to right
     temp   = (quint8)it[13];
-    it[13] = (quint8)stattic_cast<>it[9];
+    it[13] = (quint8)it[9];
     it[9]  = (quint8)it[5];
     it[5]  = (quint8)it[1];
     it[1]  = (quint8)temp;

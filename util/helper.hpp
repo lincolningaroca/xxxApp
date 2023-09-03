@@ -3,6 +3,7 @@
 #include <QStringView>
 #include <QDesktopServices>
 #include <QApplication>
+#include "qaesencryption.h"
 
 namespace SW {
 
@@ -32,6 +33,8 @@ struct Helper_t{
   static QString getColorReg(QByteArray dataColor) noexcept;
 
   static QString hashGenerator(const QByteArray&) noexcept;
+  static QByteArray encrypt_txt(const QString& txt) noexcept;
+  static QString decrypt_txt(const QByteArray &txt) noexcept;
 
   static QPalette set_Theme(SW::Theme theme) noexcept;
 
@@ -46,6 +49,14 @@ struct Helper_t{
 
 private:
   inline static const QString dbDir_name{"/xxxdatabase"};
+
+  //variables y constantes de encriptacion
+  inline static QAESEncryption encrypt{QAESEncryption::AES_256, QAESEncryption::CBC};
+  inline static const QString key {"swsystems@2311046"};
+  inline static const QString iv {"carolina@m1am0r"};
+  inline static const QByteArray hashKey {QCryptographicHash::hash(key.toLatin1(), QCryptographicHash::Sha256)};
+  inline static const QByteArray hashIV {QCryptographicHash::hash(iv.toLatin1(), QCryptographicHash::Md5)};
+
 };
 
 } // namespace SW

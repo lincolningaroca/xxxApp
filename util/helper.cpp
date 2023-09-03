@@ -1,7 +1,7 @@
 #include "helper.hpp"
 #include <QPalette>
 #include <QApplication>
-//#include <QGuiApplication>
+
 #include <QStyle>
 
 namespace SW {
@@ -11,6 +11,18 @@ namespace SW {
     crypto.addData(data);
     return QString{crypto.result().toHex()};
 
+  }
+
+  QByteArray Helper_t::encrypt_txt(const QString &txt) noexcept{
+    QByteArray encodeText = encrypt.encode(txt.toLatin1(), hashKey, hashIV);
+    return encodeText;
+
+  }
+
+  QString Helper_t::decrypt_txt(const QByteArray &txt) noexcept{
+    QByteArray decodeText = encrypt.decode(txt, hashKey, hashIV);
+    QString decodedString = QString(encrypt.removePadding(decodeText));
+    return decodedString;
   }
 
   QByteArray Helper_t::setColorReg(const QString& color) noexcept
@@ -39,7 +51,7 @@ namespace SW {
     //  static QRegularExpression regex("^(http|https:\\/\\/)?[\\w\\-]+(\\.[\\w\\-]+)+[/#?]?.*$");
     //  static QRegularExpression regex(R"(^(http:\/\/|https:\/\/)?[w]{3}(\.\w+)+[.\w]{2,3}[.\w]?[/#?]?.*$)");
     //  static QRegularExpression regex(R"(^((http|https):\/\/)?(www\.([\w+]))+\.([\w])?)");
-//    static QRegularExpression regex(R"(^(:?(http|https)://)?(:?www\..+\.\w{2,4})(:?\.\w)?(:?.+)?$)");
+    //    static QRegularExpression regex(R"(^(:?(http|https)://)?(:?www\..+\.\w{2,4})(:?\.\w)?(:?.+)?$)");
     static QRegularExpression regex(R"(^(https?|ftp)://[^\s/$.?#].[^\s]*$)");
     auto match = regex.match(url);
     return match.hasMatch();
