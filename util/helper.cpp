@@ -13,17 +13,17 @@ namespace SW {
 
   }
 
-  QByteArray Helper_t::encrypt_txt(const QString &txt) noexcept{
-    QByteArray encodeText = encrypt.encode(txt.toLatin1(), hashKey, hashIV);
-    return encodeText;
+//  QByteArray Helper_t::encrypt_txt(const QString &txt) noexcept{
+//    QByteArray encodeText = encrypt.encode(txt.toLatin1(), hashKey, hashIV);
+//    return encodeText;
 
-  }
+//  }
 
-  QString Helper_t::decrypt_txt(const QByteArray &txt) noexcept{
-    QByteArray decodeText = encrypt.decode(txt, hashKey, hashIV);
-    QString decodedString = QString(encrypt.removePadding(decodeText));
-    return decodedString;
-  }
+//  QString Helper_t::decrypt_txt(const QByteArray &txt) noexcept{
+//    QByteArray decodeText = encrypt.decode(txt, hashKey, hashIV);
+//    QString decodedString = QString(encrypt.removePadding(decodeText));
+//    return decodedString;
+//  }
 
   QByteArray Helper_t::setColorReg(const QString& color) noexcept
   {

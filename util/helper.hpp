@@ -3,7 +3,7 @@
 #include <QStringView>
 #include <QDesktopServices>
 #include <QApplication>
-#include "qaesencryption.h"
+//#include "qaesencryption.h"
 
 namespace SW {
 
@@ -51,11 +51,11 @@ private:
   inline static const QString dbDir_name{"/xxxdatabase"};
 
   //variables y constantes de encriptacion
-  inline static QAESEncryption encrypt{QAESEncryption::AES_256, QAESEncryption::CBC};
-  inline static const QString key {"swsystems@2311046"};
-  inline static const QString iv {"carolina@m1am0r"};
-  inline static const QByteArray hashKey {QCryptographicHash::hash(key.toLatin1(), QCryptographicHash::Sha256)};
-  inline static const QByteArray hashIV {QCryptographicHash::hash(iv.toLatin1(), QCryptographicHash::Md5)};
+  //inline static QAESEncryption encrypt{QAESEncryption::AES_256, QAESEncryption::CBC};
+  //inline static const QString key {"swsystems@2311046"};
+  //inline static const QString iv {"carolina@m1am0r"};
+  //inline static const QByteArray hashKey {QCryptographicHash::hash(key.toLatin1(), QCryptographicHash::Sha256)};
+  //inline static const QByteArray hashIV {QCryptographicHash::hash(iv.toLatin1(), QCryptographicHash::Md5)};
 
 };
 
