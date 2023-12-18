@@ -20,5 +20,6 @@
         <file>img/close.png</file>
         <file>img/open.png</file>
         <file>img/backup.png</file>
+        <file>img/desc.png</file>
     </qresource>
 </RCC>
