@@ -540,14 +540,17 @@ void Widget::showAlldescription() noexcept{
   // auto* otherModel = dynamic_cast<QSqlTableModel*>(ui->tvUrl->model());
   auto row = ui->tvUrl->currentIndex().row();
   auto desc = ui->tvUrl->model()->index(row,2).data().toString();
+  auto url = ui->tvUrl->model()->index(row,1).data().toString();
 
   QMessageBox msgDescription;
 
   // msgDescription.setIcon(QMessageBox::Information);
   QPixmap pixMap(":/img/desc.png");
   // pixMap.scaled(32,32);
+  msgDescription.setWindowTitle(qApp->applicationName().append(" - Descripción completa de la URL"));
   msgDescription.setIconPixmap(pixMap.scaled(64, 64));
   msgDescription.setText(desc);
+  msgDescription.setDetailedText(url);
   msgDescription.addButton("Cerrar descripción", QMessageBox::AcceptRole);
 
   msgDescription.exec();
