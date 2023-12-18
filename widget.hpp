@@ -12,6 +12,7 @@ QT_END_NAMESPACE
 
 class QAction;
 class QSqlTableModel;
+class QMenu;
 
 class Widget : public QWidget{
   Q_OBJECT
@@ -29,6 +30,11 @@ private:
   QAction* openUrl_{ nullptr };
   QAction* editUrl_{ nullptr };
   QAction* quittUrl_{ nullptr };
+  QAction* showDescDetail_{ nullptr };
+
+  QMenu* contextMenu{nullptr};
+
+
   QSqlTableModel* xxxModel_{ nullptr };
   inline static uint32_t userId_{0};
   SW::SessionStatus sessionStatus_{SW::SessionStatus::Session_closed};
@@ -77,4 +83,8 @@ private:
 protected:
   virtual void closeEvent(QCloseEvent *event) override;
 
+
+  // QObject interface
+public:
+  bool eventFilter(QObject* watched, QEvent* event) override;
 };

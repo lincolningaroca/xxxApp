@@ -13,6 +13,7 @@
 #include "logindialog.hpp"
 #include "util/helper.hpp"
 #include <QDebug>
+#include <QMenu>
 
 
 Widget::Widget(QWidget *parent)
@@ -570,17 +571,30 @@ void Widget::setUpCboCategoryContextMenu() noexcept{
 
 void Widget::setUptvUrlContextMenu() noexcept{
 
-  ui->tvUrl->setContextMenuPolicy(Qt::ActionsContextMenu);
+  // ui->tvUrl->setContextMenuPolicy(Qt::ActionsContextMenu);
+  contextMenu = new QMenu(this);
 
-  openUrl_ = new QAction(QIcon(":/img/openurl.png"), "Abrir url en el navegador", this);
-  editUrl_ = new QAction(QIcon(":/img/editurl.png"), "Editar url", this);
-  quittUrl_ = new QAction(QIcon(":/img/quiturl.png"), "Quitar url", this);
+  openUrl_ = contextMenu->addAction(QIcon(":/img/openurl.png"), "Abrir url en el navegador");
+  editUrl_ = contextMenu->addAction(QIcon(":/img/editurl.png"), "Editar url");
+  quittUrl_ = contextMenu->addAction(QIcon(":/img/quiturl.png"), "Quitar url");
+  contextMenu->addSeparator();
+  showDescDetail_ = contextMenu->addAction("Ver descripción de URL completa");
 
-  ui->tvUrl->addAction(openUrl_);
-  ui->tvUrl->addAction(editUrl_);
-  ui->tvUrl->addAction(quittUrl_);
+  ui->tvUrl->installEventFilter(this);
+
+  // ui->tvUrl->addAction(openUrl_);
+  // ui->tvUrl->addAction(editUrl_);
+  // ui->tvUrl->addAction(quittUrl_);
 
 
+}
+
+bool Widget::eventFilter(QObject* watched, QEvent* event){
+  if(watched == ui->tvUrl && event->type() == QEvent::ContextMenu){
+      QContextMenuEvent* contextMenuEvent = static_cast<QContextMenuEvent*>(event);
+      contextMenu->exec(contextMenuEvent->globalPos());
+    }
+  return QWidget::eventFilter(watched, event);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
