@@ -51,6 +51,7 @@ private:
   void writeSettings() const noexcept;
   void readSettings() noexcept;
 
+  void showAlldescription() noexcept;
 
   void setLabelInfo(const QString &color, const QString& userName="PUBLIC") noexcept;
   void loadListCategory(uint32_t user_id) noexcept;

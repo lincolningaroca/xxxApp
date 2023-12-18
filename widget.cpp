@@ -362,6 +362,7 @@ Widget::Widget(QWidget *parent)
       ui->btnAdd->setText("Agregar");
 
     });
+  QObject::connect(showDescDetail_, &QAction::triggered, this, &Widget::showAlldescription);
 
 }//Fin del constructor
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -532,6 +533,27 @@ void Widget::readSettings() noexcept{
 
   ui->cboTheme->setCurrentIndex(static_cast<int>(theme));
   restoreGeometry(settings.value("position").toByteArray());
+}
+
+void Widget::showAlldescription() noexcept{
+
+  // auto* otherModel = dynamic_cast<QSqlTableModel*>(ui->tvUrl->model());
+  auto row = ui->tvUrl->currentIndex().row();
+  auto desc = ui->tvUrl->model()->index(row,2).data().toString();
+
+  QMessageBox msgDescription;
+
+  // msgDescription.setIcon(QMessageBox::Information);
+  QPixmap pixMap(":/img/desc.png");
+  // pixMap.scaled(32,32);
+  msgDescription.setIconPixmap(pixMap.scaled(64, 64));
+  msgDescription.setText(desc);
+  msgDescription.addButton("Cerrar descripción", QMessageBox::AcceptRole);
+
+  msgDescription.exec();
+
+  // QMessageBox::information(this, qApp->applicationName(), desc);
+
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
