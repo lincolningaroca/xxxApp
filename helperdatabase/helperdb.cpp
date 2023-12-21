@@ -6,7 +6,7 @@
 namespace SW {
 
   HelperDataBase_t::HelperDataBase_t()
-    :db_{QSqlDatabase::database("xxxConection")},
+    :db_{QSqlDatabase::database(QStringLiteral("xxxConection"))},
       qry_{db_}
   {
 
@@ -15,7 +15,7 @@ namespace SW {
   bool HelperDataBase_t::userExists(QStringView user) noexcept{
 
     [[maybe_unused]]
-        auto ret = qry_.prepare("SELECT COUNT(*) FROM users WHERE user = ?");
+        auto ret = qry_.prepare(QStringLiteral("SELECT COUNT(*) FROM users WHERE user = ?"));
     qry_.addBindValue(user.toString());
 
     if(qry_.exec()){
@@ -28,8 +28,8 @@ namespace SW {
                                      QStringView rescue_type,  QStringView val1,  QStringView val2) noexcept{
 
     [[maybe_unused]]
-        auto res = qry_.prepare("INSERT INTO users(user,password,user_profile,rescue_type,first_value,confirm_value) "
-                                "VALUES(?,?,?,?,?,?)");
+        auto res = qry_.prepare(QStringLiteral("INSERT INTO users(user,password,user_profile,rescue_type,first_value,confirm_value) "
+                                "VALUES(?,?,?,?,?,?)"));
     qry_.addBindValue(user.toString());
     qry_.addBindValue(password.toString());
     qry_.addBindValue(user_prof.toString());
@@ -43,7 +43,7 @@ namespace SW {
   bool HelperDataBase_t::logIn(QStringView user, QStringView password) noexcept{
 
     [[maybe_unused]]
-        auto res = qry_.prepare("SELECT COUNT(*) FROM users WHERE user = ? AND password = ?");
+        auto res = qry_.prepare(QStringLiteral("SELECT COUNT(*) FROM users WHERE user = ? AND password = ?"));
     qry_.addBindValue(user.toString().simplified());
     qry_.addBindValue(SW::Helper_t::hashGenerator(password.toString().simplified().toLatin1()));
     if(qry_.exec())
@@ -56,7 +56,7 @@ namespace SW {
   bool HelperDataBase_t::saveCategoryData( QStringView catName,  QStringView desc, uint32_t userid)  noexcept{
 
     [[maybe_unused]]
-        auto res = qry_.prepare("INSERT INTO category(category_name, desc, userid) VALUES(?,?,?)");
+        auto res = qry_.prepare(QStringLiteral("INSERT INTO category(category_name, desc, userid) VALUES(?,?,?)"));
     qry_.addBindValue(catName.toString().simplified().toUpper(), QSql::In);
     qry_.addBindValue(desc.toString().simplified().toUpper(), QSql::In);
     qry_.addBindValue(userid, QSql::In);
@@ -66,7 +66,7 @@ namespace SW {
   bool HelperDataBase_t::updateCategory( QStringView url,  QStringView desc, uint32_t category_id, uint32_t user_id) noexcept{
 
     [[ maybe_unused ]]
-        auto res = qry_.prepare("UPDATE category SET category_name=?, desc=? WHERE category_id=? AND userid=? ");
+        auto res = qry_.prepare(QStringLiteral("UPDATE category SET category_name=?, desc=? WHERE category_id=? AND userid=? "));
     qry_.addBindValue(url.toString().simplified(), QSql::In);
     qry_.addBindValue(desc.toString().simplified(), QSql::In);
     qry_.addBindValue(category_id, QSql::In);
@@ -78,7 +78,7 @@ namespace SW {
   bool HelperDataBase_t::saveData_url(QStringView url, QStringView desc, std::uint32_t id) noexcept{
 
     [[maybe_unused]]
-        auto res = qry_.prepare("INSERT INTO urls(url,desc,categoryid) VALUES(?,?,?)");
+        auto res = qry_.prepare(QStringLiteral("INSERT INTO urls(url,desc,categoryid) VALUES(?,?,?)"));
     qry_.addBindValue(url.toString().simplified(), QSql::In);
     qry_.addBindValue(desc.toString().simplified().toUpper(), QSql::In);
     qry_.addBindValue(id, QSql::In);
@@ -88,13 +88,13 @@ namespace SW {
   bool HelperDataBase_t::deleteUrls(std::uint8_t op, uint32_t categoryId, uint32_t urlId) noexcept{
 
     if(op == 1){
-        [[maybe_unused]] auto res=qry_.prepare("DELETE FROM urls WHERE categoryid=?");
+        [[maybe_unused]] auto res=qry_.prepare(QStringLiteral("DELETE FROM urls WHERE categoryid=?"));
         //        auto categoryId=categoryList.key(category);
         qry_.addBindValue(categoryId, QSql::In);
         return qry_.exec();
 
       }else{
-        [[maybe_unused]] auto res=qry_.prepare("DELETE FROM urls WHERE url_id=?");
+        [[maybe_unused]] auto res=qry_.prepare(QStringLiteral("DELETE FROM urls WHERE url_id=?"));
         //        auto currentRow = ui->tvUrl->currentIndex().row();
         //        auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
         //        auto urlId=urlList.key(url);
@@ -110,7 +110,7 @@ namespace SW {
     categoryList.clear();
 
     [[maybe_unused]]
-        auto res=qry_.prepare("SELECT category_id, category_name FROM category WHERE userid = ?");
+        auto res=qry_.prepare(QStringLiteral("SELECT category_id, category_name FROM category WHERE userid = ?"));
 
     qry_.addBindValue(user_id);
     if(qry_.exec())
@@ -126,7 +126,7 @@ namespace SW {
   {
 
     [[maybe_unused]]
-        auto res=qry_.prepare("DELETE FROM category WHERE category_id=?");
+        auto res=qry_.prepare(QStringLiteral("DELETE FROM category WHERE category_id=?"));
     //    auto categoryId=categoryList.key(ui->cboCategory->currentText());
     qry_.addBindValue(categoryId, QSql::In);
     return qry_.exec();
@@ -136,7 +136,7 @@ namespace SW {
 
   bool HelperDataBase_t::validateAnswer(QStringView respuesta, uint32_t userId) noexcept{
     [[maybe_unused]]
-        auto res = qry_.prepare("SELECT COUNT(*) FROM users WHERE confirm_value = ? AND user_id = ?");
+        auto res = qry_.prepare(QStringLiteral("SELECT COUNT(*) FROM users WHERE confirm_value = ? AND user_id = ?"));
     qry_.addBindValue(SW::Helper_t::hashGenerator(respuesta.toString().simplified().toLatin1()));
     qry_.addBindValue(userId);
     if(qry_.exec())
@@ -148,7 +148,7 @@ namespace SW {
 
   bool HelperDataBase_t::resetPassword(QStringView password, uint32_t userId) noexcept{
     [[ maybe_unused ]]
-    auto res = qry_.prepare("UPDATE users SET password=? WHERE user_id=?");
+    auto res = qry_.prepare(QStringLiteral("UPDATE users SET password=? WHERE user_id=?"));
     auto pass = password.toString();
     qry_.addBindValue(SW::Helper_t::hashGenerator(pass.simplified().toLatin1()), QSql::In);
     qry_.addBindValue(userId, QSql::In);
@@ -166,7 +166,7 @@ namespace SW {
 
     uint32_t ret_value{0};
     [[maybe_unused]]
-        auto res = qry_.prepare("SELECT user_id FROM users WHERE user = ? AND user_profile = ?");
+        auto res = qry_.prepare(QStringLiteral("SELECT user_id FROM users WHERE user = ? AND user_profile = ?"));
     qry_.addBindValue(user.simplified());
     qry_.addBindValue(user_profile.simplified());
     if(qry_.exec())
@@ -180,7 +180,7 @@ namespace SW {
 
     QStringList dataCategory{};
     [[maybe_unused]]
-        auto res=qry_.prepare("SELECT category_name, desc FROM category WHERE category_id=?");
+        auto res=qry_.prepare(QStringLiteral("SELECT category_name, desc FROM category WHERE category_id=?"));
     qry_.addBindValue(category_id);
     if(qry_.exec())
       if(qry_.next()){
@@ -198,7 +198,7 @@ namespace SW {
     QString errMessage{};
 
     [[maybe_unused]]
-        auto res=qry_.prepare("SELECT COUNT (*) FROM urls WHERE categoryid=?");
+        auto res=qry_.prepare(QStringLiteral("SELECT COUNT (*) FROM urls WHERE categoryid=?"));
 
     qry_.addBindValue(categoryId, QSql::In);
     if(!qry_.exec()){
@@ -219,7 +219,7 @@ namespace SW {
   QString HelperDataBase_t::validateRescueType(uint32_t userId) noexcept{
 
     [[maybe_unused]]
-        auto res=qry_.prepare("SELECT rescue_type FROM users WHERE user_id = ?");
+        auto res=qry_.prepare(QStringLiteral("SELECT rescue_type FROM users WHERE user_id = ?"));
 
     qry_.addBindValue(userId, QSql::In);
     if(qry_.exec())
@@ -231,7 +231,7 @@ namespace SW {
 
   QString HelperDataBase_t::getQuestion(uint32_t userId) noexcept{
     [[maybe_unused]]
-        auto res=qry_.prepare("SELECT first_value FROM users WHERE user_id = ?");
+        auto res=qry_.prepare(QStringLiteral("SELECT first_value FROM users WHERE user_id = ?"));
 
     qry_.addBindValue(userId, QSql::In);
     if(qry_.exec())

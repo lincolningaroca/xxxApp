@@ -53,7 +53,7 @@ private:
 
   void showAlldescription() noexcept;
 
-  void setLabelInfo(const QString &color, const QString& userName="PUBLIC") noexcept;
+  void setLabelInfo(const QString &color, const QString& userName=QStringLiteral("PUBLIC")) noexcept;
   void loadListCategory(uint32_t user_id) noexcept;
 
   //menbers var

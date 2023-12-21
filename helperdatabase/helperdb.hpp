@@ -38,7 +38,7 @@ struct HelperDataBase_t{
 
   QHash<uint32_t, QString> loadList_Category(uint32_t user_id) noexcept;
 
-  uint32_t getUser_id(const QString &user, const QString &user_profile = "PUBLIC") noexcept;
+  uint32_t getUser_id(const QString &user, const QString &user_profile = QStringLiteral("PUBLIC")) noexcept;
   QStringList dataCategory(uint32_t category_id) noexcept;
   std::tuple<bool, QString> verifyDeleteCategory(uint32_t categoryId) noexcept;
   QString validateRescueType(uint32_t userId) noexcept;

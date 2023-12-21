@@ -20,12 +20,12 @@ LogInDialog::LogInDialog(QWidget *parent) :
   QObject::connect(ui->pbLogIn, &QPushButton::clicked, this, [&](){
 
       if(!helperdb_.logIn(ui->txtUser->text().simplified(), ui->txtPassword->text().simplified())){
-          QMessageBox::warning(this, SW::Helper_t::appName(), "<span>"
+          QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("<span>"
                                                               "<strong>"
                                                               "Los datos que ingreso son incorrectos\n"
                                                               "vuelva a intentarlo."
                                                               "</strong>"
-                                                              "</span>");
+                                                              "</span>"));
           ui->txtUser->selectAll();
           ui->txtUser->setFocus(Qt::OtherFocusReason);
 
@@ -42,7 +42,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
   QObject::connect(ui->btnOtherOptions, &QToolButton::toggled, ui->widget, [&](){
       if(ui->btnOtherOptions->isChecked()){
-          ui->btnOtherOptions->setIcon(QIcon(":/img/up.png"));
+          ui->btnOtherOptions->setIcon(QIcon(QStringLiteral(":/img/up.png")));
           ui->widget->setVisible(true);
           setStateControls(true);
           ui->txtNewUser->setFocus(Qt::OtherFocusReason);
@@ -70,32 +70,32 @@ LogInDialog::LogInDialog(QWidget *parent) :
   //connect to create user button
   QObject::connect(ui->btnCreateUser, &QAbstractButton::clicked, this, [&](){
       if(Validate_hasNoEmpty()){
-          QMessageBox::warning(this, SW::Helper_t::appName(), "<span><em>Todos los campos son requeridos!</em></span>");
+          QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("<span><em>Todos los campos son requeridos!</em></span>"));
           ui->txtNewUser->setFocus();
           return;
         }
       if(!SW::Helper_t::verify_Values(ui->txtNewPassword->text(), ui->txtRePassword->text())){
           QMessageBox::warning(this, SW::Helper_t::appName(),
-                               "<span>"
+                               QStringLiteral("<span>"
                                "<strong>"
                                "<em>"
                                "El password o clave de confirmación no coincide!"
                                "</em>"
                                "</strong>"
-                               "</span>");
+                               "</span>"));
           ui->txtRePassword->selectAll();
           ui->txtRePassword->setFocus();
           return;
         }
-      if(ui->cboRestoreType->currentText() == "Pin numérico"){
+      if(ui->cboRestoreType->currentText() == QStringLiteral("Pin numérico")){
           if(ui->txtfirstValue->text().count() < 4 || ui->txtConfirmValue->text().count() <4){
-              QMessageBox::warning(this, SW::Helper_t::appName(), "<span><em>El PIN numérico debe contener 4 digitos!</em></span>");
+              QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("<span><em>El PIN numérico debe contener 4 digitos!</em></span>"));
               ui->txtfirstValue->selectAll();
               ui->txtfirstValue->setFocus();
               return;
             }
           if(!SW::Helper_t::verify_Values(ui->txtfirstValue->text(), ui->txtConfirmValue->text())){
-              QMessageBox::warning(this, SW::Helper_t::appName(), "<span><strong><em>El número de confirmación no coincide!</em></strong></span>");
+              QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("<span><strong><em>El número de confirmación no coincide!</em></strong></span>"));
               ui->txtConfirmValue->selectAll();
               ui->txtConfirmValue->setFocus();
               return;
@@ -103,7 +103,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
         }
       if(!ui->checkBox->isChecked()){
-          QMessageBox::warning(this, SW::Helper_t::appName(), "<span><em>Debe marcar siempre el perfil de usuario!</em></span>");
+          QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("<span><em>Debe marcar siempre el perfil de usuario!</em></span>"));
           return;
         }
 
@@ -122,7 +122,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
       auto password = SW::Helper_t::hashGenerator(ui->txtRePassword->text().toLatin1());
       QString first_value{};
       QString confirm_value{};
-      if(ui->cboRestoreType->currentText() == "Pin numérico"){
+      if(ui->cboRestoreType->currentText() == QStringLiteral("Pin numérico")){
 
           first_value = SW::Helper_t::hashGenerator(ui->txtfirstValue->text().toLatin1());
           confirm_value = SW::Helper_t::hashGenerator(ui->txtConfirmValue->text().toLatin1());
@@ -134,7 +134,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
       if(helperdb_.createUser(ui->txtNewUser->text(), password, ui->checkBox->text(),
                               ui->cboRestoreType->currentText(), first_value, confirm_value)){
-          QMessageBox::information(this, SW::Helper_t::appName(), "<span><em>El nuevo usuario fue creado con éxito!</em></span>");
+          QMessageBox::information(this, SW::Helper_t::appName(), QStringLiteral("<span><em>El nuevo usuario fue creado con éxito!</em></span>"));
           clearControls();
           ui->btnOtherOptions->toggle();
         }
@@ -144,7 +144,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
   QObject::connect(ui->btnResetPassword, &QPushButton::clicked, this, [&](){
       ResetPasswordDialog resetPassword{this};
-      resetPassword.setWindowTitle(SW::Helper_t::appName().append(" - Resetear clave o password"));
+      resetPassword.setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - Resetear clave o password")));
       resetPassword.exec();
 
     });
@@ -174,7 +174,7 @@ LogInDialog::~LogInDialog()
 
 void LogInDialog::setUp_Form() noexcept{
 
-  setWindowTitle(SW::Helper_t::appName().append(" - inicio de sesión"));
+  setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - inicio de sesión")));
 
   ui->txtUser->setPlaceholderText("Usuario");
   ui->txtUser->setClearButtonEnabled(true);
@@ -183,7 +183,7 @@ void LogInDialog::setUp_Form() noexcept{
   ui->txtPassword->setPlaceholderText("Clave o password");
   ui->txtPassword->setClearButtonEnabled(true);
 
-  ui->btnOtherOptions->setIcon(QIcon(":/img/down.png"));
+  ui->btnOtherOptions->setIcon(QIcon(QStringLiteral(":/img/down.png")));
   layout()->setSizeConstraint(QLayout::SetFixedSize);
 
   ui->btnOtherOptions->setToolTip("<p>"
@@ -216,8 +216,8 @@ void LogInDialog::setUp_Form() noexcept{
   ui->txtConfirmValue->setEchoMode(QLineEdit::Password);
 
   //set the combo box options
-  ui->cboRestoreType->addItem(QIcon(":/img/paper_pin.png"), "Pregunta secreta");
-  ui->cboRestoreType->addItem(QIcon(":/img/paper_pin.png"), "Pin numérico");
+  ui->cboRestoreType->addItem(QIcon(QStringLiteral(":/img/paper_pin.png")), QStringLiteral("Pregunta secreta"));
+  ui->cboRestoreType->addItem(QIcon(QStringLiteral(":/img/paper_pin.png")), QStringLiteral("Pin numérico"));
   ui->checkBox->setChecked(true);
 
 }
@@ -246,7 +246,7 @@ void LogInDialog::setOptionsToComboBox(int index) noexcept{
       ui->txtConfirmValue->clear();
       ui->txtfirstValue->setPlaceholderText("Ingrese PIN numérico de 4 cifras!");
       ui->txtConfirmValue->setPlaceholderText("Vuelva a ingresar el número");
-      auto* validator = new QRegularExpressionValidator(QRegularExpression("^\\d{4}$"), this);
+      auto* validator = new QRegularExpressionValidator(QRegularExpression(QStringLiteral("^\\d{4}$")), this);
       ui->txtfirstValue->setValidator(validator);
       ui->txtConfirmValue->setValidator(validator);
       ui->txtfirstValue->setFocus(Qt::OtherFocusReason);
@@ -274,14 +274,14 @@ bool LogInDialog::Validate_hasNoEmpty() const noexcept{
 void LogInDialog::writeSettings() const noexcept{
   QSettings settings(qApp->organizationName(), SW::Helper_t::appName());
 
-  settings.setValue("pos_login_form", saveGeometry());
+  settings.setValue(QStringLiteral("pos_login_form"), saveGeometry());
 
 }
 
 void LogInDialog::readSettings(){
   QSettings settings(qApp->organizationName(), SW::Helper_t::appName());
 
-  restoreGeometry(settings.value("pos_login_form").toByteArray());
+  restoreGeometry(settings.value(QStringLiteral("pos_login_form")).toByteArray());
 
 }
 
@@ -294,12 +294,12 @@ void LogInDialog::setFeatures(QLineEdit *w, QCheckBox *b, bool checked) noexcept
 
   if(checked){
       w->setEchoMode(QLineEdit::Normal);
-      b->setIcon(QIcon(":/img/open.png"));
+      b->setIcon(QIcon(QStringLiteral(":/img/open.png")));
       b->setToolTip("Ocultar los caracteres.");
     }
   else{
       w->setEchoMode(QLineEdit::Password);
-      b->setIcon(QIcon(":/img/close.png"));
+      b->setIcon(QIcon(QStringLiteral(":/img/close.png")));
       b->setToolTip("Mostrar los caracteres.");
 
     }

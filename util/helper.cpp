@@ -62,7 +62,7 @@ namespace SW {
     auto appLocation = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
     QDir docDir(appLocation);
 
-    return docDir.mkpath("xxxdatabase");
+    return docDir.mkpath(QStringLiteral("xxxdatabase"));
 
   }
 

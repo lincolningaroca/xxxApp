@@ -10,11 +10,11 @@ dlgNewCategory::dlgNewCategory(OpenMode mode, const QStringList &list, QWidget *
   setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
 
   if(mode == OpenMode::Edit){
-    setWindowTitle(SW::Helper_t::appName().append(" - Edit category data."));
+    setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - Edit category data.")));
     ui->txtCategory->setText(list.value(0));
     ui->pteDesc->setPlainText(list.value(1));
   }else{
-    setWindowTitle(SW::Helper_t::appName().append(" - New category."));
+    setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - New category.")));
   }
 
 
@@ -75,7 +75,7 @@ QString dlgNewCategory::descriptionToolTip() const noexcept{
 
 bool dlgNewCategory::validateData() const noexcept{
   if(ui->txtCategory->text().simplified().isEmpty()){
-    QMessageBox::warning(nullptr, SW::Helper_t::appName(), "Debe ingresar un nombre de categoría!\n");
+    QMessageBox::warning(nullptr, SW::Helper_t::appName(), QStringLiteral("Debe ingresar un nombre de categoría!\n"));
     ui->txtCategory->setFocus(Qt::OtherFocusReason);
     return false;
   }
