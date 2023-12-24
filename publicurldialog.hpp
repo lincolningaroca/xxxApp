@@ -1,13 +1,14 @@
 #pragma once
 
 #include <QDialog>
+#include <QSqlDatabase>
+#include <QHash>
 
 namespace Ui {
   class PublicUrlDialog;
 }
 
-class PublicUrlDialog : public QDialog
-{
+class PublicUrlDialog : public QDialog{
   Q_OBJECT
 
 public:
@@ -16,5 +17,11 @@ public:
 
 private:
   Ui::PublicUrlDialog *ui;
+
+  QHash<uint32_t, QString> data_{};
+  const QSqlDatabase db_{};
+
+  void loadDataComboBox();
+  void loadDataTableView();
 };
 
