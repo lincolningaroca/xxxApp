@@ -31,6 +31,7 @@ private:
   QAction* editUrl_{ nullptr };
   QAction* quittUrl_{ nullptr };
   QAction* showDescDetail_{ nullptr };
+  QAction* showPublicUrl_{ nullptr };
 
   QMenu* contextMenu{nullptr};
 
@@ -52,6 +53,8 @@ private:
   void readSettings() noexcept;
 
   void showAlldescription() noexcept;
+
+  void checkStatusContextMenu();
 
   void setLabelInfo(const QString &color, const QString& userName=QStringLiteral("PUBLIC")) noexcept;
   void loadListCategory(uint32_t user_id) noexcept;

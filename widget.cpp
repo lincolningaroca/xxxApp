@@ -11,6 +11,7 @@
 //#include <QProcess>
 #include "dlgnewcategory.hpp"
 #include "logindialog.hpp"
+#include "publicurldialog.hpp"
 #include "util/helper.hpp"
 #include <QDebug>
 #include <QMenu>
@@ -293,6 +294,7 @@ Widget::Widget(QWidget *parent)
           ui->lblIcon->setPixmap(QPixmap(QStringLiteral(":/img/user.png")).scaled(16,16));
           sessionStatus_ = SW::SessionStatus::Session_start;
           has_data();
+          checkStatusContextMenu();
         }
     });
 
@@ -308,6 +310,7 @@ Widget::Widget(QWidget *parent)
       ui->lblIcon->setPixmap(QPixmap(QStringLiteral(":/img/7278151.png")).scaled(16,16));
       sessionStatus_ = SW::SessionStatus::Session_closed;
       has_data();
+      checkStatusContextMenu();
     });
 
   //connect boton crear copia de seguridad
@@ -363,11 +366,18 @@ Widget::Widget(QWidget *parent)
 
     });
   QObject::connect(showDescDetail_, &QAction::triggered, this, &Widget::showAlldescription);
+  QObject::connect(showPublicUrl_, &QAction::triggered, this, [&](){
+      PublicUrlDialog publicDialog(this);
+      publicDialog.setWindowTitle("Direcciones url públicas");
+
+      publicDialog.exec();
+    });
 
 }//Fin del constructor
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 Widget::~Widget()
 {
   delete ui;
@@ -558,6 +568,11 @@ void Widget::showAlldescription() noexcept{
   // QMessageBox::information(this, qApp->applicationName(), desc);
 
 }
+
+void Widget::checkStatusContextMenu(){
+  (sessionStatus_ == SW::SessionStatus::Session_closed) ? showPublicUrl_->setDisabled(true) : showPublicUrl_->setDisabled(false);
+
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -605,7 +620,12 @@ void Widget::setUptvUrlContextMenu() noexcept{
   contextMenu->addSeparator();
   showDescDetail_ = contextMenu->addAction(QStringLiteral("Ver descripción de URL completa"));
 
+  contextMenu->addSeparator();
+  showPublicUrl_ = contextMenu->addAction(QStringLiteral("Ver url's públicas"));
+
   ui->tvUrl->installEventFilter(this);
+
+  checkStatusContextMenu();
 
   // ui->tvUrl->addAction(openUrl_);
   // ui->tvUrl->addAction(editUrl_);
