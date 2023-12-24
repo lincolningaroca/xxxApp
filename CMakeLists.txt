@@ -44,6 +44,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
          resetpassworddialog.hpp
          resetpassworddialog.cpp
          resetpassworddialog.ui
+         publicurldialog.hpp publicurldialog.cpp publicurldialog.ui
          #qaesencryption.cpp
          #qaesencryption.h
       )
