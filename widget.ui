@@ -61,6 +61,9 @@
            <iconset resource="rsc.qrc">
             <normaloff>:/img/login.png</normaloff>:/img/login.png</iconset>
           </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item>
@@ -74,6 +77,9 @@
           <property name="icon">
            <iconset resource="rsc.qrc">
             <normaloff>:/img/logout.png</normaloff>:/img/logout.png</iconset>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -101,6 +107,9 @@
           <property name="icon">
            <iconset resource="rsc.qrc">
             <normaloff>:/img/backup.png</normaloff>:/img/backup.png</iconset>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -344,8 +353,7 @@
            <string>Agregar</string>
           </property>
           <property name="icon">
-           <iconset theme="edit-paste">
-            <normaloff>.</normaloff>.</iconset>
+           <iconset theme="edit-paste"/>
           </property>
          </widget>
         </item>
