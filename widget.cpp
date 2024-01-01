@@ -12,6 +12,7 @@
 #include "dlgnewcategory.hpp"
 #include "logindialog.hpp"
 #include "publicurldialog.hpp"
+#include "categorydialog.hpp"
 #include "util/helper.hpp"
 #include <QDebug>
 #include <QMenu>
@@ -45,9 +46,9 @@ Widget::Widget(QWidget *parent)
       QMessageBox msgBox;
       msgBox.setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - Advertencia")));
       msgBox.setText(QStringLiteral("<p style='color:#FB4934;'>"
-                     "<cite><strong>Esta a punto eliminar ésta categoría y todo su contenido.<br>"
-                     "Recuerde que al aceptar, eliminará de forma permanente estos datos.<br>"
-                     "Desea continuar y eliminar los datos?</strong></cite></p>"));
+                                    "<cite><strong>Esta a punto eliminar ésta categoría y todo su contenido.<br>"
+                                    "Recuerde que al aceptar, eliminará de forma permanente estos datos.<br>"
+                                    "Desea continuar y eliminar los datos?</strong></cite></p>"));
       msgBox.setIcon(QMessageBox::Warning);
       msgBox.addButton(QStringLiteral("Borrar categoría"), QMessageBox::AcceptRole);
       msgBox.addButton(QStringLiteral("Cancelar"), QMessageBox::RejectRole);
@@ -59,6 +60,7 @@ Widget::Widget(QWidget *parent)
           ui->cboCategory->clear();
           loadListCategory(userId_);
           has_data();
+          checkStatusContextMenu();
         }
     });
 
@@ -101,6 +103,7 @@ Widget::Widget(QWidget *parent)
           ui->cboCategory->clear();
           loadListCategory(userId_);
           has_data();
+          checkStatusContextMenu();
         }
     });
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -182,6 +185,7 @@ Widget::Widget(QWidget *parent)
       ui->cboCategory->clear();
       loadListCategory(userId_);
       has_data();
+      checkStatusContextMenu();
 
     });
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -371,6 +375,24 @@ Widget::Widget(QWidget *parent)
       publicDialog.setWindowTitle("Direcciones url públicas");
 
       publicDialog.exec();
+    });
+  QObject::connect(moveUrl_, &QAction::triggered, this, [this](){
+
+      CategoryDialog cDialog(categoryList, this);
+      auto currentRow_ = ui->tvUrl->currentIndex().row();
+      if(cDialog.exec() == QDialog::Accepted){
+
+          auto categoryid = cDialog.getCategoryId();
+          auto urlid = xxxModel_->index(currentRow_, 0).data().toUInt();
+          // qInfo() <<categoryid;
+          if(!helperdb_.moveUrlToOtherCategory(categoryid, urlid)){
+              QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error al intentar actualizar.\n"));
+              return;
+            }
+          setUpTable(categoryList.key(ui->cboCategory->currentText()));
+          hastvUrlData();
+        }
+
     });
 
 }//Fin del constructor
@@ -571,6 +593,7 @@ void Widget::showAlldescription() noexcept{
 
 void Widget::checkStatusContextMenu(){
   (sessionStatus_ == SW::SessionStatus::Session_closed) ? showPublicUrl_->setDisabled(true) : showPublicUrl_->setDisabled(false);
+  (categoryList.count() > 1) ? moveUrl_->setEnabled(true) : moveUrl_->setDisabled(true);
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -623,6 +646,9 @@ void Widget::setUptvUrlContextMenu() noexcept{
   contextMenu->addSeparator();
   showPublicUrl_ = contextMenu->addAction(QStringLiteral("Ver url's públicas"));
 
+  contextMenu->addSeparator();
+  moveUrl_ = contextMenu->addAction(QStringLiteral("Mover url, a otra categoría"));
+
   ui->tvUrl->installEventFilter(this);
 
   checkStatusContextMenu();
@@ -671,7 +697,7 @@ void Widget::setCboCategoryToolTip() noexcept{
   //  QString desc{};
   if(desc.isEmpty()){
       ui->cboCategory->setToolTip(QStringLiteral("<p><cite><strong>Descripción de la categoría:</strong><br><br>"
-                                  "Esta categoría no cuenta con una descripción!</cite></p>"));
+                                                 "Esta categoría no cuenta con una descripción!</cite></p>"));
       return;
     }
 
@@ -720,6 +746,8 @@ void Widget::hastvUrlData() noexcept{
       ui->btnQuit->setDisabled(true);
       editUrl_->setDisabled(true);
       quittUrl_->setDisabled(true);
+      moveUrl_->setDisabled(true);
+      showDescDetail_->setDisabled(true);
     }else{
       openUrl_->setEnabled(true);
       ui->btnopen->setEnabled(true);
@@ -727,6 +755,8 @@ void Widget::hastvUrlData() noexcept{
       ui->btnQuit->setEnabled(true);
       editUrl_->setEnabled(true);
       quittUrl_->setEnabled(true);
+      moveUrl_->setEnabled(true);
+      showDescDetail_->setEnabled(true);
     }
 }
 
@@ -736,10 +766,10 @@ void Widget::closeEvent(QCloseEvent *event){
   if(sessionStatus_ == SW::SessionStatus::Session_start){
       QMessageBox::warning(this, SW::Helper_t::appName(),
                            QStringLiteral("<cite>Hay una sesión activa en este momento.<br>"
-                           "Necesita cerrar sesión primero antes de salir, "
-                           "haciendo click en el boton:<br>"
-                           "<cite><strong style='background:#FFFF00;color:#FF5500;'>Cerrar sesión</strong></cite><br>"
-                           "O presionando la combinación de teclas Ctrl+Q.</cite>"));
+                                          "Necesita cerrar sesión primero antes de salir, "
+                                          "haciendo click en el boton:<br>"
+                                          "<cite><strong style='background:#FFFF00;color:#FF5500;'>Cerrar sesión</strong></cite><br>"
+                                          "O presionando la combinación de teclas Ctrl+Q.</cite>"));
       event->ignore();
       return;
     }

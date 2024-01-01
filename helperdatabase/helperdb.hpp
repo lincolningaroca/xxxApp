@@ -30,6 +30,7 @@ struct HelperDataBase_t{
   bool deleteCategory(uint32_t categoryId) noexcept;
   bool validateAnswer(QStringView respuesta, uint32_t userId) noexcept;
   bool resetPassword(QStringView password, uint32_t userId) noexcept;
+  bool moveUrlToOtherCategory(uint32_t categoryId, uint32_t urlId) noexcept;
 
   //verificar si la base d edatos existe
   bool dataBase_exists(QStringView db_name);

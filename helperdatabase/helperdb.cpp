@@ -157,6 +157,16 @@ namespace SW {
 
   }
 
+  bool HelperDataBase_t::moveUrlToOtherCategory(uint32_t categoryId, uint32_t urlId) noexcept{
+    [[ maybe_unused ]]
+        auto res = qry_.prepare(QStringLiteral("UPDATE urls SET categoryid=? WHERE url_id=?"));
+    qry_.addBindValue(categoryId, QSql::In);
+    qry_.addBindValue(urlId, QSql::In);
+
+    return qry_.exec();
+
+  }
+
   bool HelperDataBase_t::dataBase_exists(QStringView db_name) {
     return (db_.isValid() && QFile::exists(db_name.toString()));
 

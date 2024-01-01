@@ -32,6 +32,7 @@ private:
   QAction* quittUrl_{ nullptr };
   QAction* showDescDetail_{ nullptr };
   QAction* showPublicUrl_{ nullptr };
+  QAction* moveUrl_{ nullptr };
 
   QMenu* contextMenu{nullptr};
 
