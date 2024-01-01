@@ -186,6 +186,7 @@ Widget::Widget(QWidget *parent)
       loadListCategory(userId_);
       has_data();
       checkStatusContextMenu();
+      hastvUrlData();
 
     });
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
