@@ -22,7 +22,7 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
           ui->txtUser->setFocus(Qt::OtherFocusReason);
           return;
         }
-      userId_ = helper.getUser_id(ui->txtUser->text().simplified(), QStringLiteral("USER"));
+      userId_ = helper.getUser_id(ui->txtUser->text().simplified(), SW::User::U_user);
       auto rescue_type = helper.validateRescueType(userId_);
 
       if(rescue_type == QStringLiteral("Pregunta secreta")){
