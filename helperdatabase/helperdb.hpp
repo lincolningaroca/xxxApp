@@ -3,6 +3,7 @@
 #include <QSqlDatabase>
 #include <QStringView>
 #include <QSqlQuery>
+#include <util/helper.hpp>
 
 namespace SW {
 
@@ -40,7 +41,8 @@ struct HelperDataBase_t{
 
   QHash<uint32_t, QString> loadList_Category(uint32_t user_id) noexcept;
 
-  uint32_t getUser_id(const QString &user, const QString &user_profile = QStringLiteral("PUBLIC")) noexcept;
+  // uint32_t getUser_id(const QString &user, const QString &user_profile = QStringLiteral("PUBLIC")) noexcept;
+  uint32_t getUser_id(const QString &user, SW::User user_profile) noexcept;
   QStringList dataCategory(uint32_t category_id) noexcept;
   std::tuple<bool, QString> verifyDeleteCategory(uint32_t categoryId) noexcept;
   QString validateRescueType(uint32_t userId) noexcept;
@@ -49,6 +51,7 @@ struct HelperDataBase_t{
 private:
   const QSqlDatabase db_{};
   QSqlQuery qry_{};
+
 
 
 };

@@ -1,5 +1,5 @@
 #include "helperdb.hpp"
-#include <util/helper.hpp>
+
 #include <QSqlError>
 
 
@@ -183,13 +183,15 @@ namespace SW {
 
   }
 
-  uint32_t HelperDataBase_t::getUser_id(const QString& user, const QString& user_profile) noexcept  {
+  uint32_t HelperDataBase_t::getUser_id(const QString& user, SW::User user_profile) noexcept {
+
+    auto userProf_ = SW::Helper_t::currentUser_.value(user_profile);
 
     uint32_t ret_value{0};
     [[maybe_unused]]
         auto res = qry_.prepare(QStringLiteral("SELECT user_id FROM users WHERE user = ? AND user_profile = ?"));
     qry_.addBindValue(user.simplified());
-    qry_.addBindValue(user_profile.simplified());
+    qry_.addBindValue(userProf_.simplified());
     if(qry_.exec())
       qry_.first();
     ret_value = qry_.value(0).toUInt();
