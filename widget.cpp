@@ -379,13 +379,18 @@ Widget::Widget(QWidget *parent)
     });
   QObject::connect(moveUrl_, &QAction::triggered, this, [this](){
 
-      CategoryDialog cDialog(categoryList, this);
-      auto currentRow_ = ui->tvUrl->currentIndex().row();
-      if(cDialog.exec() == QDialog::Accepted){
 
-          auto categoryid = cDialog.getCategoryId();
-          auto urlid = xxxModel_->index(currentRow_, 0).data().toUInt();
+      auto currentRow_ = ui->tvUrl->currentIndex().row();
+      auto currentCategoryId_ = categoryList.key(ui->cboCategory->currentText());
+      auto urlid = xxxModel_->index(currentRow_, 0).data().toUInt();
+      auto data_ = categoryList;
+      data_.remove(currentCategoryId_);
+
+      CategoryDialog cDialog(data_, this);
+
+      if(cDialog.exec() == QDialog::Accepted){
           // qInfo() <<categoryid;
+          auto categoryid = cDialog.getCategoryId();
           if(!helperdb_.moveUrlToOtherCategory(categoryid, urlid)){
               QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error al intentar actualizar.\n"));
               return;
