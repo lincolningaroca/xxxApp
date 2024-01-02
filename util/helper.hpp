@@ -9,6 +9,7 @@ namespace SW {
 
 enum class Theme{ Modo_Claro, Modo_Oscuro };
 enum class SessionStatus{ Session_start, Session_closed };
+enum class User{ U_public, U_user };
 
 struct Helper_t{
 
@@ -47,8 +48,15 @@ struct Helper_t{
   static QString app_pathLocation(){return QApplication::applicationDirPath();}
   static QString appName(){return QApplication::applicationName();}
 
+  inline static QHash<SW::User, QString> currentUser_{
+    {SW::User::U_public, "PUBLIC"},
+    {SW::User::U_user, "USER"}
+  };
+
+
 private:
   inline static const QString dbDir_name{"/xxxdatabase"};
+
 
   //variables y constantes de encriptacion
   //inline static QAESEncryption encrypt{QAESEncryption::AES_256, QAESEncryption::CBC};
