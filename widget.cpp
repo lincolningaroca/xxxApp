@@ -22,7 +22,7 @@ Widget::Widget(QWidget *parent)
   : QWidget(parent), ui(new Ui::Widget),
     db_{QSqlDatabase::database(QStringLiteral("xxxConection"))}{
   ui->setupUi(this);
-  userId_ = helperdb_.getUser_id(QStringLiteral("public"));
+  userId_ = helperdb_.getUser_id(QStringLiteral("public"), SW::User::U_public);
   ui->lblIcon->setPixmap(QPixmap(QStringLiteral(":/img/7278151.png")).scaled(16,16));
   initFrm();
 
@@ -261,13 +261,10 @@ Widget::Widget(QWidget *parent)
 
   //cboTheme
   QObject::connect(ui->cboTheme, &QComboBox::currentTextChanged, this, [&](const QString& text){
-      if(text.compare("Modo Oscuro") == 0){
-          setTheme(SW::Theme::Modo_Oscuro);
-          setLabelInfo(SW::Helper_t::darkModeColor.data());
-        }else{
-          setTheme(SW::Theme::Modo_Claro);
-          setLabelInfo(SW::Helper_t::lightModeColor.data());
-        }
+
+      ( text == QStringLiteral("Modo Oscuro") ) ? setTheme(SW::Theme::Modo_Oscuro) : setTheme(SW::Theme::Modo_Claro);
+      checkStatusSessionColor(text);
+
 
     });
   //cboCategory connection
@@ -287,15 +284,20 @@ Widget::Widget(QWidget *parent)
       LogInDialog logDialog;
       if(logDialog.exec() == QDialog::Accepted){
 
-          userId_ = helperdb_.getUser_id(logDialog.userName(),QStringLiteral("USER"));
+          currentUser_ = logDialog.userName();
+
+          // userId_ = helperdb_.getUser_id(logDialog.userName(),QStringLiteral("USER"));
+          userId_ = helperdb_.getUser_id(logDialog.userName(), SW::User::U_user);
 
           ui->cboCategory->clear();
           loadListCategory(userId_);
 
-          (ui->cboTheme->currentText() == QStringLiteral("Modo Oscuro") ) ? setLabelInfo(SW::Helper_t::darkModeColor.data(), logDialog.userName()) : setLabelInfo(SW::Helper_t::lightModeColor.data(), logDialog.userName());
+          // (ui->cboTheme->currentText() == QStringLiteral("Modo Oscuro") ) ? setLabelInfo(SW::Helper_t::darkModeColor.data(), logDialog.userName()) : setLabelInfo(SW::Helper_t::lightModeColor.data(), logDialog.userName());
+          (ui->cboTheme->currentText() == QStringLiteral("Modo Oscuro") ) ? setLabelInfo(SW::Helper_t::darkModeColor.data(), currentUser_) : setLabelInfo(SW::Helper_t::lightModeColor.data(), currentUser_);
           ui->btnLogOut->setEnabled(true);
           ui->btnLogIn->setDisabled(true);
-          setWindowTitle(QApplication::applicationName().append(QStringLiteral(" - Sesión inicada como: ")+logDialog.userName()));
+          // setWindowTitle(QApplication::applicationName().append(QStringLiteral(" - Sesión inicada como: ")+logDialog.userName()));
+          setWindowTitle(QApplication::applicationName().append(QStringLiteral(" - Sesión inicada como: ").append(currentUser_)));
           ui->lblIcon->setPixmap(QPixmap(QStringLiteral(":/img/user.png")).scaled(16,16));
           sessionStatus_ = SW::SessionStatus::Session_start;
           has_data();
@@ -305,7 +307,7 @@ Widget::Widget(QWidget *parent)
 
   //connect to button logout
   QObject::connect(ui->btnLogOut, &QToolButton::clicked, this, [&](){
-      userId_ = helperdb_.getUser_id(QStringLiteral("public"));
+      userId_ = helperdb_.getUser_id(QStringLiteral("public"), SW::User::U_public);
       (ui->cboTheme->currentText() == QStringLiteral("Modo Oscuro") ) ? setLabelInfo(SW::Helper_t::darkModeColor.data()) : setLabelInfo(SW::Helper_t::lightModeColor.data());
       ui->btnLogOut->setDisabled(true);
       ui->btnLogIn->setEnabled(true);
@@ -316,6 +318,7 @@ Widget::Widget(QWidget *parent)
       sessionStatus_ = SW::SessionStatus::Session_closed;
       has_data();
       checkStatusContextMenu();
+      currentUser_ = SW::Helper_t::currentUser_.value(SW::User::U_public);
     });
 
   //connect boton crear copia de seguridad
@@ -602,10 +605,25 @@ void Widget::checkStatusContextMenu(){
   (categoryList.count() > 1) ? moveUrl_->setEnabled(true) : moveUrl_->setDisabled(true);
 
 }
+
+void Widget::checkStatusSessionColor(const QString& text){
+
+  if(sessionStatus_ == SW::SessionStatus::Session_start){
+      ( text == QStringLiteral("Modo Oscuro") ) ? setLabelInfo(SW::Helper_t::darkModeColor.data(), currentUser_):
+                                                  setLabelInfo(SW::Helper_t::lightModeColor.data(), currentUser_);
+    }else{
+      ( text == QStringLiteral("Modo Claro") ) ? setLabelInfo(SW::Helper_t::lightModeColor.data(), currentUser_):
+                                                 setLabelInfo(SW::Helper_t::darkModeColor.data(), currentUser_);
+    }
+
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Widget::setLabelInfo(const QString& color, const QString& userName) noexcept{
+
+  // auto userName_ = SW::Helper_t::currentUser_.value(userName);
+
   ui->lblInfo->setText(QString("<span style='color:%1;'>"
                                "<strong>SWSystem's - Lincoln Ingaroca"
                                "</strong></span>").arg(color));

@@ -22,6 +22,8 @@ public:
   explicit Widget(QWidget *parent = nullptr);
   ~Widget();
 
+  inline static QString currentUser_{SW::Helper_t::currentUser_.value(SW::User::U_public)};
+
 
 private:
   Ui::Widget *ui;
@@ -56,8 +58,9 @@ private:
   void showAlldescription() noexcept;
 
   void checkStatusContextMenu();
+  void checkStatusSessionColor(const QString& text);
 
-  void setLabelInfo(const QString &color, const QString& userName=QStringLiteral("PUBLIC")) noexcept;
+  void setLabelInfo(const QString &color, const QString& userName=SW::Helper_t::currentUser_.value(SW::User::U_public)) noexcept;
   void loadListCategory(uint32_t user_id) noexcept;
 
   //menbers var
@@ -80,8 +83,6 @@ private:
 
   void has_data() noexcept;
   //    void userId();
-
-
 
 
   // QWidget interface
