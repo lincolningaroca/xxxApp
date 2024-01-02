@@ -24,6 +24,17 @@ namespace SW {
     return (qry_.value(0).toUInt() == 1);
   }
 
+  bool HelperDataBase_t::categoryExists(QStringView category) noexcept{
+    [[maybe_unused]]
+        auto ret = qry_.prepare(QStringLiteral("SELECT COUNT(*) FROM category WHERE category_name = ?"));
+    qry_.addBindValue(category.toString());
+
+    if(qry_.exec()){
+        qry_.first();
+      }
+    return (qry_.value(0).toUInt() == 1);
+  }
+
   bool HelperDataBase_t::createUser( QStringView user,  QStringView password,  QStringView user_prof,
                                      QStringView rescue_type,  QStringView val1,  QStringView val2) noexcept{
 

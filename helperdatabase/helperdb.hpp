@@ -18,6 +18,7 @@ struct HelperDataBase_t{
   HelperDataBase_t& operator=(HelperDataBase_t&&) = delete;
 
   bool userExists(QStringView user) noexcept;
+  bool categoryExists(QStringView category) noexcept;
   bool createUser(QStringView, QStringView, QStringView user_prof,
                   QStringView rescue_type, QStringView val1, QStringView val2) noexcept;
   bool logIn(QStringView user, QStringView password) noexcept;
