@@ -178,6 +178,8 @@ Widget::Widget(QWidget *parent)
       if(newCategory.exec() == QDialog::Rejected)
         return;
 
+      // auto userid = helperdb_.getUser_id(QStringLiteral("public"), SW::User::U_public);
+
       if(!helperdb_.saveCategoryData(newCategory.category(), newCategory.description(), userId_)){
           QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error alguardar los datos!\n"));
           return;
@@ -284,22 +286,22 @@ Widget::Widget(QWidget *parent)
       LogInDialog logDialog;
       if(logDialog.exec() == QDialog::Accepted){
 
-          currentUser_ = logDialog.userName();
+          SW::Helper_t::current_user_ = logDialog.userName();
 
           // userId_ = helperdb_.getUser_id(logDialog.userName(),QStringLiteral("USER"));
-          userId_ = helperdb_.getUser_id(logDialog.userName(), SW::User::U_user);
+          userId_ = helperdb_.getUser_id(SW::Helper_t::current_user_, SW::User::U_user);
 
           ui->cboCategory->clear();
           loadListCategory(userId_);
 
           // (ui->cboTheme->currentText() == QStringLiteral("Modo Oscuro") ) ? setLabelInfo(SW::Helper_t::darkModeColor.data(), logDialog.userName()) : setLabelInfo(SW::Helper_t::lightModeColor.data(), logDialog.userName());
-          (ui->cboTheme->currentText() == QStringLiteral("Modo Oscuro") ) ? setLabelInfo(SW::Helper_t::darkModeColor.data(), currentUser_) : setLabelInfo(SW::Helper_t::lightModeColor.data(), currentUser_);
+          (ui->cboTheme->currentText() == QStringLiteral("Modo Oscuro") ) ? setLabelInfo(SW::Helper_t::darkModeColor.data(), SW::Helper_t::current_user_) : setLabelInfo(SW::Helper_t::lightModeColor.data(), SW::Helper_t::current_user_);
           ui->btnLogOut->setEnabled(true);
           ui->btnLogIn->setDisabled(true);
           // setWindowTitle(QApplication::applicationName().append(QStringLiteral(" - Sesión inicada como: ")+logDialog.userName()));
-          setWindowTitle(QApplication::applicationName().append(QStringLiteral(" - Sesión inicada como: ").append(currentUser_)));
+          setWindowTitle(QApplication::applicationName().append(QStringLiteral(" - Sesión inicada como: ").append(SW::Helper_t::current_user_)));
           ui->lblIcon->setPixmap(QPixmap(QStringLiteral(":/img/user.png")).scaled(16,16));
-          sessionStatus_ = SW::SessionStatus::Session_start;
+          SW::Helper_t::sessionStatus_ = SW::SessionStatus::Session_start;
           has_data();
           checkStatusContextMenu();
         }
@@ -315,10 +317,10 @@ Widget::Widget(QWidget *parent)
       ui->cboCategory->clear();
       loadListCategory(userId_);
       ui->lblIcon->setPixmap(QPixmap(QStringLiteral(":/img/7278151.png")).scaled(16,16));
-      sessionStatus_ = SW::SessionStatus::Session_closed;
+      SW::Helper_t::sessionStatus_ = SW::SessionStatus::Session_closed;
       has_data();
       checkStatusContextMenu();
-      currentUser_ = SW::Helper_t::currentUser_.value(SW::User::U_public);
+      SW::Helper_t::current_user_ = QStringLiteral("public");
     });
 
   //connect boton crear copia de seguridad
@@ -601,19 +603,19 @@ void Widget::showAlldescription() noexcept{
 }
 
 void Widget::checkStatusContextMenu(){
-  (sessionStatus_ == SW::SessionStatus::Session_closed) ? showPublicUrl_->setDisabled(true) : showPublicUrl_->setDisabled(false);
+  (SW::Helper_t::sessionStatus_ == SW::SessionStatus::Session_closed) ? showPublicUrl_->setDisabled(true) : showPublicUrl_->setDisabled(false);
   (categoryList.count() > 1) ? moveUrl_->setEnabled(true) : moveUrl_->setDisabled(true);
 
 }
 
 void Widget::checkStatusSessionColor(const QString& text){
 
-  if(sessionStatus_ == SW::SessionStatus::Session_start){
-      ( text == QStringLiteral("Modo Oscuro") ) ? setLabelInfo(SW::Helper_t::darkModeColor.data(), currentUser_):
-                                                  setLabelInfo(SW::Helper_t::lightModeColor.data(), currentUser_);
+  if(SW::Helper_t::sessionStatus_ == SW::SessionStatus::Session_start){
+      ( text == QStringLiteral("Modo Oscuro") ) ? setLabelInfo(SW::Helper_t::darkModeColor.data(), SW::Helper_t::current_user_):
+                                                  setLabelInfo(SW::Helper_t::lightModeColor.data(), SW::Helper_t::current_user_);
     }else{
-      ( text == QStringLiteral("Modo Claro") ) ? setLabelInfo(SW::Helper_t::lightModeColor.data(), currentUser_):
-                                                 setLabelInfo(SW::Helper_t::darkModeColor.data(), currentUser_);
+      ( text == QStringLiteral("Modo Claro") ) ? setLabelInfo(SW::Helper_t::lightModeColor.data(), SW::Helper_t::current_user_):
+                                                 setLabelInfo(SW::Helper_t::darkModeColor.data(), SW::Helper_t::current_user_);
     }
 
 }
@@ -787,7 +789,7 @@ void Widget::hastvUrlData() noexcept{
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Widget::closeEvent(QCloseEvent *event){
-  if(sessionStatus_ == SW::SessionStatus::Session_start){
+  if(SW::Helper_t::sessionStatus_ == SW::SessionStatus::Session_start){
       QMessageBox::warning(this, SW::Helper_t::appName(),
                            QStringLiteral("<cite>Hay una sesión activa en este momento.<br>"
                                           "Necesita cerrar sesión primero antes de salir, "

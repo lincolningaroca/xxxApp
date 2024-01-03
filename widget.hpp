@@ -22,8 +22,8 @@ public:
   explicit Widget(QWidget *parent = nullptr);
   ~Widget();
 
-  inline static QString currentUser_{SW::Helper_t::currentUser_.value(SW::User::U_public)};
-
+  // inline static QString currentUser_{SW::Helper_t::currentUser_.value(SW::User::U_public)};
+  // inline static SW::SessionStatus sessionStatus_{SW::SessionStatus::Session_closed};
 
 private:
   Ui::Widget *ui;
@@ -41,7 +41,7 @@ private:
 
   QSqlTableModel* xxxModel_{ nullptr };
   inline static uint32_t userId_{0};
-  SW::SessionStatus sessionStatus_{SW::SessionStatus::Session_closed};
+
   SW::HelperDataBase_t helperdb_{};
 
   //custom functions

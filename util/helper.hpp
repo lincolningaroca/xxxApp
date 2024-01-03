@@ -53,6 +53,9 @@ struct Helper_t{
     {SW::User::U_user, "USER"}
   };
 
+  inline static QString current_user_{QStringLiteral("public")};
+  inline static SW::SessionStatus sessionStatus_{SW::SessionStatus::Session_closed};
+
 
 private:
   inline static const QString dbDir_name{"/xxxdatabase"};

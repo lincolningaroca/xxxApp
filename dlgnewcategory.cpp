@@ -20,26 +20,19 @@ dlgNewCategory::dlgNewCategory(OpenMode mode, const QStringList &list, QWidget *
 
 
   QObject::connect(ui->buttonBox, &QDialogButtonBox::accepted, this, [&](){
-      // QStringList list1 = {list};
+
       SW::HelperDataBase_t helperdb_{};
+
+      uint32_t userid {0};
+      (SW::Helper_t::sessionStatus_ == SW::SessionStatus::Session_closed) ?
+           userid = helperdb_.getUser_id(SW::Helper_t::current_user_, SW::User::U_public) :
+           userid = helperdb_.getUser_id(SW::Helper_t::current_user_, SW::User::U_user);
+
+
       if(mode == OpenMode::New){
           if(validateData()){
-              //   if(std::any_of(list1.begin(), list1.end(), [&](const QString& l){
-              //                  return l.compare(ui->txtCategory->text().toUpper()) == 0;
-              // })){
-              //     QMessageBox::warning(this, SW::Helper_t::appName(),
-              //                          QString("<p><cite>La categoría: "
-              //                                  "<strong style='color:#ff0800;'>\"%1\""
-              //                                  "</strong>, ya esta registrada en la base de datos.<br>"
-              //                                  "pruebe con otro nombre por favor!"
-              //                                  "</cite>"
-              //                                  "</p>").arg(ui->txtCategory->text().toUpper()));
-              //     ui->txtCategory->selectAll();
-              //     ui->txtCategory->setFocus(Qt::OtherFocusReason);
-              //     return;
-              //   }
 
-              if(helperdb_.categoryExists(ui->txtCategory->text().toUpper())){
+              if(helperdb_.categoryExists(ui->txtCategory->text().toUpper(), userid)){
                   QMessageBox::warning(this, SW::Helper_t::appName(),
                                        QString("<p><cite>La categoría: "
                                                "<strong style='color:#ff0800;'>\"%1\""
