@@ -22,7 +22,7 @@ Widget::Widget(QWidget *parent)
   : QWidget(parent), ui(new Ui::Widget),
     db_{QSqlDatabase::database(QStringLiteral("xxxConection"))}{
   ui->setupUi(this);
-  userId_ = helperdb_.getUser_id(QStringLiteral("public"), SW::User::U_public);
+  userId_ = helperdb_.getUser_id(SW::Helper_t::defaultUser, SW::User::U_public);
   ui->lblIcon->setPixmap(QPixmap(QStringLiteral(":/img/7278151.png")).scaled(16,16));
   initFrm();
 
@@ -131,8 +131,18 @@ Widget::Widget(QWidget *parent)
               ui->txtUrl->setFocus(Qt::OtherFocusReason);
               return;
             }
-          //get the key from categoryList, with current selected text to cboCategory.
+
           auto categoryId = categoryList.key(ui->cboCategory->currentText());
+
+          if(helperdb_.urlExists(ui->txtUrl->text(), categoryId)){
+              QMessageBox::warning(this, SW::Helper_t::appName(),
+                                   QStringLiteral("<p>La url: <cite><strong>%1</strong></cite></p> ya esta registrada!!").arg(ui->txtUrl->text()));
+              ui->txtUrl->selectAll();
+              ui->txtUrl->setFocus(Qt::OtherFocusReason);
+              return;
+            }
+          //get the key from categoryList, with current selected text to cboCategory.
+          // auto categoryId = categoryList.key(ui->cboCategory->currentText());
           if(helperdb_.saveData_url(ui->txtUrl->text(), ui->pteDesc->toPlainText(), categoryId)){
               //              QMessageBox::information(this,SW::Helper_t::appName(),"Datos guardados!!");
               ui->txtUrl->clear();
@@ -140,6 +150,7 @@ Widget::Widget(QWidget *parent)
               ui->txtUrl->setFocus(Qt::OtherFocusReason);
               setUpTable(categoryList.key(ui->cboCategory->currentText()));
               verifyContextMenu();
+              checkStatusContextMenu();
               hastvUrlData();
             }
         }else{
@@ -275,6 +286,7 @@ Widget::Widget(QWidget *parent)
       verifyContextMenu();
       setCboCategoryToolTip();
       hastvUrlData();
+      checkStatusContextMenu();
       //      has_data();
     });
 
@@ -309,7 +321,7 @@ Widget::Widget(QWidget *parent)
 
   //connect to button logout
   QObject::connect(ui->btnLogOut, &QToolButton::clicked, this, [&](){
-      userId_ = helperdb_.getUser_id(QStringLiteral("public"), SW::User::U_public);
+      userId_ = helperdb_.getUser_id(SW::Helper_t::defaultUser, SW::User::U_public);
       (ui->cboTheme->currentText() == QStringLiteral("Modo Oscuro") ) ? setLabelInfo(SW::Helper_t::darkModeColor.data()) : setLabelInfo(SW::Helper_t::lightModeColor.data());
       ui->btnLogOut->setDisabled(true);
       ui->btnLogIn->setEnabled(true);
@@ -320,7 +332,7 @@ Widget::Widget(QWidget *parent)
       SW::Helper_t::sessionStatus_ = SW::SessionStatus::Session_closed;
       has_data();
       checkStatusContextMenu();
-      SW::Helper_t::current_user_ = QStringLiteral("public");
+      SW::Helper_t::current_user_ = SW::Helper_t::defaultUser;
     });
 
   //connect boton crear copia de seguridad
@@ -386,6 +398,7 @@ Widget::Widget(QWidget *parent)
 
 
       auto currentRow_ = ui->tvUrl->currentIndex().row();
+      auto url_ = xxxModel_->index(currentRow_, 1).data().toString();
       auto currentCategoryId_ = categoryList.key(ui->cboCategory->currentText());
       auto urlid = xxxModel_->index(currentRow_, 0).data().toUInt();
       auto data_ = categoryList;
@@ -394,8 +407,21 @@ Widget::Widget(QWidget *parent)
       CategoryDialog cDialog(data_, this);
 
       if(cDialog.exec() == QDialog::Accepted){
-          // qInfo() <<categoryid;
+
           auto categoryid = cDialog.getCategoryId();
+          if(helperdb_.urlExists(url_, categoryid)){
+
+              QMessageBox::warning(this, SW::Helper_t::appName(),
+                                   QStringLiteral("<p>"
+                                                  "La url: <cite>"
+                                                  "<strong>%1</strong>"
+                                                  "</cite>"
+                                                  "</p> ya esta registrada, en la categoría a la que desea mover!!").arg(url_));
+              return;
+
+            }
+          // qInfo() <<categoryid;
+
           if(!helperdb_.moveUrlToOtherCategory(categoryid, urlid)){
               QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error al intentar actualizar.\n"));
               return;
@@ -772,7 +798,7 @@ void Widget::hastvUrlData() noexcept{
       ui->btnQuit->setDisabled(true);
       editUrl_->setDisabled(true);
       quittUrl_->setDisabled(true);
-      moveUrl_->setDisabled(true);
+      // moveUrl_->setDisabled(true);
       showDescDetail_->setDisabled(true);
     }else{
       openUrl_->setEnabled(true);
@@ -781,7 +807,7 @@ void Widget::hastvUrlData() noexcept{
       ui->btnQuit->setEnabled(true);
       editUrl_->setEnabled(true);
       quittUrl_->setEnabled(true);
-      moveUrl_->setEnabled(true);
+      // moveUrl_->setEnabled(true);
       showDescDetail_->setEnabled(true);
     }
 }

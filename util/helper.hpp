@@ -27,6 +27,7 @@ struct Helper_t{
   static bool open_Url(const QUrl& url) noexcept{return QDesktopServices::openUrl(url);}
   static bool urlValidate(QStringView url) noexcept;
 
+
   static bool createDataBase_dir() noexcept;
 
 
@@ -53,7 +54,8 @@ struct Helper_t{
     {SW::User::U_user, "USER"}
   };
 
-  inline static QString current_user_{QStringLiteral("public")};
+  inline static const QString defaultUser{QStringLiteral("public")};
+  inline static QString current_user_{defaultUser};
   inline static SW::SessionStatus sessionStatus_{SW::SessionStatus::Session_closed};
 
 
