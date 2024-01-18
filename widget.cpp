@@ -405,6 +405,7 @@ Widget::Widget(QWidget *parent)
       data_.remove(currentCategoryId_);
 
       CategoryDialog cDialog(data_, this);
+      cDialog.setWindowTitle(QStringLiteral("Mover url a otra categoría"));
 
       if(cDialog.exec() == QDialog::Accepted){
 
