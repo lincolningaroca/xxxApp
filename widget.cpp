@@ -40,6 +40,8 @@ Widget::Widget(QWidget *parent)
   setUptvUrlContextMenu();
   verifyContextMenu();
 
+  canRestoreDataBase();
+
 
   //action delete category
   QObject::connect(delCategory, &QAction::triggered, this, [&](){
@@ -316,6 +318,7 @@ Widget::Widget(QWidget *parent)
           SW::Helper_t::sessionStatus_ = SW::SessionStatus::Session_start;
           has_data();
           checkStatusContextMenu();
+          canRestoreDataBase();
         }
     });
 
@@ -333,6 +336,7 @@ Widget::Widget(QWidget *parent)
       has_data();
       checkStatusContextMenu();
       SW::Helper_t::current_user_ = SW::Helper_t::defaultUser;
+      canRestoreDataBase();
     });
 
   //connect boton crear copia de seguridad
@@ -622,6 +626,11 @@ void  Widget::has_data() noexcept{
       ui->pteDesc->setEnabled(true);
     }
 
+}
+
+void Widget::canRestoreDataBase() const noexcept{
+
+  (static_cast<bool>(SW::Helper_t::sessionStatus_)) ? ui->btnRestore->setVisible(true) : ui->btnRestore->setVisible(false);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////

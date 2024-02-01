@@ -82,7 +82,7 @@ private:
   void btnEdit() noexcept;
 
   void has_data() noexcept;
-  //    void userId();
+  void canRestoreDataBase() const noexcept;
 
 
   // QWidget interface
