@@ -361,7 +361,7 @@ Widget::Widget(QWidget *parent)
       auto baseName{fileInfo.baseName()};
       auto extension{fileInfo.completeSuffix()};
 
-      auto fecha{QDate::currentDate().toString(QStringLiteral("yyyy-MM-dd"))};
+      auto fecha{QDateTime::currentDateTime().toString("yyyy-MM-dd_hhmmss")};
       QString path{".backup %1/%2-%3.%4"};
 
 
