@@ -97,6 +97,23 @@
          </spacer>
         </item>
         <item>
+         <widget class="QToolButton" name="btnRestore">
+          <property name="toolTip">
+           <string>Restaurar base de datos</string>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+          <property name="icon">
+           <iconset resource="rsc.qrc">
+            <normaloff>:/img/server-database-restore-64.png</normaloff>:/img/server-database-restore-64.png</iconset>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QToolButton" name="btnBackUp">
           <property name="toolTip">
            <string>Crear una copia de seguridad</string>
