@@ -345,7 +345,7 @@ Widget::Widget(QWidget *parent)
       const auto path_app = QStringLiteral("sqlite3.exe");
       QStringList argv{};
       auto databasePath = SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase.db"));
-      auto filePath = QFileDialog::getSaveFileName(this, QStringLiteral("Crear una copia de seguridad"), QDir::rootPath(),
+      auto filePath = QFileDialog::getSaveFileName(this, QStringLiteral("Crear una copia de seguridad"), QDir::homePath(),
                                                    QStringLiteral("Archivos de copia de seguridad (*.bak)"));
       if(filePath.isEmpty())
         return;
