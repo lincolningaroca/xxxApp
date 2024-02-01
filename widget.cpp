@@ -376,6 +376,67 @@ Widget::Widget(QWidget *parent)
 
     });
 
+  //restore database
+  QObject::connect(ui->btnRestore, &QToolButton::clicked, this, [&](){
+
+     const auto dbasePath{SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase.db"))};
+
+      // qInfo() << dbasePath <<'\n';
+      QFile file{dbasePath};
+
+      if(file.exists()){
+
+          QMessageBox msg{this};
+          msg.setWindowTitle(SW::Helper_t::appName());
+          msg.setIcon(QMessageBox::Warning);
+          msg.setText(QStringLiteral("<span>"
+                                     "En éste momento hay una instancia de la base de datos en uso.<br/>"
+                                     "<em>Tenga en cuenta que al restaurar la base de datos con una cópia de seguridad,<br/>"
+                                     "se perderan todos los datos que tengan en éste momento, y seran reemplazados por los datos de la cópia.</em><br/><br/>"
+                                     "<cite><strong>Consejo:</strong></cite>"
+                                     "<ul><li>Tal vez antes de restaurar, una cópia de seguridad, quiera crear un backup, de la base de datos actual, para no perder los datos.</li></ul><br/>"
+                                     "</span>"));
+          msg.addButton(QStringLiteral("Restaurar la base de datos"), QMessageBox::AcceptRole);
+          msg.addButton(QStringLiteral("Cancelar"), QMessageBox::RejectRole);
+
+          if(msg.exec() == QMessageBox::RejectRole)
+            return;
+        }
+
+      const auto pathBackup{QFileDialog::getOpenFileName(this, "Abrir archivo de respaldo", QDir::homePath(),
+                                                         QStringLiteral("Archivo backup (*.bak)"))};
+      if(pathBackup.isEmpty())
+        return;
+
+      auto db{QSqlDatabase::database("xxxConection")};
+
+      if(db.isOpen())
+        db.close();
+
+
+      QStringList args{};
+      QString cmd {".restore %1"};
+
+      args << dbasePath << cmd.arg(pathBackup);
+
+      auto app{QStringLiteral("sqlite3.exe")};
+
+      QProcess process{this};
+
+      if(!process.startDetached(app, args)){
+          QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error en la ejecución.\n")+
+                                process.errorString());
+          return;
+
+        }
+      QMessageBox::information(this, SW::Helper_t::appName(), QStringLiteral("La base de datos, fue restaurada"));
+      db.open();
+      ui->cboCategory->clear();
+      loadListCategory(userId_);
+
+
+    });
+
   //connect boton cancelar
   QObject::connect(ui->btnCancel, &QAbstractButton::clicked, this, [&](){
 
