@@ -7,11 +7,11 @@ bool validate{false};
 
 bool createDataBase(){
   QSqlDatabase db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), QStringLiteral("xxxConection"));
-  db.setDatabaseName(SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase.db")));
+  db.setDatabaseName(SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase - copia.db")));
   return db.open();
 }
 bool dataBaseExists(){
-  const auto path = SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase.db"));
+  const auto path = SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase - copia.db"));
   QFile file(path);
   return file.exists();
 }
