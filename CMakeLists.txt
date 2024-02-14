@@ -48,6 +48,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
          publicurldialog.cpp
          publicurldialog.ui
          categorydialog.hpp categorydialog.cpp categorydialog.ui
+         swtablemodel.hpp swtablemodel.cpp
          #qaesencryption.cpp
          #qaesencryption.h
       )
