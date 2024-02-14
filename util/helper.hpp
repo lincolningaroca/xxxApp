@@ -49,6 +49,11 @@ struct Helper_t{
   static QString app_pathLocation(){return QApplication::applicationDirPath();}
   static QString appName(){return QApplication::applicationName();}
 
+  //encryp/decrypt metods
+
+  static QString encrypt(const QString& text, const QString& key=key_);
+  static QString decrypt(const QString& encryptedText, const QString& key=key_);
+
   inline static QHash<SW::User, QString> currentUser_{
     {SW::User::U_public, "PUBLIC"},
     {SW::User::U_user, "USER"}
@@ -61,6 +66,7 @@ struct Helper_t{
 
 private:
   inline static const QString dbDir_name{"/xxxdatabase"};
+  inline static const QString key_{"AbCdEfGhIjKlMnOpQrStUvWxYz@!#$%&/()=?¡1234567890"};
 
 
   //variables y constantes de encriptacion

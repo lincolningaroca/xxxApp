@@ -13,17 +13,17 @@ namespace SW {
 
   }
 
-//  QByteArray Helper_t::encrypt_txt(const QString &txt) noexcept{
-//    QByteArray encodeText = encrypt.encode(txt.toLatin1(), hashKey, hashIV);
-//    return encodeText;
+  //  QByteArray Helper_t::encrypt_txt(const QString &txt) noexcept{
+  //    QByteArray encodeText = encrypt.encode(txt.toLatin1(), hashKey, hashIV);
+  //    return encodeText;
 
-//  }
+  //  }
 
-//  QString Helper_t::decrypt_txt(const QByteArray &txt) noexcept{
-//    QByteArray decodeText = encrypt.decode(txt, hashKey, hashIV);
-//    QString decodedString = QString(encrypt.removePadding(decodeText));
-//    return decodedString;
-//  }
+  //  QString Helper_t::decrypt_txt(const QByteArray &txt) noexcept{
+  //    QByteArray decodeText = encrypt.decode(txt, hashKey, hashIV);
+  //    QString decodedString = QString(encrypt.removePadding(decodeText));
+  //    return decodedString;
+  //  }
 
   QByteArray Helper_t::setColorReg(const QString& color) noexcept
   {
@@ -97,6 +97,44 @@ namespace SW {
       }
 
     return mPalette;
+
+  }
+
+  QString Helper_t::encrypt(const QString& text, const QString& key)  {
+    QByteArray encryptedData;
+    QByteArray textData = text.toUtf8();
+    QByteArray keyData = key.toUtf8();
+
+    QCryptographicHash hash(QCryptographicHash::Sha512);
+    hash.addData(keyData);
+    QByteArray hashedKey = hash.result();
+
+    // Encriptar el texto utilizando AES
+    for (int i = 0; i < textData.size(); ++i) {
+        char encryptedChar = textData.at(i) ^ hashedKey.at(i % hashedKey.size());
+        encryptedData.append(encryptedChar);
+      }
+
+    return QString::fromUtf8(encryptedData.toBase64());
+
+  }
+
+  QString Helper_t::decrypt(const QString& encryptedText, const QString& key)  {
+    QByteArray decryptedData;
+    QByteArray encryptedData = QByteArray::fromBase64(encryptedText.toUtf8());
+    QByteArray keyData = key.toUtf8();
+
+    QCryptographicHash hash(QCryptographicHash::Sha512);
+    hash.addData(keyData);
+    QByteArray hashedKey = hash.result();
+
+    // Desencriptar el texto utilizando AES
+    for (int i = 0; i < encryptedData.size(); ++i) {
+        char decryptedChar = encryptedData.at(i) ^ hashedKey.at(i % hashedKey.size());
+        decryptedData.append(decryptedChar);
+      }
+
+    return QString::fromUtf8(decryptedData);
 
   }
 
