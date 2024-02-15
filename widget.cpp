@@ -344,7 +344,7 @@ Widget::Widget(QWidget *parent)
   //connect boton crear copia de seguridad
   QObject::connect(ui->btnBackUp, &QToolButton::clicked, this, [&](){
       QProcess process;
-      const auto path_app = QStringLiteral("sqlite3.exe");
+      const auto path_app {SW::Helper_t::app_pathLocation().append("/tools/sqlite-tools-win-x64-3450100/sqlite3.exe")};
       QStringList argv{};
       auto databasePath = SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase.db"));
       auto filePath = QFileDialog::getSaveFileName(this, QStringLiteral("Crear una copia de seguridad"), QDir::homePath(),
@@ -425,7 +425,7 @@ Widget::Widget(QWidget *parent)
 
       args << dbasePath << cmd.arg(pathBackup);
 
-      auto app{QStringLiteral("sqlite3.exe")};
+      const auto app{SW::Helper_t::app_pathLocation().append("/tools/sqlite-tools-win-x64-3450100/sqlite3.exe")};
 
       QProcess process{this};
 
@@ -499,6 +499,8 @@ Widget::Widget(QWidget *parent)
         }
 
     });
+
+
 
 }//Fin del constructor
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
