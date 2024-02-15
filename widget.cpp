@@ -14,6 +14,7 @@
 #include "publicurldialog.hpp"
 #include "categorydialog.hpp"
 #include "util/helper.hpp"
+#include "swtablemodel.hpp"
 #include <QDebug>
 #include <QMenu>
 
@@ -159,7 +160,8 @@ Widget::Widget(QWidget *parent)
 
           QSqlQuery qry(db_);
           [[maybe_unused]] auto res=qry.prepare(QStringLiteral("UPDATE  urls SET url=?, desc=? WHERE url_id=? AND categoryid=?"));
-          qry.addBindValue(ui->txtUrl->text(), QSql::In);
+          auto encryptedData = SW::Helper_t::encrypt(ui->txtUrl->text());
+          qry.addBindValue(encryptedData, QSql::In);
           qry.addBindValue(ui->pteDesc->toPlainText().simplified().toUpper(), QSql::In);
           auto currentRow = ui->tvUrl->currentIndex().row();
           auto id = ui->tvUrl->model()->index(currentRow,0).data().toInt();
@@ -567,10 +569,17 @@ bool Widget::validateSelectedRow() noexcept{
 
 void Widget::setUpTable(uint32_t categoryId) noexcept{
 
-  xxxModel_ = new QSqlTableModel(this, db_);
-  xxxModel_->setTable(QStringLiteral("urls"));
-  xxxModel_->setFilter(QString("categoryid=%1").arg(categoryId));
+  // xxxModel_ = new QSqlTableModel(this, db_);
+  // xxxModel_->setTable(QStringLiteral("urls"));
+  // xxxModel_->setFilter(QString("categoryid=%1").arg(categoryId));
 
+  // xxxModel_->select();
+
+  // ui->tvUrl->setModel(xxxModel_);
+
+  xxxModel_ = new SWTableModel(this, db_);
+  xxxModel_->setTable("urls");
+  xxxModel_->setFilter(QString("categoryid=%1").arg(categoryId));
   xxxModel_->select();
 
   ui->tvUrl->setModel(xxxModel_);

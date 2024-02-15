@@ -40,7 +40,8 @@ namespace SW {
 
     [[maybe_unused]]
         auto ret = qry_.prepare(QStringLiteral("SELECT COUNT(*) FROM urls WHERE url = ? AND categoryid = ?"));
-    qry_.addBindValue(url.toString());
+    auto dataEncrypted = SW::Helper_t::encrypt(url.toString().simplified());
+    qry_.addBindValue(dataEncrypted);
     qry_.addBindValue(categoryid);
 
     if(qry_.exec()){
@@ -106,7 +107,8 @@ namespace SW {
 
     [[maybe_unused]]
         auto res = qry_.prepare(QStringLiteral("INSERT INTO urls(url,desc,categoryid) VALUES(?,?,?)"));
-    qry_.addBindValue(url.toString().simplified(), QSql::In);
+    auto encryptData = SW::Helper_t::encrypt(url.toString().simplified());
+    qry_.addBindValue(encryptData, QSql::In);
     qry_.addBindValue(desc.toString().simplified().toUpper(), QSql::In);
     qry_.addBindValue(id, QSql::In);
     return qry_.exec();

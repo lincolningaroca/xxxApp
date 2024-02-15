@@ -13,6 +13,7 @@ QT_END_NAMESPACE
 class QAction;
 class QSqlTableModel;
 class QMenu;
+class SWTableModel;
 
 class Widget : public QWidget{
   Q_OBJECT
@@ -39,6 +40,7 @@ private:
   QMenu* contextMenu{nullptr};
 
 
+  // QSqlTableModel* xxxModel_{ nullptr };
   QSqlTableModel* xxxModel_{ nullptr };
   inline static uint32_t userId_{0};
 

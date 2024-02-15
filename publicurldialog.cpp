@@ -8,6 +8,7 @@
 
 #include "helperdatabase/helperdb.hpp"
 #include "util/helper.hpp"
+#include "swtablemodel.hpp"
 
 PublicUrlDialog::PublicUrlDialog(QWidget *parent) :
   QDialog(parent), ui(new Ui::PublicUrlDialog),
@@ -59,7 +60,7 @@ void PublicUrlDialog::loadDataComboBox(){
 void PublicUrlDialog::loadDataTableView(){
 
   auto categoryId_ = data_.key(ui->categoryComboBox->currentText());
-  QSqlTableModel* xxxModel_ = new QSqlTableModel(this, db_);
+  SWTableModel* xxxModel_ = new SWTableModel(this, db_);
   xxxModel_->setTable(QStringLiteral("urls"));
   xxxModel_->setFilter(QString("categoryid=%1").arg(categoryId_));
 

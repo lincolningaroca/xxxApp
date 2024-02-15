@@ -35,8 +35,8 @@ struct Helper_t{
   static QString getColorReg(QByteArray dataColor) noexcept;
 
   static QString hashGenerator(const QByteArray&) noexcept;
-  static QByteArray encrypt_txt(const QString& txt) noexcept;
-  static QString decrypt_txt(const QByteArray &txt) noexcept;
+  // static QByteArray encrypt_txt(const QString& txt) noexcept;
+  // static QString decrypt_txt(const QByteArray &txt) noexcept;
 
   static QPalette set_Theme(SW::Theme theme) noexcept;
 
