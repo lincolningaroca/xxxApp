@@ -11,7 +11,7 @@ namespace Ui { class Widget; }
 QT_END_NAMESPACE
 
 class QAction;
-class QSqlTableModel;
+// class QSqlTableModel;
 class QMenu;
 class SWTableModel;
 
@@ -41,7 +41,7 @@ private:
 
 
   // QSqlTableModel* xxxModel_{ nullptr };
-  QSqlTableModel* xxxModel_{ nullptr };
+  SWTableModel* xxxModel_{ nullptr };
   inline static uint32_t userId_{0};
 
   SW::HelperDataBase_t helperdb_{};
