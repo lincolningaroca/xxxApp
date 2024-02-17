@@ -202,19 +202,37 @@ namespace SW {
   }
 
   bool HelperDataBase_t::isDataBase_empty() noexcept {
-    [[ maybe_unused ]]
-        auto res = qry_.prepare(QStringLiteral("SELECT COUNT(*) FROM category"));
-    [[ maybe_unused ]] auto ret =qry_.exec();
-    qry_.next();
-    auto res1 = qry_.value(0).toUInt();
+    // [[ maybe_unused ]]
+    //     auto res = qry_.prepare(QStringLiteral("SELECT COUNT(*) FROM category"));
+    // [[ maybe_unused ]] auto ret =qry_.exec();
+    // qry_.next();
+    // auto res1 = qry_.value(0).toUInt();
 
-    [[ maybe_unused ]]
-        auto res_1 = qry_.prepare(QStringLiteral("SELECT COUNT(*) FROM urls"));
-    [[ maybe_unused ]] auto ret1 = qry_.exec();
-    qry_.next();
-    auto res2 = qry_.value(0).toUInt();
+    // [[ maybe_unused ]]
+    //     auto res_1 = qry_.prepare(QStringLiteral("SELECT COUNT(*) FROM urls"));
+    // [[ maybe_unused ]] auto ret1 = qry_.exec();
+    // qry_.next();
+    // auto res2 = qry_.value(0).toUInt();
 
-    return (res1 == 0 && res2 == 0);
+    // return (res1 == 0 && res2 == 0);
+
+    auto tables = db_.tables();
+
+    // bool res = false;
+    uint32_t count{0};
+
+    foreach (const auto& table, tables) {
+        if(table == "users")
+          continue;
+        [[ maybe_unused ]]
+            auto res = qry_.prepare(QStringLiteral("SELECT COUNT(*) FROM %1").arg(table));
+        if(qry_.exec()){
+            qry_.next();
+            if(qry_.value(0).toUInt() == 0) ++count;
+          }
+      }
+    if(count == 2) return true;
+    return false;
 
 
   }
