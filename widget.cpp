@@ -388,9 +388,9 @@ Widget::Widget(QWidget *parent)
      const auto dbasePath{SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase.db"))};
 
       // qInfo() << dbasePath <<'\n';
-      QFile file{dbasePath};
+      // QFile file{dbasePath};
 
-      if(file.exists()){
+      if(!helperdb_.isDataBase_empty()){
 
           QMessageBox msg{this};
           msg.setWindowTitle(SW::Helper_t::appName());
@@ -501,7 +501,7 @@ Widget::Widget(QWidget *parent)
 
     });
 
-
+  qInfo() << helperdb_.isDataBase_empty();
 
 }//Fin del constructor
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -38,6 +38,8 @@ struct HelperDataBase_t{
   //verificar si la base d edatos existe
   bool dataBase_exists(QStringView db_name);
 
+  bool isDataBase_empty() noexcept;
+
 
 
   QHash<uint32_t, QString> loadList_Category(uint32_t user_id) noexcept;
