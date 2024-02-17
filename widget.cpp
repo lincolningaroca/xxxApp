@@ -439,6 +439,7 @@ Widget::Widget(QWidget *parent)
       db.open();
       ui->cboCategory->clear();
       loadListCategory(userId_);
+      has_data();
 
 
     });
