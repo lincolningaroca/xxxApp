@@ -501,7 +501,7 @@ Widget::Widget(QWidget *parent)
 
     });
 
-  qInfo() << helperdb_.isDataBase_empty();
+  // qInfo() << helperdb_.isDataBase_empty();
 
 }//Fin del constructor
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
