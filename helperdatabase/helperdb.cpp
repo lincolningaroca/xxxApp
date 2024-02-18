@@ -1,6 +1,7 @@
 #include "helperdb.hpp"
 
 #include <QSqlError>
+#include <QtDebug>
 
 
 namespace SW {
@@ -230,9 +231,12 @@ namespace SW {
             qry_.next();
             if(qry_.value(0).toUInt() == 0) ++count;
           }
+
       }
-    if(count == 2) return true;
-    return false;
+    // if(count == 2) return true;
+    // return false;
+
+    return (count == tables.size()-2);
 
 
   }
