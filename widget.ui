@@ -560,7 +560,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="lblInfo">
+      <widget class="SWLabel" name="lblInfo">
        <property name="text">
         <string/>
        </property>
@@ -573,6 +573,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SWLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">swlabel.hpp</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="rsc.qrc"/>
  </resources>
