@@ -2,9 +2,7 @@
 #include "ui_acercadedialog.h"
 
 AcercaDeDialog::AcercaDeDialog(QWidget *parent) :
-  QDialog(parent),
-  ui(new Ui::AcercaDeDialog)
-{
+  QDialog(parent), ui(new Ui::AcercaDeDialog){
   ui->setupUi(this);
 }
 

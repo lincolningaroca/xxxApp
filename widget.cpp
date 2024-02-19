@@ -8,8 +8,10 @@
 #include <QAction>
 #include <QFileDialog>
 #include <QSqlTableModel>
+
 //#include <QProcess>
 #include "dlgnewcategory.hpp"
+#include "acercadedialog.hpp"
 #include "logindialog.hpp"
 #include "publicurldialog.hpp"
 #include "categorydialog.hpp"
@@ -17,7 +19,7 @@
 #include "swtablemodel.hpp"
 #include <QDebug>
 #include <QMenu>
-
+#include "swlabel.hpp"
 
 Widget::Widget(QWidget *parent)
   : QWidget(parent), ui(new Ui::Widget),
@@ -42,6 +44,11 @@ Widget::Widget(QWidget *parent)
   verifyContextMenu();
 
   canRestoreDataBase();
+
+  QObject::connect(ui->lblInfo, &SWLabel::clicked, this, [&](){
+      AcercaDeDialog acercaDe{this};
+      acercaDe.exec();
+    });
 
 
   //action delete category

@@ -561,6 +561,9 @@
      </item>
      <item>
       <widget class="SWLabel" name="lblInfo">
+       <property name="toolTip">
+        <string>Mostrar ventana acerca de</string>
+       </property>
        <property name="text">
         <string/>
        </property>
