@@ -22,5 +22,7 @@
         <file>img/backup.png</file>
         <file>img/desc.png</file>
         <file>img/server-database-restore-64.png</file>
+        <file>img/logoEmpresa.png</file>
+        <file>img/logoEmpresa_1.png</file>
     </qresource>
 </RCC>
