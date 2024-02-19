@@ -2,10 +2,18 @@
 
 #include <QLabel>
 
-class SWLabel : public QLabel
-{
+class QMouseEvent;
+
+class SWLabel : public QLabel{
   Q_OBJECT
 public:
-  SWLabel();
+  explicit SWLabel(QWidget* parent = nullptr);
+
+signals:
+  void clicked();
+
+  // QWidget interface
+protected:
+  void mousePressEvent(QMouseEvent* event) override;
 };
 
