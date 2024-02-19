@@ -46,7 +46,8 @@ Widget::Widget(QWidget *parent)
   canRestoreDataBase();
 
   QObject::connect(ui->lblInfo, &SWLabel::clicked, this, [&](){
-      AcercaDeDialog acercaDe{this};
+      AcercaDeDialog acercaDe{ui->cboTheme->currentText(), this};
+      acercaDe.setWindowTitle(SW::Helper_t::appName().append(" - Acerca de"));
       acercaDe.exec();
     });
 

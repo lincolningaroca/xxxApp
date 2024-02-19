@@ -17,17 +17,66 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="acercaDeTab">
       <attribute name="title">
        <string>Acerca de</string>
       </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QPlainTextEdit" name="ptAcercaDe">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+         <property name="plainText">
+          <string>Powered by:
+Lincoln Ingaroca De La Cruz.
+SWSystem's
+
+Contacto:
+lincolningaroca@gmail.com
+
+Lincoln Ingaroca:
+Analista y Programador de sistemas informáticos.</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="licenciaTab">
       <attribute name="title">
        <string>Licencia</string>
       </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QTextBrowser" name="tbLicencia"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="lblLicencia">
+         <property name="text">
+          <string>Ver licencia</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="companyTab">
+      <attribute name="title">
+       <string>SWSystem's</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QLabel" name="lblLogo">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
@@ -47,7 +96,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="btnCerrar">
        <property name="text">
         <string>Cerrar</string>
        </property>

@@ -24,5 +24,6 @@
         <file>img/server-database-restore-64.png</file>
         <file>img/logoEmpresa.png</file>
         <file>img/logoEmpresa_1.png</file>
+        <file>licencia/licencia.txt</file>
     </qresource>
 </RCC>
