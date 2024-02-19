@@ -50,6 +50,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
          categorydialog.hpp categorydialog.cpp categorydialog.ui
          swtablemodel.hpp swtablemodel.cpp
          swlabel.hpp swlabel.cpp
+         acercadedialog.hpp acercadedialog.cpp acercadedialog.ui
          #qaesencryption.cpp
          #qaesencryption.h
       )
