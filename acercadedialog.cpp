@@ -24,7 +24,7 @@ AcercaDeDialog::AcercaDeDialog(const QString& colorMode, QWidget *parent) :
       QDialog licenciaDlg(this);
 
       QScopedPointer<QVBoxLayout> mainLayOut(new QVBoxLayout(&licenciaDlg));
-      QScopedPointer<QTextEdit> teLicencia(new QTextEdit(&licenciaDlg));
+      QScopedPointer<QTextBrowser> teLicencia(new QTextBrowser(&licenciaDlg));
 
       QFile fileName(":/licencia/licencia.txt");
       if (!fileName.open(QFile::ReadOnly | QFile::Text)) {
@@ -33,8 +33,9 @@ AcercaDeDialog::AcercaDeDialog(const QString& colorMode, QWidget *parent) :
           return;
         }
 
-      teLicencia->setFontPointSize(11);
-      teLicencia->setPlainText(fileName.readAll());
+      teLicencia->setAcceptRichText(true);
+      teLicencia->setOpenExternalLinks(true);
+      teLicencia->setHtml(fileName.readAll());
       teLicencia->setReadOnly(true);
       mainLayOut->addWidget(teLicencia.data());
       licenciaDlg.setLayout(mainLayOut.data());
@@ -59,10 +60,10 @@ void AcercaDeDialog::loadInfo_app() const noexcept{
         "href=\"https://www.fsf.org\">Free Software "
         "Foundation</a>, bien de la versión 3 de dicha Licencia o bien (según su "
         "elección) de cualquier versión posterior.<br><br>"
-        "Este programa se distribuye con la esperanza de que sea útil, pero SIN "
+        "Este programa se distribuye con la esperanza de que sea útil, pero <strong>SIN "
         "NINGUNA "
-        "GARANTÍA, incluso sin la garantía MERCANTIL implícita ni la de "
-        "garantizar la ADECUACIÓN A UN PROPÓSITO PARTICULAR. Véase la <a "
+        "GARANTÍA</strong>, incluso sin la garantía <strong>MERCANTIL</strong> implícita ni la de "
+        "garantizar la <strong>ADECUACIÓN A UN PROPÓSITO PARTICULAR.</strong> Véase la <a "
         "href=\"https://www.gnu.org/licenses/\">Licencia "
         "Pública General</a> de GNU para más detalles.</font></p>");
 
