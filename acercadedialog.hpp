@@ -16,6 +16,7 @@ public:
 
 private:
   Ui::AcercaDeDialog *ui;
+  const QFont font_{"Fira Code", 11};
 
 private:
   void loadInfo_app() const noexcept;

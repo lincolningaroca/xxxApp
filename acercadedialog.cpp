@@ -33,6 +33,9 @@ AcercaDeDialog::AcercaDeDialog(const QString& colorMode, QWidget *parent) :
           return;
         }
 
+
+
+      teLicencia->setFont(font_);
       teLicencia->setAcceptRichText(true);
       teLicencia->setOpenExternalLinks(true);
       teLicencia->setHtml(fileName.readAll());
@@ -43,6 +46,9 @@ AcercaDeDialog::AcercaDeDialog(const QString& colorMode, QWidget *parent) :
       licenciaDlg.setWindowTitle(SW::Helper_t::appName().append(" - licencia"));
       licenciaDlg.exec();
     });
+
+  ui->ptAcercaDe->setFont(font_);
+  ui->tbLicencia->setFont(font_);
 }
 
 AcercaDeDialog::~AcercaDeDialog()
@@ -54,7 +60,7 @@ void AcercaDeDialog::loadInfo_app() const noexcept{
   ui->tbLicencia->setAcceptRichText(true);
   ui->tbLicencia->setOpenExternalLinks(true);
   ui->tbLicencia->setHtml(
-        "<p><font size=\"4\">xxxApp:<br><br>Es software libre, puede "
+        "<p>xxxApp:<br><br>Es software libre, puede "
         "redistribuirlo y/o modificarlo bajo los términos de la Licencia Pública "
         "General de GNU según se encuentra publicada por la <a "
         "href=\"https://www.fsf.org\">Free Software "
@@ -65,6 +71,6 @@ void AcercaDeDialog::loadInfo_app() const noexcept{
         "GARANTÍA</strong>, incluso sin la garantía <strong>MERCANTIL</strong> implícita ni la de "
         "garantizar la <strong>ADECUACIÓN A UN PROPÓSITO PARTICULAR.</strong> Véase la <a "
         "href=\"https://www.gnu.org/licenses/\">Licencia "
-        "Pública General</a> de GNU para más detalles.</font></p>");
+        "Pública General</a> de GNU para más detalles.</p>");
 
 }
