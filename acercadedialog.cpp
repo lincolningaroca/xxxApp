@@ -3,7 +3,7 @@
 #include "util/helper.hpp"
 
 #include <QMessageBox>
-#include <QImageReader>
+
 
 AcercaDeDialog::AcercaDeDialog(const QString& colorMode, QWidget *parent) :
   QDialog(parent), ui(new Ui::AcercaDeDialog){
@@ -76,7 +76,6 @@ void AcercaDeDialog::loadInfo_app() const noexcept{
 }
 
 void AcercaDeDialog::setTextToAbout() const{
-
   ui->tbAcercaDe->setFont(font_);
   ui->tbAcercaDe->setHtml("<p>Powered by:"
                           "<ul>"
@@ -92,7 +91,6 @@ void AcercaDeDialog::setTextToAbout() const{
                           "<li>Analista de sistemas informáticos.</li>"
                           "<li>Software development.</li>"
                           "</ul><br>"
-
                           "</p>");
 
 }
