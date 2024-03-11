@@ -18,7 +18,7 @@ AcercaDeDialog::AcercaDeDialog(const QString& colorMode, QWidget *parent) :
 
   loadInfo_app();
   ui->lblLicencia->setText(QStringLiteral("<a href='message'>Ver licencia.</a>"));
-  QObject::connect(ui->btnCerrar, &QPushButton::clicked, this, &AcercaDeDialog::reject);
+  QObject::connect(ui->btnCerrar, &QPushButton::clicked, this, &AcercaDeDialog::close);
 
   QObject::connect(ui->lblLicencia, &QLabel::linkActivated, this, [&](){
       QDialog licenciaDlg(this);
