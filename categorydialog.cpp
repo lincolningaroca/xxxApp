@@ -6,6 +6,7 @@ CategoryDialog::CategoryDialog(QHash<uint32_t, QString> categoryList, QWidget *p
   ui->setupUi(this);
 
   ui->categoryComboBox->addItems(data_.values());
+  ui->cancelPushButton->setDefault(true);
 
   QObject::connect(ui->cancelPushButton, &QPushButton::clicked, this, [this](){ reject();});
   QObject::connect(ui->aceptPushButton, &QPushButton::clicked, this, [this](){ accept();});

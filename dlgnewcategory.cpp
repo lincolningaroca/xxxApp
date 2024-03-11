@@ -10,6 +10,7 @@ dlgNewCategory::dlgNewCategory(OpenMode mode, const QStringList &list, QWidget *
   ui->setupUi(this);
   setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
 
+
   if(mode == OpenMode::Edit){
       setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - Edit category data.")));
       ui->txtCategory->setText(list.value(0));

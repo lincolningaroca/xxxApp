@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>117</height>
+    <width>392</width>
+    <height>123</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,9 +17,16 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Categorías</string>
+      <string/>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Seleccione una categoría, a donde sera movida la url</string>
+        </property>
+       </widget>
+      </item>
       <item>
        <widget class="QComboBox" name="categoryComboBox"/>
       </item>

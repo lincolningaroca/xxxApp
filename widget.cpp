@@ -507,6 +507,7 @@ Widget::Widget(QWidget *parent)
               return;
             }
           setUpTable(categoryList.key(ui->cboCategory->currentText()));
+          verifyContextMenu();
           hastvUrlData();
         }
 
