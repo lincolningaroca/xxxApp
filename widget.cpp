@@ -248,6 +248,7 @@ Widget::Widget(QWidget *parent)
       if(!validateSelectedRow()) return;
 
       quitUrl();
+      verifyContextMenu();
 
       hastvUrlData();
 
@@ -257,6 +258,7 @@ Widget::Widget(QWidget *parent)
       if(!validateSelectedRow()) return;
 
       quitUrl();
+      verifyContextMenu();
       hastvUrlData();
 
     });
@@ -296,6 +298,7 @@ Widget::Widget(QWidget *parent)
   QObject::connect(ui->cboCategory, &QComboBox::currentIndexChanged, this, [&](){
       setUpTable(categoryList.key(ui->cboCategory->currentText()));
       verifyContextMenu();
+      // setUpCboCategoryContextMenu();
       setCboCategoryToolTip();
       hastvUrlData();
       checkStatusContextMenu();
@@ -393,7 +396,7 @@ Widget::Widget(QWidget *parent)
   //restore database
   QObject::connect(ui->btnRestore, &QToolButton::clicked, this, [&](){
 
-     const auto dbasePath{SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase.db"))};
+      const auto dbasePath{SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase.db"))};
 
       // qInfo() << dbasePath <<'\n';
       // QFile file{dbasePath};
@@ -720,8 +723,8 @@ void Widget::showAlldescription() noexcept{
 }
 
 void Widget::checkStatusContextMenu(){
-  (SW::Helper_t::sessionStatus_ == SW::SessionStatus::Session_closed) ? showPublicUrl_->setDisabled(true) : showPublicUrl_->setDisabled(false);
-  (categoryList.count() > 1) ? moveUrl_->setEnabled(true) : moveUrl_->setDisabled(true);
+  (SW::Helper_t::sessionStatus_ == SW::SessionStatus::Session_closed) ? showPublicUrl_->setVisible(false) : showPublicUrl_->setVisible(true);
+  (categoryList.count() > 1) ? moveUrl_->setVisible(true) : moveUrl_->setVisible(false);
 
 }
 
@@ -767,10 +770,12 @@ void Widget::loadListCategory(uint32_t user_id) noexcept{
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Widget::setUpCboCategoryContextMenu() noexcept{
+
   QIcon icon(QStringLiteral(":/img/118277.png"));
   ui->cboCategory->setContextMenuPolicy(Qt::ActionsContextMenu);
   delCategory = new QAction(icon, QStringLiteral("Forzar eliminación de categoría"),this);
   ui->cboCategory->addAction(delCategory);
+
 
 
 }
@@ -889,8 +894,8 @@ void Widget::hastvUrlData() noexcept{
       ui->btnQuit->setDisabled(true);
       editUrl_->setDisabled(true);
       quittUrl_->setDisabled(true);
-      // moveUrl_->setDisabled(true);
-      showDescDetail_->setDisabled(true);
+      moveUrl_->setVisible(false);
+      showDescDetail_->setVisible(false);
     }else{
       openUrl_->setEnabled(true);
       ui->btnopen->setEnabled(true);
@@ -898,8 +903,8 @@ void Widget::hastvUrlData() noexcept{
       ui->btnQuit->setEnabled(true);
       editUrl_->setEnabled(true);
       quittUrl_->setEnabled(true);
-      // moveUrl_->setEnabled(true);
-      showDescDetail_->setEnabled(true);
+      moveUrl_->setVisible(true);
+      showDescDetail_->setVisible(true);
     }
 }
 
