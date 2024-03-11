@@ -20,5 +20,6 @@ private:
 
 private:
   void loadInfo_app() const noexcept;
+  void setTextToAbout() const;
 };
 

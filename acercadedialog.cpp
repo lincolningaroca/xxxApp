@@ -3,13 +3,14 @@
 #include "util/helper.hpp"
 
 #include <QMessageBox>
+#include <QImageReader>
 
 AcercaDeDialog::AcercaDeDialog(const QString& colorMode, QWidget *parent) :
   QDialog(parent), ui(new Ui::AcercaDeDialog){
   ui->setupUi(this);
 
   setWindowFlags(windowFlags() | Qt::MSWindowsFixedSizeDialogHint);
-
+  setTextToAbout();
   ui->tabWidget->setCurrentIndex(0);
 
   (colorMode == QStringLiteral("Modo Oscuro")) ? ui->lblLogo->setPixmap(QPixmap(":/img/logoEmpresa.png").scaled(490, 338)) :
@@ -47,7 +48,6 @@ AcercaDeDialog::AcercaDeDialog(const QString& colorMode, QWidget *parent) :
       licenciaDlg.exec();
     });
 
-  ui->ptAcercaDe->setFont(font_);
   ui->tbLicencia->setFont(font_);
 }
 
@@ -72,5 +72,27 @@ void AcercaDeDialog::loadInfo_app() const noexcept{
         "garantizar la <strong>ADECUACIÓN A UN PROPÓSITO PARTICULAR.</strong> Véase la <a "
         "href=\"https://www.gnu.org/licenses/\">Licencia "
         "Pública General</a> de GNU para más detalles.</p>");
+
+}
+
+void AcercaDeDialog::setTextToAbout() const{
+
+  ui->tbAcercaDe->setFont(font_);
+  ui->tbAcercaDe->setHtml("<p>Powered by:"
+                          "<ul>"
+                          "<li>Lincoln Ingaroca De La Cruz.</li>"
+                          "<li>SWSystem's.</li>"
+                          "</ul>"
+                          "Contacto:"
+                          "<ul>"
+                          "<li>lincolningaroca@gmail.com</li>"
+                          "</ul>"
+                          "Lincoln Ingaroca:"
+                          "<ul>"
+                          "<li>Analista de sistemas informáticos.</li>"
+                          "<li>Software development.</li>"
+                          "</ul><br>"
+
+                          "</p>");
 
 }

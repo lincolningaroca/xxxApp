@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="acercaDeTab">
       <attribute name="title">
@@ -25,22 +25,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QPlainTextEdit" name="ptAcercaDe">
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-         <property name="plainText">
-          <string>Powered by:
-Lincoln Ingaroca De La Cruz.
-SWSystem's
-
-Contacto:
-lincolningaroca@gmail.com
-
-Lincoln Ingaroca:
-Analista y Programador de sistemas informáticos.</string>
-         </property>
-        </widget>
+        <widget class="QTextBrowser" name="tbAcercaDe"/>
        </item>
       </layout>
      </widget>
