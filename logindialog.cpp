@@ -61,7 +61,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
                                           "Crear un nuevo usuario y/o<br>"
                                           "restablecer clave o password!"
                                           "</span>");
-          ui->pbLogIn->setDefault(true);
+          ui->pbCancel->setDefault(true);
         }
     });
 
