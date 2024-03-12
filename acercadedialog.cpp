@@ -13,8 +13,8 @@ AcercaDeDialog::AcercaDeDialog(const QString& colorMode, QWidget *parent) :
   setTextToAbout();
   ui->tabWidget->setCurrentIndex(0);
 
-  (colorMode == QStringLiteral("Modo Oscuro")) ? ui->lblLogo->setPixmap(QPixmap(":/img/logoEmpresa.png").scaled(490, 338)) :
-                                                 ui->lblLogo->setPixmap(QPixmap(":/img/logoEmpresa_1.png").scaled(490, 338));
+  (colorMode == QStringLiteral("Modo Oscuro")) ? ui->lblLogo->setPixmap(QPixmap(":/img/logoEmpresa_1.png").scaled(490, 338)) :
+                                                 ui->lblLogo->setPixmap(QPixmap(":/img/logoEmpresa.png").scaled(490, 338));
 
 
   loadInfo_app();
