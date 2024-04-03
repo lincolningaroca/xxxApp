@@ -16,6 +16,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
   readSettings();
   ui->pbLogIn->setDefault(true);
 
+
   QObject::connect(ui->pbCancel, &QPushButton::clicked, this, &LogInDialog::reject_form);
 
   QObject::connect(ui->pbLogIn, &QPushButton::clicked, this, [&](){

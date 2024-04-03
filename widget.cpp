@@ -551,7 +551,7 @@ void Widget::initFrm() noexcept{
 
   //set the focus to txturl control
   ui->txtUrl->setFocus(Qt::OtherFocusReason);
-
+  ui->lblInfo->setCursor(Qt::PointingHandCursor);
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////

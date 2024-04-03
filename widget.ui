@@ -561,6 +561,18 @@
      </item>
      <item>
       <widget class="SWLabel" name="lblInfo">
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="toolTip">
         <string>Mostrar ventana acerca de</string>
        </property>
