@@ -15,3 +15,5 @@ img/*
 *.autosave
 .gitignore.swp
 tools/*
+CMakeLists.txt.user.c4fca1e
+build/
