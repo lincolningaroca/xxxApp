@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="acercaDeTab">
       <attribute name="title">
@@ -38,11 +38,35 @@
         <widget class="QTextBrowser" name="tbLicencia"/>
        </item>
        <item>
-        <widget class="QLabel" name="lblLicencia">
-         <property name="text">
-          <string>Ver licencia</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="lblLicencia">
+           <property name="text">
+            <string>Ver licencia</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="lblAcercaQt">
+           <property name="text">
+            <string>Acerca de Qt</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>

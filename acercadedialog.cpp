@@ -19,6 +19,7 @@ AcercaDeDialog::AcercaDeDialog(const QString& colorMode, QWidget *parent) :
 
   loadInfo_app();
   ui->lblLicencia->setText(QStringLiteral("<a href='message'>Ver licencia.</a>"));
+  ui->lblAcercaQt->setText(QStringLiteral("<a href='message'>Acerca de Qt.</a>"));
   QObject::connect(ui->btnCerrar, &QPushButton::clicked, this, &AcercaDeDialog::close);
 
   QObject::connect(ui->lblLicencia, &QLabel::linkActivated, this, [&](){
@@ -35,7 +36,6 @@ AcercaDeDialog::AcercaDeDialog(const QString& colorMode, QWidget *parent) :
         }
 
 
-
       teLicencia->setFont(font_);
       teLicencia->setAcceptRichText(true);
       teLicencia->setOpenExternalLinks(true);
@@ -47,6 +47,10 @@ AcercaDeDialog::AcercaDeDialog(const QString& colorMode, QWidget *parent) :
       licenciaDlg.setWindowTitle(SW::Helper_t::appName().append(" - licencia"));
       licenciaDlg.exec();
     });
+
+  QObject::connect(ui->lblAcercaQt, &QLabel::linkActivated, this, [&](){
+      QMessageBox::aboutQt(this);
+  });
 
   ui->tbLicencia->setFont(font_);
 }

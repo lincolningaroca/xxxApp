@@ -594,7 +594,7 @@ void Widget::setUpTable(uint32_t categoryId) noexcept{
 
   xxxModel_ = new SWTableModel(this, db_);
   xxxModel_->setTable("urls");
-  xxxModel_->setFilter(QString("categoryid=%1").arg(categoryId));
+	xxxModel_->setFilter(QStringLiteral("categoryid=%1").arg(categoryId));
   xxxModel_->select();
 
   ui->tvUrl->setModel(xxxModel_);
@@ -747,12 +747,12 @@ void Widget::setLabelInfo(const QString& color, const QString& userName) noexcep
 
   // auto userName_ = SW::Helper_t::currentUser_.value(userName);
 
-  ui->lblInfo->setText(QString("<span style='color:%1;'>"
+	ui->lblInfo->setText(QStringLiteral("<span style='color:%1;'>"
                                "<strong>SWSystem's - Lincoln Ingaroca"
                                "</strong></span>").arg(color));
 
 
-  ui->lblState->setText(QString("<span style='color:%1;'>"
+	ui->lblState->setText(QStringLiteral("<span style='color:%1;'>"
                                 "<strong>User: %2"
                                 "</strong></span>").arg(color, userName));
 
