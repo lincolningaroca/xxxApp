@@ -196,7 +196,7 @@ Widget::Widget(QWidget *parent)
 
   //btnAddNewCategory
   QObject::connect(ui->btnNewCategory, &QPushButton::clicked, this, [&](){
-      dlgNewCategory newCategory(dlgNewCategory::OpenMode::New, QStringList{}, this);
+      dlgNewCategory newCategory(dlgNewCategory::OpenMode::New);
 
       if(newCategory.exec() == QDialog::Rejected)
         return;
