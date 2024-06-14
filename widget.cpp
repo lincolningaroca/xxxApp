@@ -594,7 +594,7 @@ void Widget::setUpTable(uint32_t categoryId) noexcept{
 
   xxxModel_ = new SWTableModel(this, db_);
   xxxModel_->setTable("urls");
-	xxxModel_->setFilter(QStringLiteral("categoryid=%1").arg(categoryId));
+  xxxModel_->setFilter(QStringLiteral("categoryid=%1").arg(categoryId));
   xxxModel_->select();
 
   ui->tvUrl->setModel(xxxModel_);
@@ -747,14 +747,14 @@ void Widget::setLabelInfo(const QString& color, const QString& userName) noexcep
 
   // auto userName_ = SW::Helper_t::currentUser_.value(userName);
 
-	ui->lblInfo->setText(QStringLiteral("<span style='color:%1;'>"
-                               "<strong>SWSystem's - Lincoln Ingaroca"
-                               "</strong></span>").arg(color));
+  ui->lblInfo->setText(QStringLiteral("<span style='color:%1;'>"
+                                      "<strong>SWSystem's - Lincoln Ingaroca"
+                                      "</strong></span>").arg(color));
 
 
-	ui->lblState->setText(QStringLiteral("<span style='color:%1;'>"
-                                "<strong>User: %2"
-                                "</strong></span>").arg(color, userName));
+  ui->lblState->setText(QStringLiteral("<span style='color:%1;'>"
+                                       "<strong>User: %2"
+                                       "</strong></span>").arg(color, userName));
 
 }
 
@@ -811,8 +811,9 @@ void Widget::setUptvUrlContextMenu() noexcept{
 
 bool Widget::eventFilter(QObject* watched, QEvent* event){
   if(watched == ui->tvUrl && event->type() == QEvent::ContextMenu){
-      QContextMenuEvent* contextMenuEvent = static_cast<QContextMenuEvent*>(event);
-      contextMenu->exec(contextMenuEvent->globalPos());
+      QContextMenuEvent* contextMenuEvent = dynamic_cast<QContextMenuEvent*>(event);
+      if(contextMenuEvent)
+        contextMenu->exec(contextMenuEvent->globalPos());
     }
   return QWidget::eventFilter(watched, event);
 }

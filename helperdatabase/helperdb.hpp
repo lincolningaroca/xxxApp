@@ -1,13 +1,15 @@
 #pragma once
 
 #include <QSqlDatabase>
-#include <QStringView>
+// #include <QStringView>
 #include <QSqlQuery>
 #include <util/helper.hpp>
 
+
+class QStringView;
 namespace SW {
 
-//  class QStringView;
+
 
 struct HelperDataBase_t{
 
