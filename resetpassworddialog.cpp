@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QRegularExpressionValidator>
 #include <QAction>
+#include "util/helper.hpp"
 
 ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
   :QDialog(parent), ui(new Ui::ResetPasswordDialog){
@@ -14,6 +15,12 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
   setInit_Form();
 
   QObject::connect(ui->btnValidarUsuario, &QPushButton::clicked, this, [&](){
+
+      if(ui->txtUser->text() == SW::Helper_t::defaultUser){
+          ui->txtUser->clear();
+          ui->txtUser->setFocus(Qt::OtherFocusReason);
+          return;
+        }
 
       if(!helper.userExists(ui->txtUser->text().simplified())){
           QMessageBox::warning(this, SW::Helper_t::appName(),
