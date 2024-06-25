@@ -221,6 +221,7 @@ void LogInDialog::setUp_Form() noexcept{
   ui->cboRestoreType->addItem(QIcon(QStringLiteral(":/img/paper_pin.png")), QStringLiteral("Pregunta secreta"));
   ui->cboRestoreType->addItem(QIcon(QStringLiteral(":/img/paper_pin.png")), QStringLiteral("Pin numérico"));
   ui->checkBox->setChecked(true);
+  ui->checkBox->setDisabled(true);
 
 }
 
