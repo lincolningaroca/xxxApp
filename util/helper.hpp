@@ -54,7 +54,7 @@ struct Helper_t{
   static QString encrypt(const QString& text, const QString& key=key_);
   static QString decrypt(const QString& encryptedText, const QString& key=key_);
 
-  inline static QHash<SW::User, QString> currentUser_{
+  inline static const QHash<SW::User, QString> currentUser_{
     {SW::User::U_public, "PUBLIC"},
     {SW::User::U_user, "USER"}
   };

@@ -333,6 +333,7 @@ Widget::Widget(QWidget *parent)
           checkStatusContextMenu();
           canRestoreDataBase();
         }
+
     });
 
   //connect to button logout
@@ -350,6 +351,7 @@ Widget::Widget(QWidget *parent)
       checkStatusContextMenu();
       SW::Helper_t::current_user_ = SW::Helper_t::defaultUser;
       canRestoreDataBase();
+
     });
 
   //connect boton crear copia de seguridad
@@ -724,14 +726,14 @@ void Widget::showAlldescription() noexcept{
 }
 
 void Widget::checkStatusContextMenu(){
-  (SW::Helper_t::sessionStatus_ == SW::SessionStatus::Session_closed) ? showPublicUrl_->setVisible(false) : showPublicUrl_->setVisible(true);
+  (static_cast<bool>(SW::Helper_t::sessionStatus_)) ? showPublicUrl_->setVisible(false) : showPublicUrl_->setVisible(true);
   (categoryList.count() > 1) ? moveUrl_->setVisible(true) : moveUrl_->setVisible(false);
 
 }
 
 void Widget::checkStatusSessionColor(const QString& text){
 
-  if(SW::Helper_t::sessionStatus_ == SW::SessionStatus::Session_start){
+  if(!static_cast<bool>(SW::Helper_t::sessionStatus_)){
       ( text == QStringLiteral("Modo Oscuro") ) ? setLabelInfo(SW::Helper_t::darkModeColor.data(), SW::Helper_t::current_user_):
                                                   setLabelInfo(SW::Helper_t::lightModeColor.data(), SW::Helper_t::current_user_);
     }else{
@@ -913,7 +915,7 @@ void Widget::hastvUrlData() noexcept{
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Widget::closeEvent(QCloseEvent *event){
-  if(SW::Helper_t::sessionStatus_ == SW::SessionStatus::Session_start){
+  if(!static_cast<bool>(SW::Helper_t::sessionStatus_)){
       QMessageBox::warning(this, SW::Helper_t::appName(),
                            QStringLiteral("<cite>Hay una sesión activa en este momento.<br>"
                                           "Necesita cerrar sesión primero antes de salir, "

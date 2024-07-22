@@ -198,7 +198,7 @@ namespace SW {
 
   }
 
-  bool HelperDataBase_t::dataBase_exists(QStringView db_name) {
+  bool HelperDataBase_t::dataBase_exists(QStringView db_name) const {
     return (db_.isValid() && QFile::exists(db_name.toString()));
 
   }

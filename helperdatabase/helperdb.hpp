@@ -38,7 +38,7 @@ struct HelperDataBase_t{
   bool moveUrlToOtherCategory(uint32_t categoryId, uint32_t urlId) noexcept;
 
   //verificar si la base d edatos existe
-  bool dataBase_exists(QStringView db_name);
+  bool dataBase_exists(QStringView db_name) const;
 
   bool isDataBase_empty() noexcept;
 
