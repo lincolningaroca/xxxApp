@@ -727,7 +727,8 @@ void Widget::showAlldescription() noexcept{
 
 void Widget::checkStatusContextMenu(){
   (static_cast<bool>(SW::Helper_t::sessionStatus_)) ? showPublicUrl_->setVisible(false) : showPublicUrl_->setVisible(true);
-  (categoryList.count() > 1) ? moveUrl_->setVisible(true) : moveUrl_->setVisible(false);
+
+  (ui->tvUrl->model()->rowCount() > 0) ? moveUrl_->setVisible(true) : moveUrl_->setVisible(false);
 
 }
 
@@ -814,8 +815,10 @@ void Widget::setUptvUrlContextMenu() noexcept{
 bool Widget::eventFilter(QObject* watched, QEvent* event){
   if(watched == ui->tvUrl && event->type() == QEvent::ContextMenu){
       QContextMenuEvent* contextMenuEvent = dynamic_cast<QContextMenuEvent*>(event);
-      if(contextMenuEvent)
-        contextMenu->exec(contextMenuEvent->globalPos());
+      if(contextMenuEvent){
+          contextMenu->exec(contextMenuEvent->globalPos());
+          return true;
+        }
     }
   return QWidget::eventFilter(watched, event);
 }

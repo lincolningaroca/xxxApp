@@ -25,7 +25,7 @@ dlgNewCategory::dlgNewCategory(OpenMode mode, const QStringList &list, QWidget *
       SW::HelperDataBase_t helperdb_{};
 
       uint32_t userid {0};
-      (SW::Helper_t::sessionStatus_ == SW::SessionStatus::Session_closed) ?
+      (static_cast<bool>(SW::Helper_t::sessionStatus_)) ?
            userid = helperdb_.getUser_id(SW::Helper_t::current_user_, SW::User::U_public) :
            userid = helperdb_.getUser_id(SW::Helper_t::current_user_, SW::User::U_user);
 
