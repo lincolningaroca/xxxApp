@@ -74,10 +74,10 @@ else()
     endif()
 endif()
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 target_link_libraries(xxxapp PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Sql
-    ${CMAKE_CURRENT_BINARY_DIR}/lib/libcrypto.lib)
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/libcrypto.lib)
 
 set_target_properties(xxxapp PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
