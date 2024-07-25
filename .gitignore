@@ -17,3 +17,5 @@ img/*
 tools/*
 CMakeLists.txt.user.c4fca1e
 build/
+lib/
+include/
