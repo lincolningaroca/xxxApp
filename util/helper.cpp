@@ -1,8 +1,12 @@
 #include "helper.hpp"
 #include <QPalette>
 #include <QApplication>
-
+#include <QCryptographicHash>
 #include <QStyle>
+
+extern "C"{
+  #include "openssl/rand.h"
+}
 
 namespace SW {
 
@@ -60,6 +64,43 @@ namespace SW {
     QDir docDir(appLocation);
 
     return docDir.mkpath(QStringLiteral("xxxdatabase"));
+
+  }
+
+  QString Helper_t::generateSecurePassword(uint32_t length) noexcept{
+
+    const QString charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*(),.?\":{}|<>";
+    QString password{};
+
+    // Inicializar el generador de números aleatorios de OpenSSL
+    unsigned char seed[32];
+    if (RAND_bytes(seed, sizeof(seed)) != 1) {
+        qFatal("Error al generar semilla aleatoria");
+      }
+
+    // Usar QCryptographicHash para mezclar la semilla con la hora actual
+    QCryptographicHash hash(QCryptographicHash::Sha512);
+    hash.addData(reinterpret_cast<const char*>(seed), sizeof(seed));
+    hash.addData(QDateTime::currentDateTime().toString(Qt::ISODate).toUtf8());
+    auto randomData = hash.result();
+
+    // Generar la contraseña
+    for (uint32_t i = 0; i < length; ++i) {
+        auto index = static_cast<unsigned char>(randomData[i % randomData.size()]) % charset.length();
+        password.append(charset[index]);
+      }
+
+    return password;
+
+  }
+
+  bool Helper_t::isPasswordSecure(const QString &password) noexcept{
+
+    static QRegularExpression passwordRegex(
+        "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#$%^&*(),.?\":{}|<>]{8,}$"
+    );
+
+    return passwordRegex.match(password).hasMatch();
 
   }
 

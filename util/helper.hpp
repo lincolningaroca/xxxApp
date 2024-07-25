@@ -3,7 +3,8 @@
 #include <QStringView>
 #include <QDesktopServices>
 #include <QApplication>
-//#include "qaesencryption.h"
+
+
 
 namespace SW {
 
@@ -29,6 +30,9 @@ struct Helper_t{
 
 
   static bool createDataBase_dir() noexcept;
+
+  static QString generateSecurePassword(uint32_t length = 8) noexcept;
+  static bool isPasswordSecure(const QString& password) noexcept;
 
 
   static QByteArray setColorReg(const QString &color) noexcept;
