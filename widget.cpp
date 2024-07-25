@@ -728,7 +728,8 @@ void Widget::showAlldescription() noexcept{
 void Widget::checkStatusContextMenu(){
   (static_cast<bool>(SW::Helper_t::sessionStatus_)) ? showPublicUrl_->setVisible(false) : showPublicUrl_->setVisible(true);
 
-  (ui->tvUrl->model()->rowCount() > 0) ? moveUrl_->setVisible(true) : moveUrl_->setVisible(false);
+  (ui->cboCategory->model()->rowCount() > 1 && ui->tvUrl->model()->rowCount() > 0)
+      ? moveUrl_->setVisible(true) : moveUrl_->setVisible(false);
 
 }
 
