@@ -125,19 +125,22 @@ Widget::Widget(QWidget *parent)
       if(ui->btnAdd->text().compare("Agregar") == 0){
           if(!SW::Helper_t::urlValidate(ui->txtUrl->text())){
               QMessageBox::warning(this, SW::Helper_t::appName(),
-                                   QString("<p><cite>La dirección: <strong>\"%1\"</strong>, no es válida!<br>"
+                                   QString("<p>"
+                                           "<span>"
+                                           "La dirección: <strong>\"%1\"</strong>, no es válida!<br>"
                                            "una dirección url válida debe tener una de las siguiente formas:"
                                            "<ol>"
-                                           "<li><strong>http://www.url.dominio</strong></li>"
-                                           "<li><strong>https://www.url.dominio</strong></li>"
-                                           "<li><strong>http://url.dominio</strong></li>"
-                                           "<li><strong>https://url.dominio</strong></li>"
+                                           "<li><strong>(http://www.)url.dominio</strong></li>"
+                                           "<li><strong>(https://www.)url.dominio</strong></li>"
+                                           "<li><strong>(ftp://)url.dominio</strong></li>"
+                                           "<li><strong>(ftp://www.)url.dominio</strong></li>"
                                            "</ol>"
-                                           "Tenga en cuenta que para éste sistema:<br>"
-                                           "http:// o https:// son requeridos.<br>"
-                                           "Lo mínimo que se espera es <strong>(http | https)://www.url.domino</strong><br>"
-                                           "<strong>Siendo (www.)</strong> opcional!"
-                                           "</cite></p>").arg(ui->txtUrl->text()));
+                                           "<br>Nota:<br>"
+                                           "Tenga en cuenta que "
+                                           "<strong>http://, https://, ftp://, www.</strong> son opcionales<br>"
+                                           "Lo mínimo que se espera es una direccón de la forma: <strong>\"url.domino\"</strong>"
+                                           "</span>"
+                                           "</p>").arg(ui->txtUrl->text()));
               ui->txtUrl->selectAll();
               ui->txtUrl->setFocus(Qt::OtherFocusReason);
               return;
@@ -532,7 +535,7 @@ Widget::~Widget()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Widget::initFrm() noexcept{
 
-  ui->txtUrl->setPlaceholderText(QStringLiteral("(http | https://)www.url.com"));
+  ui->txtUrl->setPlaceholderText(QStringLiteral("(http:// | https:// | ftp://)(www.)url.com(.pe|.abc)"));
   ui->pteDesc->setPlaceholderText(QStringLiteral("Description to url's"));
   ui->btnNewCategory->setToolTip(QStringLiteral("New Category!"));
   ui->btnEditCategory->setToolTip(QStringLiteral("Edit Category Data!"));
