@@ -49,7 +49,7 @@ namespace SW {
   bool Helper_t::urlValidate(QStringView url) noexcept
   {
     // static QRegularExpression regex(R"(^(https?|ftp)://[^\s/$.?#].[^\s]*$)");
-    static QRegularExpression regex(R"(^(https?://|ftp://)?(www\.)?[a-zA-Z0-9.-]+(\.[a-zA-Z]{2,6})?(/[^\s]*)?$)");
+    static QRegularExpression regex(R"(^(https?://|ftp://)?(www\.)?[a-zA-Z0-9.-]+(\.[a-zA-Z]{2,6})(/[^\s]*)?$)");
     auto match = regex.match(url);
     return match.hasMatch();
   }

@@ -535,7 +535,7 @@ Widget::~Widget()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Widget::initFrm() noexcept{
 
-  ui->txtUrl->setPlaceholderText(QStringLiteral("(http:// | https:// | ftp://)(www.)url.com(.pe|.abc)"));
+  ui->txtUrl->setPlaceholderText(QStringLiteral("(http:// | https:// | ftp://)(www.)url.com(.pe | .abc)"));
   ui->pteDesc->setPlaceholderText(QStringLiteral("Description to url's"));
   ui->btnNewCategory->setToolTip(QStringLiteral("New Category!"));
   ui->btnEditCategory->setToolTip(QStringLiteral("Edit Category Data!"));
