@@ -5,7 +5,7 @@
 #include <QStyle>
 
 extern "C"{
-  #include "openssl/rand.h"
+#include "openssl/rand.h"
 }
 
 namespace SW {
@@ -16,18 +16,6 @@ namespace SW {
     return QString{crypto.result().toHex()};
 
   }
-
-  //  QByteArray Helper_t::encrypt_txt(const QString &txt) noexcept{
-  //    QByteArray encodeText = encrypt.encode(txt.toLatin1(), hashKey, hashIV);
-  //    return encodeText;
-
-  //  }
-
-  //  QString Helper_t::decrypt_txt(const QByteArray &txt) noexcept{
-  //    QByteArray decodeText = encrypt.decode(txt, hashKey, hashIV);
-  //    QString decodedString = QString(encrypt.removePadding(decodeText));
-  //    return decodedString;
-  //  }
 
   QByteArray Helper_t::setColorReg(const QString& color) noexcept
   {
@@ -69,36 +57,45 @@ namespace SW {
 
   QString Helper_t::generateSecurePassword(uint32_t length) noexcept{
 
-    const QString charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*(),.?\":{}|<>";
-    QString password{};
+    // if (length < 4) {
+    //     throw std::invalid_argument("La longitud mínima de la contraseña debe ser 4");
+    //   }
 
-    // Inicializar el generador de números aleatorios de OpenSSL
-    unsigned char seed[32];
-    if (RAND_bytes(seed, sizeof(seed)) != 1) {
-        qFatal("Error al generar semilla aleatoria");
+    const QString chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*?:{}|<>~-_=+[]/;\\";
+    const int lowercaseEnd = 26;
+    const int uppercaseEnd = 52;
+    const int numbersEnd = 62;
+
+    QString password;
+
+    // Generar bytes aleatorios
+    QByteArray randomBytes(length, 0);
+    if (RAND_bytes(reinterpret_cast<unsigned char*>(randomBytes.data()), length) != 1) {
+        qFatal("Error al generar bytes aleatorios con OpenSSL");
       }
 
-    // Usar QCryptographicHash para mezclar la semilla con la hora actual
-    QCryptographicHash hash(QCryptographicHash::Sha512);
-    hash.addData(reinterpret_cast<const char*>(seed), sizeof(seed));
-    hash.addData(QDateTime::currentDateTime().toString(Qt::ISODate).toUtf8());
-    auto randomData = hash.result();
+    // Asegurar un carácter de cada tipo
+    password += chars[static_cast<unsigned char>(randomBytes[0]) % lowercaseEnd];
+    password += chars[lowercaseEnd + (static_cast<unsigned char>(randomBytes[1]) % (uppercaseEnd - lowercaseEnd))];
+    password += chars[uppercaseEnd + (static_cast<unsigned char>(randomBytes[2]) % (numbersEnd - uppercaseEnd))];
+    password += chars[numbersEnd + (static_cast<unsigned char>(randomBytes[3]) % (chars.length() - numbersEnd))];
 
-    // Generar la contraseña
-    for (uint32_t i = 0; i < length; ++i) {
-        auto index = static_cast<unsigned char>(randomData[i % randomData.size()]) % charset.length();
-        password.append(charset[index]);
+    // Llenar el resto de la contraseña
+    for (uint32_t i = 4; i < length; ++i) {
+        password += chars[static_cast<unsigned char>(randomBytes[i]) % chars.length()];
       }
+
+    // Mezclar los caracteres
+    std::shuffle(password.begin(), password.end(), std::default_random_engine(static_cast<unsigned long>(randomBytes[0])));
 
     return password;
+
 
   }
 
   bool Helper_t::isPasswordSecure(const QString &password) noexcept{
 
-    static QRegularExpression passwordRegex(
-        "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#$%^&*(),.?\":{}|<>]{8,}$"
-    );
+    static QRegularExpression passwordRegex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#$%^&*(),.?\":{}|<>]{8,}$");
 
     return passwordRegex.match(password).hasMatch();
 
