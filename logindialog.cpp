@@ -23,11 +23,11 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
       if(!helperdb_.logIn(ui->txtUser->text().simplified(), ui->txtPassword->text().simplified())){
           QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("<span>"
-                                                              "<strong>"
-                                                              "Los datos que ingreso son incorrectos\n"
-                                                              "vuelva a intentarlo."
-                                                              "</strong>"
-                                                              "</span>"));
+                                                                             "<strong>"
+                                                                             "Los datos que ingreso son incorrectos\n"
+                                                                             "vuelva a intentarlo."
+                                                                             "</strong>"
+                                                                             "</span>"));
           ui->txtUser->selectAll();
           ui->txtUser->setFocus(Qt::OtherFocusReason);
 
@@ -69,6 +69,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
   //coneccion de combo box metodo de recuperacion
   QObject::connect(ui->cboRestoreType, &QComboBox::activated, this, &LogInDialog::setOptionsToComboBox);
   ui->widget->hide();
+
   //connect to create user button
   QObject::connect(ui->btnCreateUser, &QAbstractButton::clicked, this, [&](){
       if(Validate_hasNoEmpty()){
@@ -76,18 +77,56 @@ LogInDialog::LogInDialog(QWidget *parent) :
           ui->txtNewUser->setFocus();
           return;
         }
-      if(!SW::Helper_t::verify_Values(ui->txtNewPassword->text(), ui->txtRePassword->text())){
+
+      if(ui->txtNewPassword->text().count() < 8 || ui->txtRePassword->text().count() < 8){
           QMessageBox::warning(this, SW::Helper_t::appName(),
                                QStringLiteral("<span>"
-                               "<strong>"
-                               "<em>"
-                               "El password o clave de confirmación no coincide!"
-                               "</em>"
-                               "</strong>"
-                               "</span>"));
+                                              "<em>"
+                                              "El password o clave, debe tener 8 caracteres como mínimo."
+                                              "</em>"
+                                              "</span>"));
           ui->txtRePassword->selectAll();
           ui->txtRePassword->setFocus();
           return;
+        }
+
+      if(!SW::Helper_t::verify_Values(ui->txtNewPassword->text(), ui->txtRePassword->text())){
+          QMessageBox::warning(this, SW::Helper_t::appName(),
+                               QStringLiteral("<span>"
+                                              "<strong>"
+                                              "<em>"
+                                              "El password o clave de confirmación no coincide!"
+                                              "</em>"
+                                              "</strong>"
+                                              "</span>"));
+          ui->txtRePassword->selectAll();
+          ui->txtRePassword->setFocus();
+          return;
+        }
+
+      if(!ui->chkGenPassword->isChecked()){
+
+          if(!SW::Helper_t::isPasswordSecure(ui->txtRePassword->text())){
+              QMessageBox::warning(this,
+                                   SW::Helper_t::appName(),
+                                   QStringLiteral("<span>"
+                                                  "<em>"
+                                                  "Debe ingresar un password o clave segura!<br>"
+                                                  "Nota:<br>"
+                                                  "Para que un password o clave se considere seguro(a), debe cumplir con lo siguiente:"
+                                                  "<ul>"
+                                                  "<li>Debe contener al menos un caracter en mayuscula y en minuscula. </li>"
+                                                  "<li>Debe contener al menos un número.</li>"
+                                                  "<li>Debe contener al menos un caracter especial por ejemplo: \"#$%&@\" etc...</li>"
+                                                  "</ul>"
+                                                  "Ejemplo de calve segura: <strong>\"MiClave@123\"</strong>"
+                                                  "</em>"
+                                                  "</span>"));
+              ui->txtRePassword->selectAll();
+              ui->txtRePassword->setFocus(Qt::OtherFocusReason);
+              return;
+            }
+
         }
       if(ui->cboRestoreType->currentText() == QStringLiteral("Pin numérico")){
           if(ui->txtfirstValue->text().count() < 4 || ui->txtConfirmValue->text().count() <4){
@@ -104,10 +143,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
             }
 
         }
-      if(!ui->checkBox->isChecked()){
-          QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("<span><em>Debe marcar siempre el perfil de usuario!</em></span>"));
-          return;
-        }
+
 
       if(helperdb_.userExists(ui->txtNewUser->text())){
           QMessageBox::warning(this, SW::Helper_t::appName(), tr("<span><em>El nombre de usuario: <strong>%1</strong> ya esta registrado.<br>"
@@ -134,7 +170,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
         }
 
 
-      if(helperdb_.createUser(ui->txtNewUser->text(), password, ui->checkBox->text(),
+      if(helperdb_.createUser(ui->txtNewUser->text(), password, SW::Helper_t::currentUser_.value(SW::User::U_user),
                               ui->cboRestoreType->currentText(), first_value, confirm_value)){
           QMessageBox::information(this, SW::Helper_t::appName(), QStringLiteral("<span><em>El nuevo usuario fue creado con éxito!</em></span>"));
           clearControls();
@@ -165,6 +201,38 @@ LogInDialog::LogInDialog(QWidget *parent) :
       setFeatures(ui->txtConfirmValue, ui->checkBox_5, checked);
     });
 
+  QObject::connect(ui->chkGenPassword, &QCheckBox::clicked, this, [this](bool checked){
+
+      if(checked){
+
+          ui->txtNewPassword->setEchoMode(QLineEdit::Normal);
+          ui->txtRePassword->setEchoMode(QLineEdit::Normal);
+          ui->txtNewPassword->clear();
+          ui->txtRePassword->clear();
+        }else{
+          ui->txtNewPassword->setEchoMode(QLineEdit::Password);
+          ui->txtRePassword->setEchoMode(QLineEdit::Password);
+          ui->txtNewPassword->clear();
+          ui->txtRePassword->clear();
+        }
+
+      ui->btnGenPassword->setEnabled(checked);
+      ui->txtNewPassword->setReadOnly(checked);
+      ui->txtRePassword->setReadOnly(checked);
+      ui->checkBox_2->setChecked(checked);
+      ui->checkBox_3->setChecked(checked);
+      ui->checkBox_2->setDisabled(checked);
+      ui->checkBox_3->setDisabled(checked);
+    });
+
+  //gen passowrd button
+  QObject::connect(ui->btnGenPassword, &QPushButton::clicked, this, [this](){
+
+      auto password{SW::Helper_t::generateSecurePassword()};
+      ui->txtNewPassword->setText(password);
+      ui->txtRePassword->setText(password);
+    });
+
 }//end constructor
 
 LogInDialog::~LogInDialog()
@@ -193,14 +261,15 @@ void LogInDialog::setUp_Form() noexcept{
                                   "restablecer clave o password!"
                                   "</span>"
                                   "</p>");
+  ui->btnGenPassword->setDisabled(true);
 
 
   //new user section
-  ui->txtNewPassword->setPlaceholderText("Ingrese clave o password");
+  ui->txtNewPassword->setPlaceholderText("Ingrese clave o password (mínimo 8 caracteres)");
   ui->txtNewPassword->setClearButtonEnabled(true);
   ui->txtNewPassword->setEchoMode(QLineEdit::Password);
 
-  ui->txtRePassword->setPlaceholderText("Vuelva a ingresar su clave o password");
+  ui->txtRePassword->setPlaceholderText("Vuelva a ingresar su clave o password (mínimo 8 caracteres)");
   ui->txtRePassword->setEchoMode(QLineEdit::Password);
   ui->txtRePassword->setClearButtonEnabled(true);
 
