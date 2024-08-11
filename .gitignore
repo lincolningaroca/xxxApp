@@ -16,6 +16,7 @@ img/*
 .gitignore.swp
 tools/*
 CMakeLists.txt.user.c4fca1e
+CMakeLists.txt.user.bf1d6e7
 build/
 lib/
 include/
