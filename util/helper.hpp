@@ -8,9 +8,10 @@
 
 namespace SW {
 
-enum class Theme{ Modo_Claro, Modo_Oscuro };
+enum class Theme{ Light_Mode, Dark_Mode };
 enum class SessionStatus{ Session_start, Session_closed };
 enum class User{ U_public, U_user };
+enum class AuthType{ Numeric_pin, Secret_Question };
 
 struct Helper_t{
 

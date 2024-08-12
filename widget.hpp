@@ -39,6 +39,11 @@ private:
 
   QMenu* contextMenu{nullptr};
 
+  QHash<SW::Theme, QString> themeType{
+    {SW::Theme::Light_Mode, "Modo Claro"},
+    {SW::Theme::Dark_Mode, "Modo Oscuro"}
+  };
+
 
   // QSqlTableModel* xxxModel_{ nullptr };
   SWTableModel* xxxModel_{ nullptr };
@@ -64,6 +69,7 @@ private:
 
   void setLabelInfo(const QString &color, const QString& userName=SW::Helper_t::currentUser_.value(SW::User::U_public)) noexcept;
   void loadListCategory(uint32_t user_id) noexcept;
+  void loadThemeComboBox() noexcept;
 
   //menbers var
   QHash<uint32_t, QString> categoryList{};

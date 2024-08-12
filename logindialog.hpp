@@ -3,6 +3,7 @@
 #include <QDialog>
 #include <helperdatabase/helperdb.hpp>
 #include <QCloseEvent>
+#include <util/helper.hpp>
 
 namespace Ui {
 class LogInDialog;
@@ -20,11 +21,17 @@ public:
 
   QString userName() const  noexcept{ return userName_;}
 
+  inline static const QHash<SW::AuthType, QString> authType{
+    {SW::AuthType::Numeric_pin, "Pin numérico"},
+    {SW::AuthType::Secret_Question, "Pregunta secreta"}
+  };
+
 private:
   Ui::LogInDialog *ui;
 
   QString userName_{};
   SW::HelperDataBase_t helperdb_;
+
 
   void setUp_Form() noexcept;
   void setStateControls(bool op) noexcept;

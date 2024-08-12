@@ -1,11 +1,9 @@
 #include "acercadedialog.hpp"
 #include "ui_acercadedialog.h"
-#include "util/helper.hpp"
-
 #include <QMessageBox>
 
 
-AcercaDeDialog::AcercaDeDialog(const QString& colorMode, QWidget *parent) :
+AcercaDeDialog::AcercaDeDialog(SW::Theme colorMode, QWidget *parent) :
   QDialog(parent), ui(new Ui::AcercaDeDialog){
   ui->setupUi(this);
 
@@ -13,7 +11,7 @@ AcercaDeDialog::AcercaDeDialog(const QString& colorMode, QWidget *parent) :
   setTextToAbout();
   ui->tabWidget->setCurrentIndex(0);
 
-  (colorMode == QStringLiteral("Modo Oscuro")) ? ui->lblLogo->setPixmap(QPixmap(":/img/logoEmpresa_1.png").scaled(490, 338)) :
+  (colorMode == SW::Theme::Dark_Mode) ? ui->lblLogo->setPixmap(QPixmap(":/img/logoEmpresa_1.png").scaled(490, 338)) :
                                                  ui->lblLogo->setPixmap(QPixmap(":/img/logoEmpresa.png").scaled(490, 338));
 
 

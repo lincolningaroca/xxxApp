@@ -1,6 +1,6 @@
 #include "logindialog.hpp"
 #include "ui_logindialog.h"
-#include <util/helper.hpp>
+
 #include <QMessageBox>
 #include "resetpassworddialog.hpp"
 #include <QDebug>
@@ -128,7 +128,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
             }
 
         }
-      if(ui->cboRestoreType->currentText() == QStringLiteral("Pin numérico")){
+      if(ui->cboRestoreType->currentText() == authType.value(SW::AuthType::Numeric_pin)){
           if(ui->txtfirstValue->text().count() < 4 || ui->txtConfirmValue->text().count() <4){
               QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("<span><em>El PIN numérico debe contener 4 digitos!</em></span>"));
               ui->txtfirstValue->selectAll();
@@ -160,7 +160,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
       auto password = SW::Helper_t::hashGenerator(ui->txtRePassword->text().toLatin1());
       QString first_value{};
       QString confirm_value{};
-      if(ui->cboRestoreType->currentText() == QStringLiteral("Pin numérico")){
+      if(ui->cboRestoreType->currentText() == authType.value(SW::AuthType::Numeric_pin)){
 
           first_value = SW::Helper_t::hashGenerator(ui->txtfirstValue->text().toLatin1());
           confirm_value = SW::Helper_t::hashGenerator(ui->txtConfirmValue->text().toLatin1());
@@ -287,8 +287,8 @@ void LogInDialog::setUp_Form() noexcept{
   ui->txtConfirmValue->setEchoMode(QLineEdit::Password);
 
   //set the combo box options
-  ui->cboRestoreType->addItem(QIcon(QStringLiteral(":/img/paper_pin.png")), QStringLiteral("Pregunta secreta"));
-  ui->cboRestoreType->addItem(QIcon(QStringLiteral(":/img/paper_pin.png")), QStringLiteral("Pin numérico"));
+  ui->cboRestoreType->addItem(QIcon(QStringLiteral(":/img/paper_pin.png")), authType.value(SW::AuthType::Secret_Question));
+  ui->cboRestoreType->addItem(QIcon(QStringLiteral(":/img/paper_pin.png")), authType.value(SW::AuthType::Numeric_pin));
   ui->checkBox->setChecked(true);
   ui->checkBox->setDisabled(true);
 

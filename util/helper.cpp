@@ -105,7 +105,7 @@ namespace SW {
   {
     QPalette mPalette{};
     //  qApp->setStyle("Fusion");
-    if(theme == Theme::Modo_Claro)
+    if(theme == Theme::Light_Mode)
       mPalette = qApp->style()->standardPalette();
     else{
         mPalette.setColor(QPalette::Window, QColor(53, 53, 53));
