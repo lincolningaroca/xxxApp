@@ -1,7 +1,7 @@
 #include "resetpassworddialog.hpp"
 #include "ui_resetpassworddialog.h"
 #include "widget.hpp"
-
+#include <logindialog.hpp>
 #include <QMessageBox>
 #include <QRegularExpressionValidator>
 #include <QAction>
@@ -32,7 +32,7 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
       userId_ = helper.getUser_id(ui->txtUser->text().simplified(), SW::User::U_user);
       auto rescue_type = helper.validateRescueType(userId_);
 
-      if(rescue_type == QStringLiteral("Pregunta secreta")){
+      if(rescue_type == LogInDialog::authType.value(SW::AuthType::Secret_Question)){
           ui->stackedWidget->setCurrentIndex(1);
           ui->txtPregunta->setPlainText(helper.getQuestion(userId_));
           ui->btnRespuesta->setDefault(true);

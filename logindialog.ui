@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>381</width>
-    <height>433</height>
+    <width>426</width>
+    <height>444</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -134,9 +134,6 @@
          <string>Nuevo usuario</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
-         <property name="spacing">
-          <number>6</number>
-         </property>
          <property name="leftMargin">
           <number>4</number>
          </property>
@@ -151,6 +148,13 @@
          </property>
          <item>
           <widget class="QLineEdit" name="txtNewUser"/>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="chkGenPassword">
+           <property name="text">
+            <string>Generar password</string>
+           </property>
+          </widget>
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_8">
@@ -176,7 +180,11 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_7">
            <item>
-            <widget class="QLineEdit" name="txtRePassword"/>
+            <widget class="QLineEdit" name="txtRePassword">
+             <property name="placeholderText">
+              <string/>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QCheckBox" name="checkBox_3">
@@ -253,19 +261,12 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_4">
            <item>
-            <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>Perfil de usuario</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QCheckBox" name="checkBox">
              <property name="layoutDirection">
               <enum>Qt::LeftToRight</enum>
              </property>
              <property name="text">
-              <string>USER</string>
+              <string>Perfil de usuario - (USER)</string>
              </property>
             </widget>
            </item>
@@ -274,26 +275,13 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
-            <widget class="Line" name="line_3">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
-              <spacer name="horizontalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
+              <widget class="QPushButton" name="btnGenPassword">
+               <property name="text">
+                <string>Generar password</string>
                </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
+              </widget>
              </item>
              <item>
               <widget class="QPushButton" name="btnResetPassword">
@@ -309,16 +297,22 @@
               </widget>
              </item>
              <item>
-              <widget class="Line" name="line_4">
+              <spacer name="horizontalSpacer_2">
                <property name="orientation">
-                <enum>Qt::Vertical</enum>
+                <enum>Qt::Horizontal</enum>
                </property>
-              </widget>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
              </item>
              <item>
               <widget class="QPushButton" name="btnCreateUser">
                <property name="text">
-                <string>Crear Usuario</string>
+                <string>Crear usuario</string>
                </property>
               </widget>
              </item>

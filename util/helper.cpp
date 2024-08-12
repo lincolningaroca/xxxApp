@@ -1,8 +1,12 @@
 #include "helper.hpp"
 #include <QPalette>
 #include <QApplication>
-
+#include <QCryptographicHash>
 #include <QStyle>
+
+extern "C"{
+#include "openssl/rand.h"
+}
 
 namespace SW {
 
@@ -12,18 +16,6 @@ namespace SW {
     return QString{crypto.result().toHex()};
 
   }
-
-  //  QByteArray Helper_t::encrypt_txt(const QString &txt) noexcept{
-  //    QByteArray encodeText = encrypt.encode(txt.toLatin1(), hashKey, hashIV);
-  //    return encodeText;
-
-  //  }
-
-  //  QString Helper_t::decrypt_txt(const QByteArray &txt) noexcept{
-  //    QByteArray decodeText = encrypt.decode(txt, hashKey, hashIV);
-  //    QString decodedString = QString(encrypt.removePadding(decodeText));
-  //    return decodedString;
-  //  }
 
   QByteArray Helper_t::setColorReg(const QString& color) noexcept
   {
@@ -63,11 +55,57 @@ namespace SW {
 
   }
 
+  QString Helper_t::generateSecurePassword(uint32_t length) noexcept{
+
+    // if (length < 4) {
+    //     throw std::invalid_argument("La longitud mínima de la contraseña debe ser 4");
+    //   }
+
+    const QString chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*?:{}|<>~-_=+[]/;\\";
+    const int lowercaseEnd = 26;
+    const int uppercaseEnd = 52;
+    const int numbersEnd = 62;
+
+    QString password;
+
+    // Generar bytes aleatorios
+    QByteArray randomBytes(length, 0);
+    if (RAND_bytes(reinterpret_cast<unsigned char*>(randomBytes.data()), length) != 1) {
+        qFatal("Error al generar bytes aleatorios con OpenSSL");
+      }
+
+    // Asegurar un carácter de cada tipo
+    password += chars[static_cast<unsigned char>(randomBytes[0]) % lowercaseEnd];
+    password += chars[lowercaseEnd + (static_cast<unsigned char>(randomBytes[1]) % (uppercaseEnd - lowercaseEnd))];
+    password += chars[uppercaseEnd + (static_cast<unsigned char>(randomBytes[2]) % (numbersEnd - uppercaseEnd))];
+    password += chars[numbersEnd + (static_cast<unsigned char>(randomBytes[3]) % (chars.length() - numbersEnd))];
+
+    // Llenar el resto de la contraseña
+    for (uint32_t i = 4; i < length; ++i) {
+        password += chars[static_cast<unsigned char>(randomBytes[i]) % chars.length()];
+      }
+
+    // Mezclar los caracteres
+    std::shuffle(password.begin(), password.end(), std::default_random_engine(static_cast<unsigned long>(randomBytes[0])));
+
+    return password;
+
+
+  }
+
+  bool Helper_t::isPasswordSecure(const QString &password) noexcept{
+
+    static QRegularExpression passwordRegex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#$%^&*(),.?\":{}|<>]{8,}$");
+
+    return passwordRegex.match(password).hasMatch();
+
+  }
+
   QPalette  Helper_t::set_Theme(SW::Theme theme) noexcept
   {
     QPalette mPalette{};
     //  qApp->setStyle("Fusion");
-    if(theme == Theme::Modo_Claro)
+    if(theme == Theme::Light_Mode)
       mPalette = qApp->style()->standardPalette();
     else{
         mPalette.setColor(QPalette::Window, QColor(53, 53, 53));

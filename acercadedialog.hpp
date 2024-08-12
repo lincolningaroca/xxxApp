@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QDialog>
+#include "util/helper.hpp"
 
 namespace Ui {
   class AcercaDeDialog;
@@ -11,7 +12,8 @@ class AcercaDeDialog : public QDialog
   Q_OBJECT
 
 public:
-  explicit AcercaDeDialog(const QString& colorMode, QWidget *parent = nullptr);
+  // explicit AcercaDeDialog(const QString& colorMode, QWidget *parent = nullptr);
+  explicit AcercaDeDialog(SW::Theme colorMode, QWidget *parent = nullptr);
   ~AcercaDeDialog();
 
 private:

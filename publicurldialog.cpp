@@ -50,7 +50,7 @@ void PublicUrlDialog::loadDataComboBox(){
 
   SW::HelperDataBase_t helperDb;
 
-  auto userId_ = helperDb.getUser_id(QStringLiteral("public"), SW::User::U_public);
+  auto userId_ = helperDb.getUser_id(SW::Helper_t::defaultUser, SW::User::U_public);
   data_ = helperDb.loadList_Category(userId_);
 
   ui->categoryComboBox->addItems(data_.values());

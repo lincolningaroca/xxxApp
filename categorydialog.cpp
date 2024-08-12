@@ -5,6 +5,7 @@ CategoryDialog::CategoryDialog(QHash<uint32_t, QString> categoryList, QWidget *p
   QDialog(parent), ui(new Ui::CategoryDialog), data_{categoryList}{
   ui->setupUi(this);
 
+  setWindowFlags(windowFlags() | Qt::MSWindowsFixedSizeDialogHint);
   ui->categoryComboBox->addItems(data_.values());
   ui->cancelPushButton->setDefault(true);
 
