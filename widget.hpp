@@ -67,7 +67,7 @@ private:
   void checkStatusContextMenu();
   void checkStatusSessionColor(const QString& text);
 
-  void setLabelInfo(const QString &color, const QString& userName=SW::Helper_t::currentUser_.value(SW::User::U_public)) noexcept;
+  void setLabelInfo(SW::Theme color, const QString& userName=SW::Helper_t::currentUser_.value(SW::User::U_public)) noexcept;
   void loadListCategory(uint32_t user_id) noexcept;
   void loadThemeComboBox() noexcept;
 
