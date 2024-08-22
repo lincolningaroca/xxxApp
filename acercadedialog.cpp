@@ -11,12 +11,8 @@ AcercaDeDialog::AcercaDeDialog(SW::Theme colorMode, QWidget *parent) :
   setTextToAbout();
   ui->tabWidget->setCurrentIndex(0);
 
-<<<<<<< HEAD
-  (colorMode == SW::Theme::Dark_Mode) ? ui->lblLogo->setPixmap(QPixmap(":/img/logoEmpresa_1.png").scaled(490, 338)) :
-=======
-  (static_cast<bool>(colorMode)) ? ui->lblLogo->setPixmap(QPixmap(":/img/logoEmpresa_1.png").scaled(490, 338)) :
->>>>>>> dev_app
-                                                 ui->lblLogo->setPixmap(QPixmap(":/img/logoEmpresa.png").scaled(490, 338));
+  (static_cast<bool>(colorMode)) ? ui->lblLogo->setPixmap(QPixmap(":/img/logoEmpresa_1.png").scaled(490, 338))
+                                 : ui->lblLogo->setPixmap(QPixmap(":/img/logoEmpresa.png").scaled(490, 338));
 
 
   loadInfo_app();
@@ -52,7 +48,7 @@ AcercaDeDialog::AcercaDeDialog(SW::Theme colorMode, QWidget *parent) :
 
   QObject::connect(ui->lblAcercaQt, &QLabel::linkActivated, this, [&](){
       QMessageBox::aboutQt(this);
-  });
+    });
 
   ui->tbLicencia->setFont(font_);
 }
