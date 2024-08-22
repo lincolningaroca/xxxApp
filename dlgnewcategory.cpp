@@ -11,7 +11,7 @@ dlgNewCategory::dlgNewCategory(OpenMode mode, const QStringList &list, QWidget *
   setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
 
 
-  if(mode == OpenMode::Edit){
+  if(static_cast<bool>(mode)){
       setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - Edit category data.")));
       ui->txtCategory->setText(list.value(0));
       ui->pteDesc->setPlainText(list.value(1));
@@ -30,7 +30,7 @@ dlgNewCategory::dlgNewCategory(OpenMode mode, const QStringList &list, QWidget *
            userid = helperdb_.getUser_id(SW::Helper_t::current_user_, SW::User::U_user);
 
 
-      if(mode == OpenMode::New){
+      if(!static_cast<bool>(mode)){
           if(validateData()){
 
               if(helperdb_.categoryExists(ui->txtCategory->text().toUpper(), userid)){
