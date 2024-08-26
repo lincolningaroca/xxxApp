@@ -39,7 +39,7 @@ private:
 
   QMenu* contextMenu{nullptr};
 
-  QHash<SW::Theme, QString> themeType{
+  const QHash<SW::Theme, QString> themeType{
     {SW::Theme::Light_Mode, "Modo Claro"},
     {SW::Theme::Dark_Mode, "Modo Oscuro"}
   };

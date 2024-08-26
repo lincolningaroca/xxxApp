@@ -157,7 +157,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
 
 
-      auto password = SW::Helper_t::hashGenerator(ui->txtRePassword->text().toLatin1());
+      const auto password = SW::Helper_t::hashGenerator(ui->txtRePassword->text().toLatin1());
       QString first_value{};
       QString confirm_value{};
       if(ui->cboRestoreType->currentText() == authType.value(SW::AuthType::Numeric_pin)){
@@ -228,7 +228,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
   //gen passowrd button
   QObject::connect(ui->btnGenPassword, &QPushButton::clicked, this, [this](){
 
-      auto password{SW::Helper_t::generateSecurePassword()};
+      const auto password{SW::Helper_t::generateSecurePassword()};
       ui->txtNewPassword->setText(password);
       ui->txtRePassword->setText(password);
     });

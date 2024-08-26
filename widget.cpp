@@ -491,10 +491,10 @@ Widget::Widget(QWidget *parent)
   QObject::connect(moveUrl_, &QAction::triggered, this, [this](){
 
 
-      auto currentRow_ = ui->tvUrl->currentIndex().row();
-      auto url_ = xxxModel_->index(currentRow_, 1).data().toString();
-      auto currentCategoryId_ = categoryList.key(ui->cboCategory->currentText());
-      auto urlid = xxxModel_->index(currentRow_, 0).data().toUInt();
+      const auto currentRow_ = ui->tvUrl->currentIndex().row();
+      const auto url_ = xxxModel_->index(currentRow_, 1).data().toString();
+      const auto currentCategoryId_ = categoryList.key(ui->cboCategory->currentText());
+      const auto urlid = xxxModel_->index(currentRow_, 0).data().toUInt();
       auto data_ = categoryList;
       data_.remove(currentCategoryId_);
 
