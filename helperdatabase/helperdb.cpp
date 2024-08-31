@@ -111,7 +111,8 @@ namespace SW {
         auto res = qry_.prepare(QStringLiteral("INSERT INTO urls(url,desc,categoryid) VALUES(?,?,?)"));
     auto encryptData = SW::Helper_t::encrypt(url.toString().simplified());
     qry_.addBindValue(encryptData, QSql::In);
-    qry_.addBindValue(desc.toString().simplified().toUpper(), QSql::In);
+    auto descData = SW::Helper_t::encrypt(desc.toString().simplified().toUpper());
+    qry_.addBindValue(descData, QSql::In);
     qry_.addBindValue(id, QSql::In);
     return qry_.exec();
   }

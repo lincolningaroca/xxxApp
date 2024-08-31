@@ -135,42 +135,78 @@ namespace SW {
 
   }
 
-  QString Helper_t::encrypt(const QString& text, const QString& key)  {
-    QByteArray encryptedData;
-    QByteArray textData = text.toUtf8();
-    QByteArray keyData = key.toUtf8();
+  // QString Helper_t::encrypt(const QString& text, const QString& key)  {
+  //   QByteArray encryptedData;
+  //   QByteArray textData = text.toUtf8();
+  //   QByteArray keyData = key.toUtf8();
 
-    QCryptographicHash hash(QCryptographicHash::Sha512);
-    hash.addData(keyData);
-    QByteArray hashedKey = hash.result();
+  //   QCryptographicHash hash(QCryptographicHash::Sha512);
+  //   hash.addData(keyData);
+  //   QByteArray hashedKey = hash.result();
 
-    // Encriptar el texto utilizando AES
-    for (int i = 0; i < textData.size(); ++i) {
-        char encryptedChar = textData.at(i) ^ hashedKey.at(i % hashedKey.size());
-        encryptedData.append(encryptedChar);
-      }
+  //   // Encriptar el texto utilizando AES
+  //   for (int i = 0; i < textData.size(); ++i) {
+  //       char encryptedChar = textData.at(i) ^ hashedKey.at(i % hashedKey.size());
+  //       encryptedData.append(encryptedChar);
+  //     }
 
-    return QString::fromUtf8(encryptedData.toBase64());
+  //   return QString::fromUtf8(encryptedData.toBase64());
 
+  // }
+  QString Helper_t::encrypt(const QString& plainText, const QByteArray& key, const QByteArray& iv){
+
+    QByteArray plainData = plainText.toUtf8();
+    QByteArray encryptedData(plainData.size() + EVP_MAX_BLOCK_LENGTH, 0);
+    int encryptedLen = 0;
+
+    EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
+    EVP_EncryptInit(ctx, EVP_aes_256_cbc(), reinterpret_cast<const unsigned char*>(key.data()), reinterpret_cast<const unsigned char*>(iv.data()));
+    EVP_EncryptUpdate(ctx, reinterpret_cast<unsigned char*>(encryptedData.data()), &encryptedLen, reinterpret_cast<const unsigned char*>(plainData.data()), plainData.size());
+
+    int finalLen = 0;
+    EVP_EncryptFinal(ctx, reinterpret_cast<unsigned char*>(encryptedData.data()) + encryptedLen, &finalLen);
+    encryptedLen += finalLen;
+
+    EVP_CIPHER_CTX_free(ctx);
+
+    return QString::fromUtf8(encryptedData.left(encryptedLen).toBase64());
   }
 
-  QString Helper_t::decrypt(const QString& encryptedText, const QString& key)  {
-    QByteArray decryptedData;
+  // QString Helper_t::decrypt(const QString& encryptedText, const QString& key)  {
+  //   QByteArray decryptedData;
+  //   QByteArray encryptedData = QByteArray::fromBase64(encryptedText.toUtf8());
+  //   QByteArray keyData = key.toUtf8();
+
+  //   QCryptographicHash hash(QCryptographicHash::Sha512);
+  //   hash.addData(keyData);
+  //   QByteArray hashedKey = hash.result();
+
+  //   // Desencriptar el texto utilizando AES
+  //   for (int i = 0; i < encryptedData.size(); ++i) {
+  //       char decryptedChar = encryptedData.at(i) ^ hashedKey.at(i % hashedKey.size());
+  //       decryptedData.append(decryptedChar);
+  //     }
+
+  //   return QString::fromUtf8(decryptedData);
+
+  // }
+  QString Helper_t::decrypt(const QString& encryptedText, const QByteArray& key, const QByteArray& iv){
+
     QByteArray encryptedData = QByteArray::fromBase64(encryptedText.toUtf8());
-    QByteArray keyData = key.toUtf8();
+    QByteArray decryptedData(encryptedData.size(), 0);
+    int decryptedLen = 0;
 
-    QCryptographicHash hash(QCryptographicHash::Sha512);
-    hash.addData(keyData);
-    QByteArray hashedKey = hash.result();
+    EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
+    EVP_DecryptInit(ctx, EVP_aes_256_cbc(), reinterpret_cast<const unsigned char*>(key.data()), reinterpret_cast<const unsigned char*>(iv.data()));
+    EVP_DecryptUpdate(ctx, reinterpret_cast<unsigned char*>(decryptedData.data()), &decryptedLen, reinterpret_cast<const unsigned char*>(encryptedData.data()), encryptedData.size());
 
-    // Desencriptar el texto utilizando AES
-    for (int i = 0; i < encryptedData.size(); ++i) {
-        char decryptedChar = encryptedData.at(i) ^ hashedKey.at(i % hashedKey.size());
-        decryptedData.append(decryptedChar);
-      }
+    int finalLen = 0;
+    EVP_DecryptFinal(ctx, reinterpret_cast<unsigned char*>(decryptedData.data()) + decryptedLen, &finalLen);
+    decryptedLen += finalLen;
 
-    return QString::fromUtf8(decryptedData);
+    EVP_CIPHER_CTX_free(ctx);
 
+    return QString::fromUtf8(decryptedData.left(decryptedLen));
   }
 
 } // namespace SW

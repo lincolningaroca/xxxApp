@@ -175,7 +175,8 @@ Widget::Widget(QWidget *parent)
           [[maybe_unused]] auto res=qry.prepare(QStringLiteral("UPDATE  urls SET url=?, desc=? WHERE url_id=? AND categoryid=?"));
           auto encryptedData = SW::Helper_t::encrypt(ui->txtUrl->text());
           qry.addBindValue(encryptedData, QSql::In);
-          qry.addBindValue(ui->pteDesc->toPlainText().simplified().toUpper(), QSql::In);
+          auto descData = SW::Helper_t::encrypt(ui->pteDesc->toPlainText().simplified().toUpper());
+          qry.addBindValue(descData, QSql::In);
           auto currentRow = ui->tvUrl->currentIndex().row();
           auto id = ui->tvUrl->model()->index(currentRow,0).data().toInt();
           qry.addBindValue(id, QSql::In);
