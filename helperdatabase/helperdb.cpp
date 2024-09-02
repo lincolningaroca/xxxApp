@@ -74,7 +74,7 @@ namespace SW {
 
     [[maybe_unused]]
         auto res = qry_.prepare(QStringLiteral("SELECT COUNT(*) FROM users WHERE user = ? AND password = ?"));
-    qry_.addBindValue(user.toString().simplified());
+    qry_.addBindValue(SW::Helper_t::hashGenerator(user.toString().simplified().toLatin1()));
     qry_.addBindValue(SW::Helper_t::hashGenerator(password.toString().simplified().toLatin1()));
     if(qry_.exec())
       qry_.first();
@@ -304,7 +304,7 @@ namespace SW {
     if(qry_.exec())
       qry_.first();
 
-    return qry_.value(0).toString();
+    return SW::Helper_t::decrypt(qry_.value(0).toString());
 
   }
 

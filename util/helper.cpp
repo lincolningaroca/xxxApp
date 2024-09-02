@@ -11,7 +11,7 @@ extern "C"{
 namespace SW {
 
   QString Helper_t::hashGenerator(const QByteArray &data) noexcept{
-    QCryptographicHash crypto(QCryptographicHash::Sha3_256);
+    QCryptographicHash crypto(QCryptographicHash::Sha3_512);
     crypto.addData(data);
     return QString{crypto.result().toHex()};
 

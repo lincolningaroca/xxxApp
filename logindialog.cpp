@@ -156,7 +156,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
 
 
-
+      const auto user = SW::Helper_t::hashGenerator(ui->txtNewUser->text().toLatin1());
       const auto password = SW::Helper_t::hashGenerator(ui->txtRePassword->text().toLatin1());
       QString first_value{};
       QString confirm_value{};
@@ -165,12 +165,12 @@ LogInDialog::LogInDialog(QWidget *parent) :
           first_value = SW::Helper_t::hashGenerator(ui->txtfirstValue->text().toLatin1());
           confirm_value = SW::Helper_t::hashGenerator(ui->txtConfirmValue->text().toLatin1());
         }else{
-          first_value = ui->txtfirstValue->text();
+          first_value = SW::Helper_t::encrypt(ui->txtfirstValue->text());
           confirm_value = SW::Helper_t::hashGenerator(ui->txtConfirmValue->text().toLatin1());
         }
 
 
-      if(helperdb_.createUser(ui->txtNewUser->text(), password, SW::Helper_t::currentUser_.value(SW::User::U_user),
+      if(helperdb_.createUser(user, password, SW::Helper_t::currentUser_.value(SW::User::U_user),
                               ui->cboRestoreType->currentText(), first_value, confirm_value)){
           QMessageBox::information(this, SW::Helper_t::appName(), QStringLiteral("<span><em>El nuevo usuario fue creado con éxito!</em></span>"));
           clearControls();

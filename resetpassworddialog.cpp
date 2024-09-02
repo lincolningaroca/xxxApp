@@ -119,6 +119,25 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
           ui->txtRePassword->setFocus(Qt::OtherFocusReason);
           return;
         }
+      if(ui->txtNewPassword->text().count() < 8 || ui->txtRePassword->text().count() < 8){
+          QMessageBox::warning(this, SW::Helper_t::appName(),
+                               QStringLiteral("<span>"
+                                              "<em>"
+                                              "El password o clave, debe tener 8 caracteres como mínimo."
+                                              "</em>"
+                                              "</span>"));
+          ui->txtRePassword->selectAll();
+          ui->txtRePassword->setFocus();
+          return;
+        }
+      if(!SW::Helper_t::isPasswordSecure(ui->txtRePassword->text().simplified())){
+          QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral(
+                                 "<span><strong><em>La clave o password no es seguro.<br>"
+                                 "Debe contener al menos una Letra Mayuscula, una miniscula, numeros y caracteres especiales.</em></strong></span>"));
+          ui->txtRePassword->selectAll();
+          ui->txtRePassword->setFocus();
+          return;
+        }
       if(helper.resetPassword(ui->txtRePassword->text(), userId_)){
           QMessageBox::information(this, SW::Helper_t::appName(), QStringLiteral("<span><em>Su clave o password de acceso fue cambiado con éxito!</em></strong></span>"));
           //          ui->btnAtras->click();
