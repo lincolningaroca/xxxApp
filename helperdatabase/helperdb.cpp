@@ -59,7 +59,7 @@ namespace SW {
 
     [[maybe_unused]]
         auto res = qry_.prepare(QStringLiteral("INSERT INTO users(user,password,user_profile,rescue_type,first_value,confirm_value) "
-                                "VALUES(?,?,?,?,?,?)"));
+                                               "VALUES(?,?,?,?,?,?)"));
     qry_.addBindValue(user.toString());
     qry_.addBindValue(password.toString());
     qry_.addBindValue(user_prof.toString());
@@ -180,7 +180,7 @@ namespace SW {
 
   bool HelperDataBase_t::resetPassword(QStringView password, uint32_t userId) noexcept{
     [[ maybe_unused ]]
-    auto res = qry_.prepare(QStringLiteral("UPDATE users SET password=? WHERE user_id=?"));
+        auto res = qry_.prepare(QStringLiteral("UPDATE users SET password=? WHERE user_id=?"));
     auto pass = password.toString();
     qry_.addBindValue(SW::Helper_t::hashGenerator(pass.simplified().toLatin1()), QSql::In);
     qry_.addBindValue(userId, QSql::In);
@@ -237,8 +237,8 @@ namespace SW {
     qry_.addBindValue(user.simplified());
     qry_.addBindValue(userProf_.simplified());
     if(qry_.exec())
-      qry_.first();
-    ret_value = qry_.value(0).toUInt();
+      if(qry_.first())
+        ret_value = qry_.value(0).toUInt();
     return ret_value;
 
   }
