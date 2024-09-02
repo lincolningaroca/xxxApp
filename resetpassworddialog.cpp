@@ -29,7 +29,8 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
           ui->txtUser->setFocus(Qt::OtherFocusReason);
           return;
         }
-      userId_ = helper.getUser_id(ui->txtUser->text().simplified(), SW::User::U_user);
+      const auto user = SW::Helper_t::hashGenerator(ui->txtUser->text().simplified().toLatin1());
+      userId_ = helper.getUser_id(user, SW::User::U_user);
       auto rescue_type = helper.validateRescueType(userId_);
 
       if(rescue_type == LogInDialog::authType.value(SW::AuthType::Secret_Question)){

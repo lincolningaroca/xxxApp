@@ -18,7 +18,7 @@ namespace SW {
 
     [[maybe_unused]]
         auto ret = qry_.prepare(QStringLiteral("SELECT COUNT(*) FROM users WHERE user = ?"));
-    qry_.addBindValue(user.toString());
+    qry_.addBindValue(SW::Helper_t::hashGenerator(user.toString().toLatin1()));
 
     if(qry_.exec()){
         qry_.first();
@@ -234,7 +234,7 @@ namespace SW {
     uint32_t ret_value{0};
     [[maybe_unused]]
         auto res = qry_.prepare(QStringLiteral("SELECT user_id FROM users WHERE user = ? AND user_profile = ?"));
-    qry_.addBindValue(user.simplified());
+    qry_.addBindValue(user);
     qry_.addBindValue(userProf_.simplified());
     if(qry_.exec())
       if(qry_.first())
