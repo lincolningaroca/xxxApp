@@ -226,7 +226,7 @@ Widget::Widget(QWidget *parent)
   QObject::connect(ui->btnEditCategory, &QPushButton::clicked, this, [&](){
 
       auto id = categoryList.key(ui->cboCategory->currentText());
-      QStringList data = helperdb_.dataCategory(id);
+      const QStringList data = helperdb_.dataCategory(id);
       dlgNewCategory editCategory(dlgNewCategory::OpenMode::Edit, data, this);
       if(editCategory.exec() == QDialog::Rejected){
           return;
@@ -707,8 +707,8 @@ void Widget::writeSettings() const noexcept{
 void Widget::readSettings() noexcept{
   QSettings settings(qApp->organizationName(), SW::Helper_t::appName());
   settings.beginGroup(QStringLiteral("Theme"));
-  auto theme = settings.value(QStringLiteral("theme Value")).toUInt();
-  auto lblColor = SW::Helper_t::getColorReg(settings.value(QStringLiteral("lblColor")).toByteArray());
+  const auto theme = settings.value(QStringLiteral("theme Value")).toUInt();
+  const auto lblColor = SW::Helper_t::getColorReg(settings.value(QStringLiteral("lblColor")).toByteArray());
   setLabelInfo(SW::Helper_t::lblColorMode.key(lblColor));
 
   setTheme(static_cast<SW::Theme>(theme));
@@ -804,7 +804,7 @@ void Widget::loadThemeComboBox() noexcept{
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Widget::setUpCboCategoryContextMenu() noexcept{
 
-  QIcon icon(QStringLiteral(":/img/118277.png"));
+  const QIcon icon(QStringLiteral(":/img/118277.png"));
   ui->cboCategory->setContextMenuPolicy(Qt::ActionsContextMenu);
   delCategory = new QAction(icon, QStringLiteral("Forzar eliminación de categoría"),this);
   ui->cboCategory->addAction(delCategory);
@@ -876,8 +876,8 @@ void Widget::verifyContextMenu() noexcept{
 
 void Widget::setCboCategoryToolTip() noexcept{
   auto id = categoryList.key(ui->cboCategory->currentText());
-  QStringList categoryData = helperdb_.dataCategory(id);
-  auto desc=categoryData.value(1);
+  const auto categoryData = helperdb_.dataCategory(id);
+  const auto desc=categoryData.value(1);
   //  QString desc{};
   if(desc.isEmpty()){
       ui->cboCategory->setToolTip(QStringLiteral("<p><cite><strong>Descripción de la categoría:</strong><br><br>"
@@ -893,7 +893,7 @@ void Widget::setCboCategoryToolTip() noexcept{
 
 void Widget::openUrl() noexcept{
   auto currentRow = ui->tvUrl->currentIndex().row();
-  auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
+  const auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
   if(!SW::Helper_t::open_Url(QUrl(url))){
       QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Fallo al intentar abrir dirección url!\n"));
       return;
@@ -902,7 +902,7 @@ void Widget::openUrl() noexcept{
 
 void Widget::quitUrl() noexcept{
   auto currentRow = ui->tvUrl->currentIndex().row();
-  auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
+  const auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
 
   QMessageBox msgBox;
   msgBox.setText(QString("<span>Confirma que desea eliminar esta dirección:<br>"

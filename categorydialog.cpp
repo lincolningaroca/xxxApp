@@ -1,7 +1,7 @@
 #include "categorydialog.hpp"
 #include "ui_categorydialog.h"
 
-CategoryDialog::CategoryDialog(QHash<uint32_t, QString> categoryList, QWidget *parent) :
+CategoryDialog::CategoryDialog(const QHash<uint32_t, QString> &categoryList, QWidget *parent) :
   QDialog(parent), ui(new Ui::CategoryDialog), data_{categoryList}{
   ui->setupUi(this);
 

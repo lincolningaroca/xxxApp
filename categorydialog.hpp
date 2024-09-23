@@ -12,7 +12,7 @@ class CategoryDialog : public QDialog
   Q_OBJECT
 
 public:
-  explicit CategoryDialog(QHash<uint32_t, QString> categoryList, QWidget *parent = nullptr);
+  explicit CategoryDialog(const QHash<uint32_t, QString>& categoryList, QWidget *parent = nullptr);
   ~CategoryDialog();
 
   uint32_t getCategoryId() const noexcept;

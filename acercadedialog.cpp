@@ -44,6 +44,7 @@ AcercaDeDialog::AcercaDeDialog(SW::Theme colorMode, QWidget *parent) :
       licenciaDlg.setFixedSize(600, 477);
       licenciaDlg.setWindowTitle(SW::Helper_t::appName().append(" - licencia"));
       licenciaDlg.exec();
+      fileName.close();
     });
 
   QObject::connect(ui->lblAcercaQt, &QLabel::linkActivated, this, [&](){
