@@ -94,7 +94,7 @@ Widget::Widget(QWidget *parent)
                                        "</strong><br>"
                                        "Si desea eliminar una categoría y todo su contenido, "
                                        "puede optar por dar click derecho sobre el nombre de la categoría y"
-                                       "del menú contextual elegir:<br><br>"
+                                       " del menú contextual elegir:<br><br>"
                                        "<strong>"
                                        "<mark style='background:#FFFF00;color:#FF5500;'>"
                                        "->Forzar eliminación de categoría.</mark>"
