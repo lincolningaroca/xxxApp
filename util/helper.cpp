@@ -209,5 +209,39 @@ namespace SW {
     return QString::fromUtf8(decryptedData.left(decryptedLen));
   }
 
+  QString Helper_t::getLastOpenedDirectory(){
+
+    QSettings settings(qApp->organizationName(), qApp->applicationName());
+    auto ret = readData(settings.value("lastOpenedDirectory", QDir::homePath()).toByteArray());
+    return ret.toString();
+
+  }
+
+  void Helper_t::setLastOpenedDirectory(const QString &directory){
+
+    QSettings settings(qApp->organizationName(), qApp->applicationName());
+    settings.setValue("lastOpenedDirectory", writeData(directory));
+  }
+
+  QByteArray Helper_t::writeData( QVariant data){
+    QByteArray data_{};
+    QDataStream out{&data_, QIODevice::WriteOnly};
+    out.setVersion(QDataStream::Qt_6_2);
+    out << data;
+    return data_;
+
+  }
+
+  QVariant Helper_t::readData(QByteArray data){
+
+    QVariant data_{};
+    QDataStream in{&data, QIODevice::ReadOnly};
+    in.setVersion(QDataStream::Qt_6_2);
+    in >> data_;
+    return data_;
+
+  }
+
+
 } // namespace SW
 

@@ -59,6 +59,12 @@ namespace SW {
     static QString app_pathLocation(){return QApplication::applicationDirPath();}
     static QString appName(){return QApplication::applicationName();}
 
+    static void setLastOpenedDirectory(const QString &directory);
+    static QString getLastOpenedDirectory();
+
+    static QVariant readData(QByteArray data);
+    static QByteArray writeData(QVariant data);
+
     //encryp/decrypt metods
 
     // static QString encrypt(const QString& text, const QString& key=key_);

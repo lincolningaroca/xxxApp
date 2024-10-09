@@ -374,8 +374,10 @@ Widget::Widget(QWidget *parent)
       const auto path_app {SW::Helper_t::app_pathLocation().append("/tools/sqlite-tools-win-x64-3450100/sqlite3.exe")};
       QStringList argv{};
       auto databasePath = SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase.db"));
-      auto filePath = QFileDialog::getSaveFileName(this, QStringLiteral("Crear una copia de seguridad"), QDir::homePath(),
+      auto filePath = QFileDialog::getSaveFileName(this, QStringLiteral("Crear una copia de seguridad"), SW::Helper_t::getLastOpenedDirectory(),
                                                    QStringLiteral("Archivos de copia de seguridad (*.bak)"));
+
+
       if(filePath.isEmpty())
         return;
 
@@ -383,7 +385,10 @@ Widget::Widget(QWidget *parent)
           QMessageBox::warning(this, SW::Helper_t::appName(), "El nombre del archivo no puede contener espacios.");
           return;
         }
-      QFileInfo fileInfo(filePath);
+
+      const QFileInfo fileInfo(filePath);
+
+
 
 
       auto absolutePath{fileInfo.absolutePath()};
@@ -397,6 +402,7 @@ Widget::Widget(QWidget *parent)
       argv << databasePath << path.arg(absolutePath,baseName,fecha,extension);
 
 
+      SW::Helper_t::setLastOpenedDirectory(absolutePath);
 
       if(!process.startDetached(path_app, argv)){
           QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error en la ejecución.\n")+
@@ -404,6 +410,7 @@ Widget::Widget(QWidget *parent)
           return;
 
         }
+
       QMessageBox::information(this, SW::Helper_t::appName(), QStringLiteral("La copia de seguridad fue creada."));
 
 
@@ -413,9 +420,6 @@ Widget::Widget(QWidget *parent)
   QObject::connect(ui->btnRestore, &QToolButton::clicked, this, [&](){
 
       const auto dbasePath{SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase.db"))};
-
-      // qInfo() << dbasePath <<'\n';
-      // QFile file{dbasePath};
 
       if(!helperdb_.isDataBase_empty()){
 
@@ -436,7 +440,7 @@ Widget::Widget(QWidget *parent)
             return;
         }
 
-      const auto pathBackup{QFileDialog::getOpenFileName(this, "Abrir archivo de respaldo", QDir::homePath(),
+      const auto pathBackup{QFileDialog::getOpenFileName(this, "Abrir archivo de respaldo", SW::Helper_t::getLastOpenedDirectory(),
                                                          QStringLiteral("Archivo backup (*.bak)"))};
       if(pathBackup.isEmpty())
         return;
@@ -455,6 +459,9 @@ Widget::Widget(QWidget *parent)
       const auto app{SW::Helper_t::app_pathLocation().append("/tools/sqlite-tools-win-x64-3450100/sqlite3.exe")};
 
       QProcess process{this};
+
+      QFileInfo fileInfo{pathBackup};
+      SW::Helper_t::setLastOpenedDirectory(fileInfo.absolutePath());
 
       if(!process.startDetached(app, args)){
           QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error en la ejecución.\n")+
