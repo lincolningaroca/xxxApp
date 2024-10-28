@@ -15,8 +15,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Wextra -Wconversion")
 #set the application icon
 set(APP_ICON "${CMAKE_CURRENT_SOURCE_DIR}/appIcon.rc")
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Sql)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Sql)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Sql Network)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Sql Network)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -77,7 +77,7 @@ endif()
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 target_link_libraries(xxxapp PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Sql
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/libcrypto.lib)
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/libcrypto.lib Qt${QT_VERSION_MAJOR}::Network)
 
 set_target_properties(xxxapp PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
