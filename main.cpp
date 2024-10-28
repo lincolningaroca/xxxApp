@@ -3,6 +3,38 @@
 #include <QSqlDatabase>
 #include <util/helper.hpp>
 
+#include <QLocalServer>
+#include <QLocalSocket>
+
+#include <QMessageBox>
+
+struct SingleIntsanceManager{
+
+  static bool isRunning(const QString& serverName){
+
+    QLocalSocket socket{};
+    socket.connectToServer(serverName);
+
+    if(socket.waitForConnected(500)){
+        socket.disconnectFromServer();
+        return true;
+      }
+    return false;
+  }
+
+  static bool initServer(const QString & serverName){
+
+    auto* server = new QLocalServer();
+    QLocalServer::removeServer(serverName);
+
+    if(!server->listen(serverName)){
+        delete server;
+        return false;
+      }
+    return true;
+  }
+};
+
 bool validate{false};
 
 bool createDataBase(){
@@ -47,6 +79,17 @@ int main(int argc, char *argv[]){
   a.setApplicationVersion(QStringLiteral("1.0"));
   a.setOrganizationName(QStringLiteral("SWSystem's"));
   a.setStyle("Fusion");
+
+  const QString serverName{a.applicationName()};
+  if(SingleIntsanceManager::isRunning(serverName)){
+      // QMessageBox::warning(nullptr, qApp->applicationName(), "Ya existe una instancia de la aplicación corriendo.");
+      return -1;
+    }
+
+  if(!SingleIntsanceManager::initServer(serverName)){
+      QMessageBox::critical(nullptr, qApp->applicationName(), "No se pudo iniciar el control de instancia única.");
+      return -1;
+    }
 
 
   //Creacion de la carpeta de la aplicación
