@@ -80,6 +80,7 @@ void AcercaDeDialog::loadInfo_app() const noexcept{
 
 void AcercaDeDialog::setTextToAbout() const{
   ui->tbAcercaDe->setFont(font_);
+  ui->tbAcercaDe->setOpenExternalLinks(true);
   ui->tbAcercaDe->setHtml("<p>Powered by:"
                           "<ul>"
                           "<li>Lincoln Ingaroca De La Cruz.</li>"
@@ -94,6 +95,13 @@ void AcercaDeDialog::setTextToAbout() const{
                           "<li>Analista de sistemas informáticos.</li>"
                           "<li>Software development.</li>"
                           "</ul><br>"
+                          "Bibliotecas:"
+                          "<p>xxxApp incluye código fuente de los siguientes proyectos:</p>"
+                          "<ul>"
+                          "<li><a href=\"https://www.openssl.org/\">OpenSSL.</a></li>"
+                          "<li><a href=\"https://www.qt.io//\">QtFrameWork and QtWidgets.</a></li>"
+                          "</ul>"
+
                           "</p>");
 
 }
