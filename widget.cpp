@@ -166,8 +166,9 @@ Widget::Widget(QWidget *parent)
               ui->txtUrl->setFocus(Qt::OtherFocusReason);
               setUpTable(categoryList.key(ui->cboCategory->currentText()));
               verifyContextMenu();
-              checkStatusContextMenu();
+
               hastvUrlData();
+              checkStatusContextMenu();
             }
         }else{
 
@@ -216,8 +217,9 @@ Widget::Widget(QWidget *parent)
       ui->cboCategory->clear();
       loadListCategory(userId_);
       has_data();
-      checkStatusContextMenu();
+
       hastvUrlData();
+      checkStatusContextMenu();
 
     });
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
