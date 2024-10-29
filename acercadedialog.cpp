@@ -100,6 +100,7 @@ void AcercaDeDialog::setTextToAbout() const{
                           "<ul>"
                           "<li><a href=\"https://www.openssl.org/\">OpenSSL.</a></li>"
                           "<li><a href=\"https://www.qt.io//\">QtFrameWork and QtWidgets.</a></li>"
+                          "<li><a href=\"https://www.sqlite.org/index.html\">SQLite.</a></li>"
                           "</ul>"
 
                           "</p>");
