@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QLineEdit>
 #include <QCheckBox>
+#include <QCloseEvent>
 
 
 LogInDialog::LogInDialog(QWidget *parent) :

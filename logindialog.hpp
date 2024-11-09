@@ -2,7 +2,7 @@
 
 #include <QDialog>
 #include <helperdatabase/helperdb.hpp>
-#include <QCloseEvent>
+// #include <QCloseEvent>
 #include <util/helper.hpp>
 
 namespace Ui {
@@ -10,6 +10,7 @@ class LogInDialog;
 }
 class QLineEdit;
 class QCheckBox;
+class QCloseEvent;
 
 class LogInDialog : public QDialog
 {
@@ -19,7 +20,7 @@ public:
   explicit LogInDialog(QWidget *parent = nullptr);
   ~LogInDialog();
 
-  QString userName() const  noexcept{ return userName_;}
+  const QString& userName() const  noexcept{ return userName_;}
 
   inline static const QHash<SW::AuthType, QString> authType{
     {SW::AuthType::Numeric_pin, "Pin numérico"},
