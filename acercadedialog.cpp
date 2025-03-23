@@ -102,7 +102,9 @@ void AcercaDeDialog::setTextToAbout() const{
                           "<li><a href=\"https://www.qt.io//\">QtFrameWork and QtWidgets.</a></li>"
                           "<li><a href=\"https://www.sqlite.org/index.html\">SQLite.</a></li>"
                           "</ul>"
-
+                          "</p>"
+                          "<p>Repositorio del programa:"
+                          "<ul><li><a href=\"https://github.com/lincolningaroca/xxxApp\">xxxApp</a></li></ul>"
                           "</p>");
 
 }
