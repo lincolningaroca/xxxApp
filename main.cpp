@@ -78,7 +78,7 @@ int main(int argc, char *argv[]){
   a.setApplicationName(QStringLiteral("xxxApp"));
   a.setApplicationVersion(QStringLiteral("1.0"));
   a.setOrganizationName(QStringLiteral("SWSystem's"));
-  a.setStyle("Fusion");
+  // a.setStyle("Fusion");
 
   const QString serverName{a.applicationName()};
   if(SingleIntsanceManager::isRunning(serverName)){

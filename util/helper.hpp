@@ -3,6 +3,7 @@
 #include <QStringView>
 #include <QDesktopServices>
 #include <QApplication>
+#include <QPalette>
 
 
 
@@ -83,6 +84,7 @@ namespace SW {
 
   private:
     inline static const QString dbDir_name{"/xxxdatabase"};
+    inline static const QPalette standardPalette_{QGuiApplication::palette()};
     // inline static const QString key_{"AbCdEfGhIjKlMnOpQrStUvWxYz@!#$%&/()=?¡1234567890"};
     // inline static const QByteArray key_{"AbCdEfGhIjKlMnOpQrStUvWxYz@!#$%&/()=?¡1234567890"};
     // inline static const QByteArray iv_{"AbCdEfGhIjKlMnOpQrStUvWxYz@!#$%&/()=?¡1234567890"};
