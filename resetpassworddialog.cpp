@@ -67,7 +67,7 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
   //btn pin numerico
   QObject::connect(ui->btnClaveNumerica, &QPushButton::clicked, this, [&](){
 
-      if(ui->txtPIN->text().count() < 4){
+      if(ui->txtPIN->text().size() < 4){
           QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("<span><em>El PIN numérico debe contener 4 digitos!</em></span>"));
           ui->txtPIN->selectAll();
           ui->txtPIN->setFocus(Qt::OtherFocusReason);
@@ -120,7 +120,7 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
           ui->txtRePassword->setFocus(Qt::OtherFocusReason);
           return;
         }
-      if(ui->txtNewPassword->text().count() < 8 || ui->txtRePassword->text().count() < 8){
+      if(ui->txtNewPassword->text().size() < 8 || ui->txtRePassword->text().size() < 8){
           QMessageBox::warning(this, SW::Helper_t::appName(),
                                QStringLiteral("<span>"
                                               "<em>"

@@ -79,7 +79,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
           return;
         }
 
-      if(ui->txtNewPassword->text().count() < 8 || ui->txtRePassword->text().count() < 8){
+      if(ui->txtNewPassword->text().size() < 8 || ui->txtRePassword->text().size() < 8){
           QMessageBox::warning(this, SW::Helper_t::appName(),
                                QStringLiteral("<span>"
                                               "<em>"
@@ -130,7 +130,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
         }
       if(ui->cboRestoreType->currentText() == authType.value(SW::AuthType::Numeric_pin)){
-          if(ui->txtfirstValue->text().count() < 4 || ui->txtConfirmValue->text().count() <4){
+          if(ui->txtfirstValue->text().size() < 4 || ui->txtConfirmValue->text().size() <4){
               QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("<span><em>El PIN numérico debe contener 4 digitos!</em></span>"));
               ui->txtfirstValue->selectAll();
               ui->txtfirstValue->setFocus();
