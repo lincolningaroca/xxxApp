@@ -631,14 +631,6 @@ bool Widget::validateSelectedRow() noexcept{
 
 void Widget::setUpTable(uint32_t categoryId) noexcept{
 
-  // xxxModel_ = new QSqlTableModel(this, db_);
-  // xxxModel_->setTable(QStringLiteral("urls"));
-  // xxxModel_->setFilter(QString("categoryid=%1").arg(categoryId));
-
-  // xxxModel_->select();
-
-  // ui->tvUrl->setModel(xxxModel_);
-
   xxxModel_ = new SWTableModel(this, db_);
   xxxModel_->setTable("urls");
   xxxModel_->setFilter(QStringLiteral("categoryid=%1").arg(categoryId));
@@ -647,11 +639,13 @@ void Widget::setUpTable(uint32_t categoryId) noexcept{
   ui->tvUrl->setModel(xxxModel_);
   setUpTableHeaders();
 
-  QSqlQuery reuseQry = xxxModel_->query();
 
-  if(reuseQry.exec()){
-    while(reuseQry.next()){
-      urlList.insert(reuseQry.value(0).toUInt(),reuseQry.value(1).toString());
+  QSqlQuery query(xxxModel_->query().lastQuery(), db_);
+
+
+  if(query.exec()){
+    while(query.next()){
+      urlList.insert(query.value(0).toUInt(),query.value(1).toString());
     }
   }
 
