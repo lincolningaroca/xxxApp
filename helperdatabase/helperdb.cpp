@@ -119,11 +119,13 @@ namespace SW {
 
   bool HelperDataBase_t::deleteUrls(std::uint8_t op, uint32_t categoryId, uint32_t urlId) noexcept{
 
+    bool ret=false;
+
     if(op == 1){
         [[maybe_unused]] auto res=qry_.prepare(QStringLiteral("DELETE FROM urls WHERE categoryid=?"));
         //        auto categoryId=categoryList.key(category);
         qry_.addBindValue(categoryId, QSql::In);
-        return qry_.exec();
+        ret = qry_.exec();
 
       }else{
         [[maybe_unused]] auto res=qry_.prepare(QStringLiteral("DELETE FROM urls WHERE url_id=?"));
@@ -131,9 +133,10 @@ namespace SW {
         //        auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
         //        auto urlId=urlList.key(url);
         qry_.addBindValue(urlId, QSql::In);
-        return qry_.exec();
+        ret = qry_.exec();
 
       }
+      return ret;
   }
 
   QHash<uint32_t, QString> HelperDataBase_t::loadList_Category(uint32_t user_id) noexcept
