@@ -23,7 +23,7 @@
 
 Widget::Widget(QWidget *parent)
   : QWidget(parent), ui(new Ui::Widget),
-    db_{QSqlDatabase::database(QStringLiteral("xxxConection"))}{
+  db_{QSqlDatabase::database(QStringLiteral("xxxConection"))}{
   ui->setupUi(this);
   userId_ = helperdb_.getUser_id(SW::Helper_t::defaultUser, SW::User::U_public);
   ui->lblIcon->setPixmap(QPixmap(QStringLiteral(":/img/7278151.png")).scaled(16,16));
@@ -47,229 +47,231 @@ Widget::Widget(QWidget *parent)
   canRestoreDataBase();
 
   QObject::connect(ui->lblInfo, &SWLabel::clicked, this, [&](){
-      // AcercaDeDialog acercaDe{ui->cboTheme->currentText(), this};
-      AcercaDeDialog acercaDe{themeType.key(ui->cboTheme->currentText()), this};
-      acercaDe.setWindowTitle(SW::Helper_t::appName().append(" - Acerca de"));
-      acercaDe.exec();
-    });
+    // AcercaDeDialog acercaDe{ui->cboTheme->currentText(), this};
+    AcercaDeDialog acercaDe{themeType.key(ui->cboTheme->currentText()), this};
+    acercaDe.setWindowTitle(SW::Helper_t::appName().append(" - Acerca de"));
+    acercaDe.exec();
+  });
 
 
   //action delete category
   QObject::connect(delCategory, &QAction::triggered, this, [&](){
-      QMessageBox msgBox;
-      msgBox.setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - Advertencia")));
-      msgBox.setText(QStringLiteral("<p style='color:#FB4934;'>"
-                                    "<cite><strong>Esta a punto eliminar ésta categoría y todo su contenido.<br>"
-                                    "Recuerde que al aceptar, eliminará de forma permanente estos datos.<br>"
-                                    "Desea continuar y eliminar los datos?</strong></cite></p>"));
-      msgBox.setIcon(QMessageBox::Warning);
-      msgBox.addButton(QStringLiteral("Borrar categoría"), QMessageBox::AcceptRole);
-      msgBox.addButton(QStringLiteral("Cancelar"), QMessageBox::RejectRole);
+    QMessageBox msgBox;
+    msgBox.setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - Advertencia")));
+    msgBox.setText(QStringLiteral("<p style='color:#FB4934;'>"
+                                  "<cite><strong>Esta a punto eliminar ésta categoría y todo su contenido.<br>"
+                                  "Recuerde que al aceptar, eliminará de forma permanente estos datos.<br>"
+                                  "Desea continuar y eliminar los datos?</strong></cite></p>"));
+    msgBox.setIcon(QMessageBox::Warning);
 
-      if(msgBox.exec() == QMessageBox::RejectRole)
-        return;
-      if(deleteAll()){
-          QMessageBox::information(this, SW::Helper_t::appName(),QStringLiteral("Datos eliminados."));
-          ui->cboCategory->clear();
-          loadListCategory(userId_);
-          has_data();
-          checkStatusContextMenu();
-        }
-    });
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.button(QMessageBox::Yes)->setText("Borrar categoría");
+    msgBox.button(QMessageBox::No)->setText("Cancelar");
+
+    if(msgBox.exec() == QMessageBox::No)
+      return;
+    if(deleteAll()){
+      QMessageBox::information(this, SW::Helper_t::appName(),QStringLiteral("Datos eliminados."));
+      ui->cboCategory->clear();
+      loadListCategory(userId_);
+      has_data();
+      checkStatusContextMenu();
+    }
+  });
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
   //connect to slot to btnDeleteCategory
   QObject::connect(ui->btnDeleteCategory, &QPushButton::clicked, this, [&](){
-      auto categoryId=categoryList.key(ui->cboCategory->currentText());
-      auto [res, errMessage] = helperdb_.verifyDeleteCategory(categoryId);
-      if(!res){
-          QMessageBox::warning(this, SW::Helper_t::appName().append(QStringLiteral(" - Advertencia")),
-                               QString("<p>"
-                                       "<cite>"
-                                       "No se puede eliminar ésta categoría.<br>"
-                                       "Esto es debido a que ésta categoría tiene asociado uno o mas"
-                                       " elementos.<br><br>"
-                                       "<strong>Sugerencia:"
-                                       "</strong><br>"
-                                       "Si desea eliminar una categoría y todo su contenido, "
-                                       "puede optar por dar click derecho sobre el nombre de la categoría y"
-                                       " del menú contextual elegir:<br><br>"
-                                       "<strong>"
-                                       "<mark style='background:#FFFF00;color:#FF5500;'>"
-                                       "->Forzar eliminación de categoría.</mark>"
-                                       "</strong>"
-                                       "</cite>"
-                                       "</p>"));
-          //            qDebug()<<count<<'\n';
-          return;
+    auto categoryId=categoryList.key(ui->cboCategory->currentText());
+    auto [res, errMessage] = helperdb_.verifyDeleteCategory(categoryId);
+    if(!res){
+      QMessageBox::warning(this, SW::Helper_t::appName().append(QStringLiteral(" - Advertencia")),
+                           QString("<p>"
+                                   "<cite>"
+                                   "No se puede eliminar ésta categoría.<br>"
+                                   "Esto es debido a que ésta categoría tiene asociado uno o mas"
+                                   " elementos.<br><br>"
+                                   "<strong>Sugerencia:"
+                                   "</strong><br>"
+                                   "Si desea eliminar una categoría y todo su contenido, "
+                                   "puede optar por dar click derecho sobre el nombre de la categoría y"
+                                   " del menú contextual elegir:<br><br>"
+                                   "<strong>"
+                                   "<mark style='background:#FFFF00;color:#FF5500;'>"
+                                   "->Forzar eliminación de categoría.</mark>"
+                                   "</strong>"
+                                   "</cite>"
+                                   "</p>"));
+      //            qDebug()<<count<<'\n';
+      return;
 
-        }
-      auto ret = QMessageBox::warning(this, SW::Helper_t::appName(),
-                                      QStringLiteral("<p><cite>Esta seguro de eliminar esta categoría?</cite></p>")
-                                      ,QMessageBox::Yes, QMessageBox::Cancel);
-      if(ret==QMessageBox::Cancel)
-        return;
+    }
+    auto ret = QMessageBox::warning(this, SW::Helper_t::appName(),
+                                    QStringLiteral("<p><cite>Esta seguro de eliminar esta categoría?</cite></p>")
+                                    ,QMessageBox::Yes, QMessageBox::Cancel);
+    if(ret==QMessageBox::Cancel)
+      return;
 
-      if(helperdb_.deleteCategory(categoryId)){
-          QMessageBox::information(this, SW::Helper_t::appName(), QStringLiteral("Categoría eliminada!"));
-          ui->cboCategory->clear();
-          loadListCategory(userId_);
-          has_data();
-          checkStatusContextMenu();
-        }
-    });
+    if(helperdb_.deleteCategory(categoryId)){
+      QMessageBox::information(this, SW::Helper_t::appName(), QStringLiteral("Categoría eliminada!"));
+      ui->cboCategory->clear();
+      loadListCategory(userId_);
+      has_data();
+      checkStatusContextMenu();
+    }
+  });
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
   //connect to slots to btnAdd new url
   QObject::connect(ui->btnAdd,&QPushButton::clicked, this, [&](){
 
-      if(ui->btnAdd->text().compare("Agregar") == 0){
-          if(!SW::Helper_t::urlValidate(ui->txtUrl->text())){
-              QMessageBox::warning(this, SW::Helper_t::appName(),
-                                   QString("<p>"
-                                           "<span>"
-                                           "La dirección: <strong>\"%1\"</strong>, no es válida!<br>"
-                                           "una dirección url válida debe tener una de las siguiente formas:"
-                                           "<ol>"
-                                           "<li><strong>(http://www.)url.dominio</strong></li>"
-                                           "<li><strong>(https://www.)url.dominio</strong></li>"
-                                           "<li><strong>(ftp://)url.dominio</strong></li>"
-                                           "<li><strong>(ftp://www.)url.dominio</strong></li>"
-                                           "</ol>"
-                                           "<br>Nota:<br>"
-                                           "Tenga en cuenta que "
-                                           "<strong>http://, https://, ftp://, www.</strong> son opcionales<br>"
-                                           "Lo mínimo que se espera es una direccón de la forma: <strong>\"url.domino\"</strong>"
-                                           "</span>"
-                                           "</p>").arg(ui->txtUrl->text()));
-              ui->txtUrl->selectAll();
-              ui->txtUrl->setFocus(Qt::OtherFocusReason);
-              return;
-            }
+    if(ui->btnAdd->text().compare("Agregar") == 0){
+      if(!SW::Helper_t::urlValidate(ui->txtUrl->text())){
+        QMessageBox::warning(this, SW::Helper_t::appName(),
+                             QString("<p>"
+                                     "<span>"
+                                     "La dirección: <strong>\"%1\"</strong>, no es válida!<br>"
+                                     "una dirección url válida debe tener una de las siguiente formas:"
+                                     "<ol>"
+                                     "<li><strong>(http://www.)url.dominio</strong></li>"
+                                     "<li><strong>(https://www.)url.dominio</strong></li>"
+                                     "<li><strong>(ftp://)url.dominio</strong></li>"
+                                     "<li><strong>(ftp://www.)url.dominio</strong></li>"
+                                     "</ol>"
+                                     "<br>Nota:<br>"
+                                     "Tenga en cuenta que "
+                                     "<strong>http://, https://, ftp://, www.</strong> son opcionales<br>"
+                                     "Lo mínimo que se espera es una direccón de la forma: <strong>\"url.domino\"</strong>"
+                                     "</span>"
+                                     "</p>").arg(ui->txtUrl->text()));
+        ui->txtUrl->selectAll();
+        ui->txtUrl->setFocus(Qt::OtherFocusReason);
+        return;
+      }
 
-          auto categoryId = categoryList.key(ui->cboCategory->currentText());
+      auto categoryId = categoryList.key(ui->cboCategory->currentText());
 
-          if(helperdb_.urlExists(ui->txtUrl->text(), categoryId)){
-              QMessageBox::warning(this, SW::Helper_t::appName(),
-                                   QStringLiteral("<p>La url: <cite><strong>%1</strong></cite></p> ya esta registrada!!").arg(ui->txtUrl->text()));
-              ui->txtUrl->selectAll();
-              ui->txtUrl->setFocus(Qt::OtherFocusReason);
-              return;
-            }
-          //get the key from categoryList, with current selected text to cboCategory.
-          // auto categoryId = categoryList.key(ui->cboCategory->currentText());
-          if(helperdb_.saveData_url(ui->txtUrl->text(), ui->pteDesc->toPlainText(), categoryId)){
-              //              QMessageBox::information(this,SW::Helper_t::appName(),"Datos guardados!!");
-              ui->txtUrl->clear();
-              ui->pteDesc->clear();
-              ui->txtUrl->setFocus(Qt::OtherFocusReason);
-              setUpTable(categoryList.key(ui->cboCategory->currentText()));
-              verifyContextMenu();
+      if(helperdb_.urlExists(ui->txtUrl->text(), categoryId)){
+        QMessageBox::warning(this, SW::Helper_t::appName(),
+                             QStringLiteral("<p>La url: <cite><strong>%1</strong></cite></p> ya esta registrada!!").arg(ui->txtUrl->text()));
+        ui->txtUrl->selectAll();
+        ui->txtUrl->setFocus(Qt::OtherFocusReason);
+        return;
+      }
+      //get the key from categoryList, with current selected text to cboCategory.
+      // auto categoryId = categoryList.key(ui->cboCategory->currentText());
+      if(helperdb_.saveData_url(ui->txtUrl->text(), ui->pteDesc->toPlainText(), categoryId)){
+        //              QMessageBox::information(this,SW::Helper_t::appName(),"Datos guardados!!");
+        ui->txtUrl->clear();
+        ui->pteDesc->clear();
+        ui->txtUrl->setFocus(Qt::OtherFocusReason);
+        setUpTable(categoryList.key(ui->cboCategory->currentText()));
+        verifyContextMenu();
 
-              hastvUrlData();
-              checkStatusContextMenu();
-            }
-        }else{
+        hastvUrlData();
+        checkStatusContextMenu();
+      }
+    }else{
 
-          QSqlQuery qry(db_);
-          [[maybe_unused]] auto res=qry.prepare(QStringLiteral("UPDATE  urls SET url=?, desc=? WHERE url_id=? AND categoryid=?"));
-          auto encryptedData = SW::Helper_t::encrypt(ui->txtUrl->text());
-          qry.addBindValue(encryptedData, QSql::In);
-          auto descData = SW::Helper_t::encrypt(ui->pteDesc->toPlainText().simplified().toUpper());
-          qry.addBindValue(descData, QSql::In);
-          auto currentRow = ui->tvUrl->currentIndex().row();
-          auto id = ui->tvUrl->model()->index(currentRow,0).data().toInt();
-          qry.addBindValue(id, QSql::In);
-          auto categoryId = categoryList.key(ui->cboCategory->currentText());
-          qry.addBindValue(categoryId, QSql::In);
-          if(!qry.exec()){
-              QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Fallo la ejecución de la sentencia!\n")
-                                    +qry.lastError().text());
-              return;
+      QSqlQuery qry(db_);
+      [[maybe_unused]] auto res=qry.prepare(QStringLiteral("UPDATE  urls SET url=?, desc=? WHERE url_id=? AND categoryid=?"));
+      auto encryptedData = SW::Helper_t::encrypt(ui->txtUrl->text());
+      qry.addBindValue(encryptedData, QSql::In);
+      auto descData = SW::Helper_t::encrypt(ui->pteDesc->toPlainText().simplified().toUpper());
+      qry.addBindValue(descData, QSql::In);
+      auto currentRow = ui->tvUrl->currentIndex().row();
+      auto id = ui->tvUrl->model()->index(currentRow,0).data().toInt();
+      qry.addBindValue(id, QSql::In);
+      auto categoryId = categoryList.key(ui->cboCategory->currentText());
+      qry.addBindValue(categoryId, QSql::In);
+      if(!qry.exec()){
+        QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Fallo la ejecución de la sentencia!\n")
+                                                               +qry.lastError().text());
+        return;
 
-            }
-          setUpTable(categoryList.key(ui->cboCategory->currentText()));
-          ui->btnAdd->setText(QStringLiteral("Agregar"));
-          editAction(false);
-          ui->txtUrl->clear();
-          ui->pteDesc->clear();
-          ui->txtUrl->setFocus(Qt::OtherFocusReason);
-        }
+      }
+      setUpTable(categoryList.key(ui->cboCategory->currentText()));
+      ui->btnAdd->setText(QStringLiteral("Agregar"));
+      editAction(false);
+      ui->txtUrl->clear();
+      ui->pteDesc->clear();
+      ui->txtUrl->setFocus(Qt::OtherFocusReason);
+    }
 
-    });
+  });
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   //btnAddNewCategory
   QObject::connect(ui->btnNewCategory, &QPushButton::clicked, this, [&](){
-      dlgNewCategory newCategory(dlgNewCategory::OpenMode::New);
+    dlgNewCategory newCategory(dlgNewCategory::OpenMode::New);
 
-      if(newCategory.exec() == QDialog::Rejected)
-        return;
+    if(newCategory.exec() == QDialog::Rejected)
+      return;
 
-      // auto userid = helperdb_.getUser_id(QStringLiteral("public"), SW::User::U_public);
+    // auto userid = helperdb_.getUser_id(QStringLiteral("public"), SW::User::U_public);
 
-      if(!helperdb_.saveCategoryData(newCategory.category(), newCategory.description(), userId_)){
-          QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error alguardar los datos!\n"));
-          return;
-        }
-      ui->cboCategory->clear();
-      loadListCategory(userId_);
-      has_data();
+    if(!helperdb_.saveCategoryData(newCategory.category(), newCategory.description(), userId_)){
+      QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error alguardar los datos!\n"));
+      return;
+    }
+    ui->cboCategory->clear();
+    loadListCategory(userId_);
+    has_data();
 
-      hastvUrlData();
-      checkStatusContextMenu();
+    hastvUrlData();
+    checkStatusContextMenu();
 
-    });
+  });
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
   //btn edit category
   QObject::connect(ui->btnEditCategory, &QPushButton::clicked, this, [&](){
 
-      auto id = categoryList.key(ui->cboCategory->currentText());
-      const QStringList data = helperdb_.dataCategory(id);
-      dlgNewCategory editCategory(dlgNewCategory::OpenMode::Edit, data, this);
-      if(editCategory.exec() == QDialog::Rejected){
-          return;
-        }
-      if(helperdb_.updateCategory(editCategory.category(), editCategory.description(), id, userId_)){
-          QMessageBox::information(this, SW::Helper_t::appName(), QStringLiteral("Datos actualizados!\n"));
-          ui->cboCategory->clear();
-          loadListCategory(userId_);
-        }
+    auto id = categoryList.key(ui->cboCategory->currentText());
+    const QStringList data = helperdb_.dataCategory(id);
+    dlgNewCategory editCategory(dlgNewCategory::OpenMode::Edit, data, this);
+    if(editCategory.exec() == QDialog::Rejected){
+      return;
+    }
+    if(helperdb_.updateCategory(editCategory.category(), editCategory.description(), id, userId_)){
+      QMessageBox::information(this, SW::Helper_t::appName(), QStringLiteral("Datos actualizados!\n"));
+      ui->cboCategory->clear();
+      loadListCategory(userId_);
+    }
 
 
-    });
+  });
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   //connect to slots to txtUrl
   QObject::connect(ui->txtUrl, &QLineEdit::textChanged,this, [&](const QString& text){
-      (!text.simplified().isEmpty()) ? ui->btnAdd->setEnabled(true) : ui->btnAdd->setDisabled(true);
-    });
+    (!text.simplified().isEmpty()) ? ui->btnAdd->setEnabled(true) : ui->btnAdd->setDisabled(true);
+  });
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   //connect to slots to btnQuit
   QObject::connect(ui->btnQuit, &QPushButton::clicked,this, [&](){
-      if(!validateSelectedRow()) return;
+    if(!validateSelectedRow()) return;
 
-      quitUrl();
-      verifyContextMenu();
+    quitUrl();
+    verifyContextMenu();
 
-      hastvUrlData();
+    hastvUrlData();
 
-    });
+  });
 
   QObject::connect(quittUrl_, &QAction::triggered,this, [&](){
-      if(!validateSelectedRow()) return;
+    if(!validateSelectedRow()) return;
 
-      quitUrl();
-      verifyContextMenu();
-      hastvUrlData();
+    quitUrl();
+    verifyContextMenu();
+    hastvUrlData();
 
-    });
+  });
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
   //btn edit url
@@ -280,263 +282,283 @@ Widget::Widget(QWidget *parent)
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
   //btnopenUrl
   QObject::connect(ui->btnopen, &QPushButton::clicked, this, [&](){
-      if(!validateSelectedRow()) return;
+    if(!validateSelectedRow()) return;
 
-      openUrl();
+    openUrl();
 
 
-    });
+  });
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
   QObject::connect(openUrl_, &QAction::triggered, this, [&](){
-      if(!validateSelectedRow()) return;
+    if(!validateSelectedRow()) return;
 
-      openUrl();
-    });
+    openUrl();
+  });
 
   //cboTheme
   QObject::connect(ui->cboTheme, &QComboBox::currentTextChanged, this, [&](const QString& text){
 
-      ( text == themeType.value(SW::Theme::Dark_Mode) ) ? setTheme(SW::Theme::Dark_Mode) : setTheme(SW::Theme::Light_Mode);
-      checkStatusSessionColor(text);
+    ( text == themeType.value(SW::Theme::Dark_Mode) ) ? setTheme(SW::Theme::Dark_Mode) : setTheme(SW::Theme::Light_Mode);
+    checkStatusSessionColor(text);
 
 
-    });
+  });
   //cboCategory connection
   QObject::connect(ui->cboCategory, &QComboBox::currentIndexChanged, this, [&](){
-      setUpTable(categoryList.key(ui->cboCategory->currentText()));
-      verifyContextMenu();
-      // setUpCboCategoryContextMenu();
-      setCboCategoryToolTip();
-      hastvUrlData();
-      checkStatusContextMenu();
-      //      has_data();
-    });
+    setUpTable(categoryList.key(ui->cboCategory->currentText()));
+    verifyContextMenu();
+    // setUpCboCategoryContextMenu();
+    setCboCategoryToolTip();
+    hastvUrlData();
+    checkStatusContextMenu();
+    //      has_data();
+  });
 
   setCboCategoryToolTip();
   hastvUrlData();
 
   //conect btn login
   QObject::connect(ui->btnLogIn, &QToolButton::clicked, this, [&](){
-      LogInDialog logDialog;
-      if(logDialog.exec() == QDialog::Accepted){
+    LogInDialog logDialog;
+    if(logDialog.exec() == QDialog::Accepted){
 
-          SW::Helper_t::current_user_ = logDialog.userName();
+      SW::Helper_t::current_user_ = logDialog.userName();
 
-          // userId_ = helperdb_.getUser_id(logDialog.userName(),QStringLiteral("USER"));
-          userId_ = helperdb_.getUser_id(SW::Helper_t::current_user_, SW::User::U_user);
+      // userId_ = helperdb_.getUser_id(logDialog.userName(),QStringLiteral("USER"));
+      userId_ = helperdb_.getUser_id(SW::Helper_t::current_user_, SW::User::U_user);
 
-          ui->cboCategory->clear();
-          loadListCategory(userId_);
+      ui->cboCategory->clear();
+      loadListCategory(userId_);
 
-          // (ui->cboTheme->currentText() == QStringLiteral("Modo Oscuro") ) ? setLabelInfo(SW::Helper_t::darkModeColor.data(), logDialog.userName()) : setLabelInfo(SW::Helper_t::lightModeColor.data(), logDialog.userName());
+      // (ui->cboTheme->currentText() == QStringLiteral("Modo Oscuro") ) ? setLabelInfo(SW::Helper_t::darkModeColor.data(), logDialog.userName()) : setLabelInfo(SW::Helper_t::lightModeColor.data(), logDialog.userName());
 
-          (ui->cboTheme->currentText() == themeType.value(SW::Theme::Dark_Mode) )
-              ? setLabelInfo(SW::Theme::Dark_Mode, SW::Helper_t::current_user_)
-              : setLabelInfo(SW::Theme::Light_Mode, SW::Helper_t::current_user_);
+      (ui->cboTheme->currentText() == themeType.value(SW::Theme::Dark_Mode) )
+        ? setLabelInfo(SW::Theme::Dark_Mode, SW::Helper_t::current_user_)
+        : setLabelInfo(SW::Theme::Light_Mode, SW::Helper_t::current_user_);
 
-          ui->btnLogOut->setEnabled(true);
-          ui->btnLogIn->setDisabled(true);
-          // setWindowTitle(QApplication::applicationName().append(QStringLiteral(" - Sesión inicada como: ")+logDialog.userName()));
-          setWindowTitle(QApplication::applicationName().append(QStringLiteral(" - Sesión inicada como: ").append(SW::Helper_t::current_user_)));
-          ui->lblIcon->setPixmap(QPixmap(QStringLiteral(":/img/user.png")).scaled(16,16));
-          SW::Helper_t::sessionStatus_ = SW::SessionStatus::Session_start;
-          has_data();
-          checkStatusContextMenu();
-          canRestoreDataBase();
-        }
+      ui->btnLogOut->setEnabled(true);
+      ui->btnLogIn->setDisabled(true);
+      // setWindowTitle(QApplication::applicationName().append(QStringLiteral(" - Sesión inicada como: ")+logDialog.userName()));
+      setWindowTitle(QApplication::applicationName().append(QStringLiteral(" - Sesión inicada como: ").append(SW::Helper_t::current_user_)));
+      ui->lblIcon->setPixmap(QPixmap(QStringLiteral(":/img/user.png")).scaled(16,16));
+      SW::Helper_t::sessionStatus_ = SW::SessionStatus::Session_start;
+      has_data();
+      checkStatusContextMenu();
+      canRestoreDataBase();
+    }
 
-    });
+  });
 
   //connect to button logout
   QObject::connect(ui->btnLogOut, &QToolButton::clicked, this, [&](){
-      userId_ = helperdb_.getUser_id(SW::Helper_t::defaultUser, SW::User::U_public);
+    userId_ = helperdb_.getUser_id(SW::Helper_t::defaultUser, SW::User::U_public);
 
-      (ui->cboTheme->currentText() == themeType.value(SW::Theme::Dark_Mode ))
-          ? setLabelInfo(SW::Theme::Dark_Mode)
-          : setLabelInfo(SW::Theme::Light_Mode);
+    (ui->cboTheme->currentText() == themeType.value(SW::Theme::Dark_Mode ))
+      ? setLabelInfo(SW::Theme::Dark_Mode)
+      : setLabelInfo(SW::Theme::Light_Mode);
 
-      ui->btnLogOut->setDisabled(true);
-      ui->btnLogIn->setEnabled(true);
-      setWindowTitle(QApplication::applicationName());
-      ui->cboCategory->clear();
-      loadListCategory(userId_);
-      ui->lblIcon->setPixmap(QPixmap(QStringLiteral(":/img/7278151.png")).scaled(16,16));
-      SW::Helper_t::sessionStatus_ = SW::SessionStatus::Session_closed;
-      has_data();
-      checkStatusContextMenu();
-      SW::Helper_t::current_user_ = SW::Helper_t::defaultUser;
-      canRestoreDataBase();
+    ui->btnLogOut->setDisabled(true);
+    ui->btnLogIn->setEnabled(true);
+    setWindowTitle(QApplication::applicationName());
+    ui->cboCategory->clear();
+    loadListCategory(userId_);
+    ui->lblIcon->setPixmap(QPixmap(QStringLiteral(":/img/7278151.png")).scaled(16,16));
+    SW::Helper_t::sessionStatus_ = SW::SessionStatus::Session_closed;
+    has_data();
+    checkStatusContextMenu();
+    SW::Helper_t::current_user_ = SW::Helper_t::defaultUser;
+    canRestoreDataBase();
 
-    });
+  });
 
   //connect boton crear copia de seguridad
   QObject::connect(ui->btnBackUp, &QToolButton::clicked, this, [&](){
-      QProcess process;
-      const auto path_app {SW::Helper_t::app_pathLocation().append("/tools/sqlite-tools-win-x64-3450100/sqlite3.exe")};
-      QStringList argv{};
-      auto databasePath = SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase.db"));
-      auto filePath = QFileDialog::getSaveFileName(this, QStringLiteral("Crear una copia de seguridad"), SW::Helper_t::getLastOpenedDirectory(),
-                                                   QStringLiteral("Archivos de copia de seguridad (*.bak)"));
+    QProcess process;
+    const auto path_app {SW::Helper_t::app_pathLocation().append("/tools/sqlite-tools-win-x64-3450100/sqlite3.exe")};
+    qInfo() << path_app << '\n';
+
+    auto databasePath = SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase.db"));
+    auto filePath = QFileDialog::getSaveFileName(this, QStringLiteral("Crear una copia de seguridad"), SW::Helper_t::getLastOpenedDirectory(),
+                                                 QStringLiteral("Archivos de copia de seguridad (*.bak)"));
 
 
-      if(filePath.isEmpty())
-        return;
+    if(filePath.isEmpty())
+      return;
 
-      if(filePath.contains(' ')){
-          QMessageBox::warning(this, SW::Helper_t::appName(), "El nombre del archivo no puede contener espacios.");
-          return;
-        }
+    if(filePath.contains(' ')){
+      QMessageBox::warning(this, SW::Helper_t::appName(), "El nombre del archivo no puede contener espacios.");
+      return;
+    }
 
-      const QFileInfo fileInfo(filePath);
-
-
+    const QFileInfo fileInfo(filePath);
 
 
-      auto absolutePath{fileInfo.absolutePath()};
-      auto baseName{fileInfo.baseName()};
-      auto extension{fileInfo.completeSuffix()};
+    auto absolutePath{fileInfo.absolutePath()};
+    auto baseName{fileInfo.baseName()};
+    auto extension{fileInfo.suffix()};
 
-      auto fecha{QDateTime::currentDateTime().toString("yyyy-MM-dd_hhmmss")};
-      QString path{".backup %1/%2-%3.%4"};
+    auto fecha{QDateTime::currentDateTime().toString("yyyy-MM-dd_hhmmss")};
+    // QString path{".backup %1/%2-%3.%4"};
+    auto backupCommand = QString(".backup '%1/%2-%3.%4'").arg(absolutePath, baseName, fecha, extension);
+
+    // Verificar si el ejecutable sqlite3 existe
+    if(!QFile::exists(path_app)) {
+      QMessageBox::critical(this, SW::Helper_t::appName(), "No se encontró el ejecutable sqlite3");
+      return;
+    }
+
+    SW::Helper_t::setLastOpenedDirectory(absolutePath);
+
+    QStringList argv{};
+
+    // argv << databasePath << path.arg(absolutePath,baseName,fecha,extension);
+    argv << databasePath << backupCommand;
+    qDebug() << "Ejecutando:" << path_app << argv;  // Para depuración
+
+    qint64 pid = 0;
+    bool started = QProcess::startDetached(path_app, argv, QDir::currentPath(), &pid);
 
 
-      argv << databasePath << path.arg(absolutePath,baseName,fecha,extension);
+    // if(!process.startDetached(path_app, argv)){
+    //   QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error en la ejecución.\n")+
+    //                                                          process.errorString());
+    //   return;
+
+    // }
+
+    if(!started || pid == 0) {
+      QMessageBox::critical(this, SW::Helper_t::appName(),
+                            "Error al crear la copia de seguridad.\n" +
+                              process.errorString());
+      return;
+    }
+
+    QMessageBox::information(this, SW::Helper_t::appName(), QStringLiteral("La copia de seguridad fue creada."));
 
 
-      SW::Helper_t::setLastOpenedDirectory(absolutePath);
-
-      if(!process.startDetached(path_app, argv)){
-          QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error en la ejecución.\n")+
-                                process.errorString());
-          return;
-
-        }
-
-      QMessageBox::information(this, SW::Helper_t::appName(), QStringLiteral("La copia de seguridad fue creada."));
-
-
-    });
+  });
 
   //restore database
   QObject::connect(ui->btnRestore, &QToolButton::clicked, this, [&](){
 
-      const auto dbasePath{SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase.db"))};
+    const auto dbasePath{SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase.db"))};
 
-      if(!helperdb_.isDataBase_empty()){
+    if(!helperdb_.isDataBase_empty()){
 
-          QMessageBox msg{this};
-          msg.setWindowTitle(SW::Helper_t::appName());
-          msg.setIcon(QMessageBox::Warning);
-          msg.setText(QStringLiteral("<span>"
-                                     "En éste momento hay una instancia de la base de datos en uso.<br/>"
-                                     "<em>Tenga en cuenta que al restaurar la base de datos con una cópia de seguridad,<br/>"
-                                     "se perderan todos los datos que tengan en éste momento, y seran reemplazados por los datos de la cópia.</em><br/><br/>"
-                                     "<cite><strong>Consejo:</strong></cite>"
-                                     "<ul><li>Tal vez antes de restaurar, una cópia de seguridad, quiera crear un backup, de la base de datos actual, para no perder los datos.</li></ul><br/>"
-                                     "</span>"));
-          msg.addButton(QStringLiteral("Restaurar la base de datos"), QMessageBox::AcceptRole);
-          msg.addButton(QStringLiteral("Cancelar"), QMessageBox::RejectRole);
+      QMessageBox msg{this};
+      msg.setWindowTitle(SW::Helper_t::appName());
+      msg.setIcon(QMessageBox::Warning);
+      msg.setText(QStringLiteral("<span>"
+                                 "En éste momento hay una instancia de la base de datos en uso.<br/>"
+                                 "<em>Tenga en cuenta que al restaurar la base de datos con una cópia de seguridad,<br/>"
+                                 "se perderan todos los datos que tengan en éste momento, y seran reemplazados por los datos de la cópia.</em><br/><br/>"
+                                 "<cite><strong>Consejo:</strong></cite>"
+                                 "<ul><li>Tal vez antes de restaurar, una cópia de seguridad, quiera crear un backup, de la base de datos actual, para no perder los datos.</li></ul><br/>"
+                                 "</span>"));
 
-          if(msg.exec() == QMessageBox::RejectRole)
-            return;
-        }
-
-      const auto pathBackup{QFileDialog::getOpenFileName(this, "Abrir archivo de respaldo", SW::Helper_t::getLastOpenedDirectory(),
-                                                         QStringLiteral("Archivo backup (*.bak)"))};
-      if(pathBackup.isEmpty())
+      msg.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+      msg.button(QMessageBox::Yes)->setText("Restaurar la base de datos");
+      msg.button(QMessageBox::No)->setText("Cancelar");
+      if(msg.exec() == QMessageBox::No)
         return;
+    }
 
-      auto db{QSqlDatabase::database("xxxConection")};
+    const auto pathBackup{QFileDialog::getOpenFileName(this, "Abrir archivo de respaldo", SW::Helper_t::getLastOpenedDirectory(),
+                                                       QStringLiteral("Archivo backup (*.bak)"))};
+    if(pathBackup.isEmpty())
+      return;
 
-      if(db.isOpen())
-        db.close();
+    auto db{QSqlDatabase::database("xxxConection")};
 
-
-      QStringList args{};
-      QString cmd {".restore %1"};
-
-      args << dbasePath << cmd.arg(pathBackup);
-
-      const auto app{SW::Helper_t::app_pathLocation().append("/tools/sqlite-tools-win-x64-3450100/sqlite3.exe")};
-
-      QProcess process{this};
-
-      QFileInfo fileInfo{pathBackup};
-      SW::Helper_t::setLastOpenedDirectory(fileInfo.absolutePath());
-
-      if(!process.startDetached(app, args)){
-          QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error en la ejecución.\n")+
-                                process.errorString());
-          return;
-
-        }
-      QMessageBox::information(this, SW::Helper_t::appName(), QStringLiteral("La base de datos, fue restaurada"));
-      db.open();
-      ui->cboCategory->clear();
-      loadListCategory(userId_);
-      has_data();
+    if(db.isOpen())
+      db.close();
 
 
-    });
+    QStringList args{};
+    QString cmd {".restore %1"};
+
+    args << dbasePath << cmd.arg(pathBackup);
+
+    const auto app{SW::Helper_t::app_pathLocation().append("/tools/sqlite-tools-win-x64-3450100/sqlite3.exe")};
+
+    QProcess process{this};
+
+    QFileInfo fileInfo{pathBackup};
+    SW::Helper_t::setLastOpenedDirectory(fileInfo.absolutePath());
+
+    if(!process.startDetached(app, args)){
+      QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error en la ejecución.\n")+
+                                                             process.errorString());
+      return;
+
+    }
+    QMessageBox::information(this, SW::Helper_t::appName(), QStringLiteral("La base de datos, fue restaurada"));
+    db.open();
+    ui->cboCategory->clear();
+    loadListCategory(userId_);
+    has_data();
+
+
+  });
 
   //connect boton cancelar
   QObject::connect(ui->btnCancel, &QAbstractButton::clicked, this, [&](){
 
-      ui->txtUrl->clear();
-      ui->pteDesc->clear();
-      ui->btnCancel->setDisabled(true);
-      ui->txtUrl->setFocus();
-      editAction(false);
-      ui->btnAdd->setText(QStringLiteral("Agregar"));
+    ui->txtUrl->clear();
+    ui->pteDesc->clear();
+    ui->btnCancel->setDisabled(true);
+    ui->txtUrl->setFocus();
+    editAction(false);
+    ui->btnAdd->setText(QStringLiteral("Agregar"));
 
-    });
+  });
   QObject::connect(showDescDetail_, &QAction::triggered, this, &Widget::showAlldescription);
   QObject::connect(showPublicUrl_, &QAction::triggered, this, [&](){
-      PublicUrlDialog publicDialog(this);
-      publicDialog.setWindowTitle("Direcciones url públicas");
+    PublicUrlDialog publicDialog(this);
+    publicDialog.setWindowTitle("Direcciones url públicas");
 
-      publicDialog.exec();
-    });
+    publicDialog.exec();
+  });
   QObject::connect(moveUrl_, &QAction::triggered, this, [this](){
 
 
-      const auto currentRow_ = ui->tvUrl->currentIndex().row();
-      const auto url_ = xxxModel_->index(currentRow_, 1).data().toString();
-      const auto currentCategoryId_ = categoryList.key(ui->cboCategory->currentText());
-      const auto urlid = xxxModel_->index(currentRow_, 0).data().toUInt();
-      auto data_ = categoryList;
-      data_.remove(currentCategoryId_);
+    const auto currentRow_ = ui->tvUrl->currentIndex().row();
+    const auto url_ = xxxModel_->index(currentRow_, 1).data().toString();
+    const auto currentCategoryId_ = categoryList.key(ui->cboCategory->currentText());
+    const auto urlid = xxxModel_->index(currentRow_, 0).data().toUInt();
+    auto data_ = categoryList;
+    data_.remove(currentCategoryId_);
 
-      CategoryDialog cDialog(data_, this);
-      cDialog.setWindowTitle(QStringLiteral("Mover url a otra categoría"));
+    CategoryDialog cDialog(data_, this);
+    cDialog.setWindowTitle(QStringLiteral("Mover url a otra categoría"));
 
-      if(cDialog.exec() == QDialog::Accepted){
+    if(cDialog.exec() == QDialog::Accepted){
 
-          auto categoryid = cDialog.getCategoryId();
-          if(helperdb_.urlExists(url_, categoryid)){
+      auto categoryid = cDialog.getCategoryId();
+      if(helperdb_.urlExists(url_, categoryid)){
 
-              QMessageBox::warning(this, SW::Helper_t::appName(),
-                                   QStringLiteral("<p>"
-                                                  "La url: <cite>"
-                                                  "<strong>%1</strong>"
-                                                  "</cite>"
-                                                  "</p> ya esta registrada, en la categoría a la que desea mover!!").arg(url_));
-              return;
+        QMessageBox::warning(this, SW::Helper_t::appName(),
+                             QStringLiteral("<p>"
+                                            "La url: <cite>"
+                                            "<strong>%1</strong>"
+                                            "</cite>"
+                                            "</p> ya esta registrada, en la categoría a la que desea mover!!").arg(url_));
+        return;
 
-            }
-          // qInfo() <<categoryid;
+      }
+      // qInfo() <<categoryid;
 
-          if(!helperdb_.moveUrlToOtherCategory(categoryid, urlid)){
-              QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error al intentar actualizar.\n"));
-              return;
-            }
-          setUpTable(categoryList.key(ui->cboCategory->currentText()));
-          verifyContextMenu();
-          hastvUrlData();
-        }
+      if(!helperdb_.moveUrlToOtherCategory(categoryid, urlid)){
+        QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error al intentar actualizar.\n"));
+        return;
+      }
+      setUpTable(categoryList.key(ui->cboCategory->currentText()));
+      verifyContextMenu();
+      hastvUrlData();
+    }
 
-    });
+  });
 
   // qInfo() << helperdb_.isDataBase_empty();
 
@@ -596,9 +618,9 @@ void Widget::editAction(bool op) noexcept{
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool Widget::validateSelectedRow() noexcept{
   if(!ui->tvUrl->selectionModel()->hasSelection()){
-      QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("Seleccione una fila!\n"));
-      return false;
-    }
+    QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("Seleccione una fila!\n"));
+    return false;
+  }
   return true;
 
 }
@@ -628,10 +650,10 @@ void Widget::setUpTable(uint32_t categoryId) noexcept{
   QSqlQuery reuseQry = xxxModel_->query();
 
   if(reuseQry.exec()){
-      while(reuseQry.next()){
-          urlList.insert(reuseQry.value(0).toUInt(),reuseQry.value(1).toString());
-        }
+    while(reuseQry.next()){
+      urlList.insert(reuseQry.value(0).toUInt(),reuseQry.value(1).toString());
     }
+  }
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -663,17 +685,17 @@ void Widget::btnEdit() noexcept{
 
 void  Widget::has_data() noexcept{
   if(categoryList.isEmpty()){
-      ui->btnEditCategory->setDisabled(true);
-      ui->btnDeleteCategory->setDisabled(true);
-      ui->txtUrl->setDisabled(true);
-      ui->pteDesc->setDisabled(true);
+    ui->btnEditCategory->setDisabled(true);
+    ui->btnDeleteCategory->setDisabled(true);
+    ui->txtUrl->setDisabled(true);
+    ui->pteDesc->setDisabled(true);
 
-    }else{
-      ui->btnEditCategory->setEnabled(true);
-      ui->btnDeleteCategory->setEnabled(true);
-      ui->txtUrl->setEnabled(true);
-      ui->pteDesc->setEnabled(true);
-    }
+  }else{
+    ui->btnEditCategory->setEnabled(true);
+    ui->btnDeleteCategory->setEnabled(true);
+    ui->txtUrl->setEnabled(true);
+    ui->pteDesc->setEnabled(true);
+  }
 
 }
 
@@ -697,13 +719,13 @@ void Widget::writeSettings() const noexcept{
   QString color;
 
   if(ui->cboTheme->currentText() == themeType.value(SW::Theme::Light_Mode)){
-      theme=SW::Theme::Light_Mode;
-      color=SW::Helper_t::lblColorMode.value(theme);
-    }else{
-      theme=SW::Theme::Dark_Mode;
-      color=SW::Helper_t::lblColorMode.value(theme);
+    theme=SW::Theme::Light_Mode;
+    color=SW::Helper_t::lblColorMode.value(theme);
+  }else{
+    theme=SW::Theme::Dark_Mode;
+    color=SW::Helper_t::lblColorMode.value(theme);
 
-    }
+  }
 
 
   settings.setValue(QStringLiteral("theme Value"), static_cast<uint32_t>(theme));
@@ -755,7 +777,7 @@ void Widget::checkStatusContextMenu(){
   (static_cast<bool>(SW::Helper_t::sessionStatus_)) ? showPublicUrl_->setVisible(false) : showPublicUrl_->setVisible(true);
 
   (ui->cboCategory->model()->rowCount() > 1 && ui->tvUrl->model()->rowCount() > 0)
-      ? moveUrl_->setVisible(true) : moveUrl_->setVisible(false);
+    ? moveUrl_->setVisible(true) : moveUrl_->setVisible(false);
 
 }
 
@@ -763,15 +785,15 @@ void Widget::checkStatusSessionColor(const QString& text){
 
   if(!static_cast<bool>(SW::Helper_t::sessionStatus_)){
 
-      ( text == themeType.value(SW::Theme::Dark_Mode) )
-          ? setLabelInfo(SW::Theme::Dark_Mode, SW::Helper_t::current_user_)
-          : setLabelInfo(SW::Theme::Light_Mode, SW::Helper_t::current_user_);
-    }else{
-      ( text == themeType.value(SW::Theme::Light_Mode) )
-          ? setLabelInfo(SW::Theme::Light_Mode, SW::Helper_t::current_user_)
-          : setLabelInfo(SW::Theme::Dark_Mode, SW::Helper_t::current_user_);
+    ( text == themeType.value(SW::Theme::Dark_Mode) )
+    ? setLabelInfo(SW::Theme::Dark_Mode, SW::Helper_t::current_user_)
+    : setLabelInfo(SW::Theme::Light_Mode, SW::Helper_t::current_user_);
+  }else{
+    ( text == themeType.value(SW::Theme::Light_Mode) )
+    ? setLabelInfo(SW::Theme::Light_Mode, SW::Helper_t::current_user_)
+    : setLabelInfo(SW::Theme::Dark_Mode, SW::Helper_t::current_user_);
 
-    }
+  }
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -852,12 +874,12 @@ void Widget::setUptvUrlContextMenu() noexcept{
 
 bool Widget::eventFilter(QObject* watched, QEvent* event){
   if(watched == ui->tvUrl && event->type() == QEvent::ContextMenu){
-      QContextMenuEvent* contextMenuEvent = dynamic_cast<QContextMenuEvent*>(event);
-      if(contextMenuEvent){
-          contextMenu->exec(contextMenuEvent->globalPos());
-          return true;
-        }
+    QContextMenuEvent* contextMenuEvent = dynamic_cast<QContextMenuEvent*>(event);
+    if(contextMenuEvent){
+      contextMenu->exec(contextMenuEvent->globalPos());
+      return true;
     }
+  }
   return QWidget::eventFilter(watched, event);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -870,9 +892,9 @@ bool Widget::eventFilter(QObject* watched, QEvent* event){
 bool Widget::deleteAll() noexcept{
   auto categoryId=categoryList.key(ui->cboCategory->currentText());
   if(helperdb_.deleteUrls(1, categoryId)){
-      if(helperdb_.deleteCategory(categoryId))
-        return true;
-    }
+    if(helperdb_.deleteCategory(categoryId))
+      return true;
+  }
   return false;
 }
 
@@ -889,10 +911,10 @@ void Widget::setCboCategoryToolTip() noexcept{
   const auto desc=categoryData.value(1);
   //  QString desc{};
   if(desc.isEmpty()){
-      ui->cboCategory->setToolTip(QStringLiteral("<p><cite><strong>Descripción de la categoría:</strong><br><br>"
-                                                 "Esta categoría no cuenta con una descripción!</cite></p>"));
-      return;
-    }
+    ui->cboCategory->setToolTip(QStringLiteral("<p><cite><strong>Descripción de la categoría:</strong><br><br>"
+                                               "Esta categoría no cuenta con una descripción!</cite></p>"));
+    return;
+  }
 
   ui->cboCategory->setToolTip(QString("<p>"
                                       "<cite><strong>Descripción de la categoría:</strong>"
@@ -904,68 +926,71 @@ void Widget::openUrl() noexcept{
   auto currentRow = ui->tvUrl->currentIndex().row();
   const auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
   if(!SW::Helper_t::open_Url(QUrl(url))){
-      QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Fallo al intentar abrir dirección url!\n"));
-      return;
-    }
+    QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Fallo al intentar abrir dirección url!\n"));
+    return;
+  }
 }
 
 void Widget::quitUrl() noexcept{
   auto currentRow = ui->tvUrl->currentIndex().row();
+
   const auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
 
   QMessageBox msgBox;
   msgBox.setText(QString("<span>Confirma que desea eliminar esta dirección:<br>"
                          " <cite style='color:#ff0800;'><strong>%1</strong></cite></span>").arg(url));
   msgBox.setIcon(QMessageBox::Question);
-  msgBox.addButton(QStringLiteral("Eliminar"),QMessageBox::AcceptRole);
-  msgBox.addButton(QStringLiteral("Cancelar"),QMessageBox::RejectRole);
-  if(msgBox.exec() == QMessageBox::AcceptRole){
-      //      auto currentRow = ui->tvUrl->currentIndex().row();
-      //      auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
-      auto urlId=urlList.key(url);
-      if(helperdb_.deleteUrls(2, 0, urlId)){
-          ui->tvUrl->model()->removeRow(ui->tvUrl->currentIndex().row());
-          setUpTable(categoryList.key(ui->cboCategory->currentText()));
-        }
+  msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+  msgBox.button(QMessageBox::Yes)->setText("Eliminar");
+  msgBox.button(QMessageBox::No)->setText("Cancelar");
 
+  if(msgBox.exec() == QMessageBox::Yes){
+    //      auto currentRow = ui->tvUrl->currentIndex().row();
+    //      auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
+    auto urlId=urlList.key(url);
+    if(helperdb_.deleteUrls(2, 0, urlId)){
+      ui->tvUrl->model()->removeRow(ui->tvUrl->currentIndex().row());
+      setUpTable(categoryList.key(ui->cboCategory->currentText()));
     }
+
+  }
 }
 
 void Widget::hastvUrlData() noexcept{
   if(ui->tvUrl->model()->rowCount() == 0){
-      openUrl_->setDisabled(true);
-      ui->btnopen->setDisabled(true);
-      ui->btnEdit->setDisabled(true);
-      ui->btnQuit->setDisabled(true);
-      editUrl_->setDisabled(true);
-      quittUrl_->setDisabled(true);
-      moveUrl_->setVisible(false);
-      showDescDetail_->setVisible(false);
-    }else{
-      openUrl_->setEnabled(true);
-      ui->btnopen->setEnabled(true);
-      ui->btnEdit->setEnabled(true);
-      ui->btnQuit->setEnabled(true);
-      editUrl_->setEnabled(true);
-      quittUrl_->setEnabled(true);
-      moveUrl_->setVisible(true);
-      showDescDetail_->setVisible(true);
-    }
+    openUrl_->setDisabled(true);
+    ui->btnopen->setDisabled(true);
+    ui->btnEdit->setDisabled(true);
+    ui->btnQuit->setDisabled(true);
+    editUrl_->setDisabled(true);
+    quittUrl_->setDisabled(true);
+    moveUrl_->setVisible(false);
+    showDescDetail_->setVisible(false);
+  }else{
+    openUrl_->setEnabled(true);
+    ui->btnopen->setEnabled(true);
+    ui->btnEdit->setEnabled(true);
+    ui->btnQuit->setEnabled(true);
+    editUrl_->setEnabled(true);
+    quittUrl_->setEnabled(true);
+    moveUrl_->setVisible(true);
+    showDescDetail_->setVisible(true);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Widget::closeEvent(QCloseEvent *event){
   if(!static_cast<bool>(SW::Helper_t::sessionStatus_)){
-      QMessageBox::warning(this, SW::Helper_t::appName(),
-                           QStringLiteral("<cite>Hay una sesión activa en este momento.<br>"
-                                          "Necesita cerrar sesión primero antes de salir, "
-                                          "haciendo click en el boton:<br>"
-                                          "<cite><strong style='background:#FFFF00;color:#FF5500;'>Cerrar sesión</strong></cite><br>"
-                                          "O presionando la combinación de teclas Ctrl+Q.</cite>"));
-      event->ignore();
-      return;
-    }
+    QMessageBox::warning(this, SW::Helper_t::appName(),
+                         QStringLiteral("<cite>Hay una sesión activa en este momento.<br>"
+                                        "Necesita cerrar sesión primero antes de salir, "
+                                        "haciendo click en el boton:<br>"
+                                        "<cite><strong style='background:#FFFF00;color:#FF5500;'>Cerrar sesión</strong></cite><br>"
+                                        "O presionando la combinación de teclas Ctrl+Q.</cite>"));
+    event->ignore();
+    return;
+  }
   writeSettings();
   event->accept();
 }
