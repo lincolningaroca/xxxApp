@@ -19,41 +19,49 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Sql Network)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Sql Network)
 
 set(PROJECT_SOURCES
-        main.cpp
-        widget.cpp
-        widget.hpp
-        widget.ui
-        dlgnewcategory.cpp
-        dlgnewcategory.hpp
-        dlgnewcategory.ui
-        logindialog.hpp
-        logindialog.cpp
-        logindialog.ui
-         util/helper.cpp
-         util/helper.hpp
-         helperdatabase/helperdb.cpp
-         helperdatabase/helperdb.hpp
-        ${APP_ICON}
+    main.cpp
+    widget.cpp
+    widget.hpp
+    widget.ui
+    dlgnewcategory.cpp
+    dlgnewcategory.hpp
+    dlgnewcategory.ui
+    logindialog.hpp
+    logindialog.cpp
+    logindialog.ui
+    util/helper.cpp
+    util/helper.hpp
+    helperdatabase/helperdb.cpp
+    helperdatabase/helperdb.hpp
+    ${APP_ICON}
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(xxxapp
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-         rsc.qrc
-         resetpassworddialog.hpp
-         resetpassworddialog.cpp
-         resetpassworddialog.ui
-         publicurldialog.hpp
-         publicurldialog.cpp
-         publicurldialog.ui
-         categorydialog.hpp categorydialog.cpp categorydialog.ui
-         swtablemodel.hpp swtablemodel.cpp
-         swlabel.hpp swlabel.cpp
-         acercadedialog.hpp acercadedialog.cpp acercadedialog.ui
-         #qaesencryption.cpp
-         #qaesencryption.h
-      )
+        rsc.qrc
+        resetpassworddialog.hpp
+        resetpassworddialog.cpp
+        resetpassworddialog.ui
+        publicurldialog.hpp
+        publicurldialog.cpp
+        publicurldialog.ui
+        categorydialog.hpp categorydialog.cpp categorydialog.ui
+        swtablemodel.hpp swtablemodel.cpp
+        swlabel.hpp swlabel.cpp
+        acercadedialog.hpp acercadedialog.cpp acercadedialog.ui
+        #qaesencryption.cpp
+        #qaesencryption.h
+    )
+add_custom_command(TARGET xxxapp POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+    "$<TARGET_FILE_DIR:xxxapp>/tools/sqlite-tools-win-x64-3450100"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_CURRENT_SOURCE_DIR}/tools/sqlite-tools-win-x64-3450100"
+    "$<TARGET_FILE_DIR:xxxapp>/tools/sqlite-tools-win-x64-3450100"
+    COMMENT "Copiando herramientas SQLite al directorio de salida"
+)
 
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET xxxapp APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -64,14 +72,14 @@ else()
         add_library(xxxapp SHARED
             ${PROJECT_SOURCES}
         )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
-        add_executable(xxxapp
-            ${PROJECT_SOURCES}
+    # Define properties for Android with Qt 5 after find_package() calls as:
+    #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+else()
+    add_executable(xxxapp
+        ${PROJECT_SOURCES}
 
-        )
-    endif()
+    )
+endif()
 endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
