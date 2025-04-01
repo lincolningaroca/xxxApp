@@ -11,7 +11,6 @@ db/diagrama.mwb
 db/publicuser.txt
 db/xxxdb.db
 db/xdatabase.db
-img/*
 *.autosave
 .gitignore.swp
 tools/*
