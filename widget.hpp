@@ -39,9 +39,10 @@ private:
 
   QMenu* contextMenu{nullptr};
 
-  const QHash<SW::Theme, QString> themeType{
-    {SW::Theme::Light_Mode, "Modo Claro"},
-    {SW::Theme::Dark_Mode, "Modo Oscuro"}
+  const QHash<Qt::ColorScheme, QString> themeType{
+    {Qt::ColorScheme::Unknown, "Prederterminado del sistema"},
+    {Qt::ColorScheme::Light, "Modo Claro"},
+    {Qt::ColorScheme::Dark, "Modo Oscuro"}
   };
 
 
@@ -58,7 +59,7 @@ private:
 
   void setUpTable(uint32_t categoryId = 1) noexcept;
   void setUpTableHeaders() const noexcept;
-  void setTheme(SW::Theme theme) const noexcept;
+  void setTheme(Qt::ColorScheme theme) const noexcept;
   void writeSettings() const noexcept;
   void readSettings() noexcept;
 
@@ -67,7 +68,7 @@ private:
   void checkStatusContextMenu();
   void checkStatusSessionColor(const QString& text);
 
-  void setLabelInfo(SW::Theme color, const QString& userName=SW::Helper_t::currentUser_.value(SW::User::U_public)) noexcept;
+  void setLabelInfo(Qt::ColorScheme color, const QString& userName=SW::Helper_t::currentUser_.value(SW::User::U_public)) noexcept;
   void loadListCategory(uint32_t user_id) noexcept;
   void loadThemeComboBox() noexcept;
 

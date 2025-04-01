@@ -101,11 +101,11 @@ bool Helper_t::isPasswordSecure(const QString &password) noexcept{
 
 }
 
-QPalette  Helper_t::set_Theme(SW::Theme theme) noexcept
+QPalette  Helper_t::set_Theme(Qt::ColorScheme theme) noexcept
 {
   QPalette mPalette{};
 
-  if(theme == Theme::Light_Mode){
+  if(theme == Qt::ColorScheme::Light){
     qApp->setStyle("Windowsvista");
     mPalette = standardPalette_;
   }
@@ -139,24 +139,6 @@ QPalette  Helper_t::set_Theme(SW::Theme theme) noexcept
 
 }
 
-// QString Helper_t::encrypt(const QString& text, const QString& key)  {
-//   QByteArray encryptedData;
-//   QByteArray textData = text.toUtf8();
-//   QByteArray keyData = key.toUtf8();
-
-//   QCryptographicHash hash(QCryptographicHash::Sha512);
-//   hash.addData(keyData);
-//   QByteArray hashedKey = hash.result();
-
-//   // Encriptar el texto utilizando AES
-//   for (int i = 0; i < textData.size(); ++i) {
-//       char encryptedChar = textData.at(i) ^ hashedKey.at(i % hashedKey.size());
-//       encryptedData.append(encryptedChar);
-//     }
-
-//   return QString::fromUtf8(encryptedData.toBase64());
-
-// }
 QString Helper_t::encrypt(const QString& plainText, const QByteArray& key, const QByteArray& iv){
 
   QByteArray plainData = plainText.toUtf8();
@@ -176,24 +158,7 @@ QString Helper_t::encrypt(const QString& plainText, const QByteArray& key, const
   return QString::fromUtf8(encryptedData.left(encryptedLen).toBase64());
 }
 
-// QString Helper_t::decrypt(const QString& encryptedText, const QString& key)  {
-//   QByteArray decryptedData;
-//   QByteArray encryptedData = QByteArray::fromBase64(encryptedText.toUtf8());
-//   QByteArray keyData = key.toUtf8();
 
-//   QCryptographicHash hash(QCryptographicHash::Sha512);
-//   hash.addData(keyData);
-//   QByteArray hashedKey = hash.result();
-
-//   // Desencriptar el texto utilizando AES
-//   for (int i = 0; i < encryptedData.size(); ++i) {
-//       char decryptedChar = encryptedData.at(i) ^ hashedKey.at(i % hashedKey.size());
-//       decryptedData.append(decryptedChar);
-//     }
-
-//   return QString::fromUtf8(decryptedData);
-
-// }
 QString Helper_t::decrypt(const QString& encryptedText, const QByteArray& key, const QByteArray& iv){
 
   QByteArray encryptedData = QByteArray::fromBase64(encryptedText.toUtf8());

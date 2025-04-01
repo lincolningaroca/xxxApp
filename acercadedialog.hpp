@@ -13,7 +13,7 @@ class AcercaDeDialog : public QDialog
 
 public:
   // explicit AcercaDeDialog(const QString& colorMode, QWidget *parent = nullptr);
-  explicit AcercaDeDialog(SW::Theme colorMode, QWidget *parent = nullptr);
+  explicit AcercaDeDialog(Qt::ColorScheme colorMode, QWidget *parent = nullptr);
   ~AcercaDeDialog();
 
 private:

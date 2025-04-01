@@ -3,7 +3,7 @@
 #include <QMessageBox>
 
 
-AcercaDeDialog::AcercaDeDialog(SW::Theme colorMode, QWidget *parent) :
+AcercaDeDialog::AcercaDeDialog(Qt::ColorScheme colorMode, QWidget *parent) :
   QDialog(parent), ui(new Ui::AcercaDeDialog){
   ui->setupUi(this);
 

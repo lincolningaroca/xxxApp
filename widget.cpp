@@ -299,7 +299,7 @@ Widget::Widget(QWidget *parent)
   //cboTheme
   QObject::connect(ui->cboTheme, &QComboBox::currentTextChanged, this, [&](const QString& text){
 
-    ( text == themeType.value(SW::Theme::Dark_Mode) ) ? setTheme(SW::Theme::Dark_Mode) : setTheme(SW::Theme::Light_Mode);
+    ( text == themeType.value(Qt::ColorScheme::Dark) ) ? setTheme(Qt::ColorScheme::Dark) : setTheme(Qt::ColorScheme::Light);
     checkStatusSessionColor(text);
 
 
@@ -333,9 +333,9 @@ Widget::Widget(QWidget *parent)
 
       // (ui->cboTheme->currentText() == QStringLiteral("Modo Oscuro") ) ? setLabelInfo(SW::Helper_t::darkModeColor.data(), logDialog.userName()) : setLabelInfo(SW::Helper_t::lightModeColor.data(), logDialog.userName());
 
-      (ui->cboTheme->currentText() == themeType.value(SW::Theme::Dark_Mode) )
-        ? setLabelInfo(SW::Theme::Dark_Mode, SW::Helper_t::current_user_)
-        : setLabelInfo(SW::Theme::Light_Mode, SW::Helper_t::current_user_);
+      (ui->cboTheme->currentText() == themeType.value(Qt::ColorScheme::Dark) )
+        ? setLabelInfo(Qt::ColorScheme::Dark, SW::Helper_t::current_user_)
+        : setLabelInfo(Qt::ColorScheme::Light, SW::Helper_t::current_user_);
 
       ui->btnLogOut->setEnabled(true);
       ui->btnLogIn->setDisabled(true);
@@ -354,9 +354,9 @@ Widget::Widget(QWidget *parent)
   QObject::connect(ui->btnLogOut, &QToolButton::clicked, this, [&](){
     userId_ = helperdb_.getUser_id(SW::Helper_t::defaultUser, SW::User::U_public);
 
-    (ui->cboTheme->currentText() == themeType.value(SW::Theme::Dark_Mode ))
-      ? setLabelInfo(SW::Theme::Dark_Mode)
-      : setLabelInfo(SW::Theme::Light_Mode);
+    (ui->cboTheme->currentText() == themeType.value(Qt::ColorScheme::Dark ))
+      ? setLabelInfo(Qt::ColorScheme::Dark)
+      : setLabelInfo(Qt::ColorScheme::Light);
 
     ui->btnLogOut->setDisabled(true);
     ui->btnLogIn->setEnabled(true);
@@ -699,7 +699,7 @@ void Widget::canRestoreDataBase() const noexcept{
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Widget::setTheme(SW::Theme theme) const noexcept{
+void Widget::setTheme(Qt::ColorScheme theme) const noexcept{
 
   qApp->setPalette(SW::Helper_t::set_Theme(theme));
 
@@ -709,14 +709,14 @@ void Widget::setTheme(SW::Theme theme) const noexcept{
 void Widget::writeSettings() const noexcept{
   QSettings settings(qApp->organizationName(), SW::Helper_t::appName());
   settings.beginGroup(QStringLiteral("Theme"));
-  SW::Theme theme;
+  Qt::ColorScheme theme;
   QString color;
 
-  if(ui->cboTheme->currentText() == themeType.value(SW::Theme::Light_Mode)){
-    theme=SW::Theme::Light_Mode;
+  if(ui->cboTheme->currentText() == themeType.value(Qt::ColorScheme::Light)){
+    theme=Qt::ColorScheme::Light;
     color=SW::Helper_t::lblColorMode.value(theme);
   }else{
-    theme=SW::Theme::Dark_Mode;
+    theme=Qt::ColorScheme::Dark;
     color=SW::Helper_t::lblColorMode.value(theme);
 
   }
@@ -736,7 +736,7 @@ void Widget::readSettings() noexcept{
   const auto lblColor = SW::Helper_t::getColorReg(settings.value(QStringLiteral("lblColor")).toByteArray());
   setLabelInfo(SW::Helper_t::lblColorMode.key(lblColor));
 
-  setTheme(static_cast<SW::Theme>(theme));
+  setTheme(static_cast<Qt::ColorScheme>(theme));
   settings.endGroup();
 
   ui->cboTheme->setCurrentIndex(static_cast<int>(theme));
@@ -779,13 +779,13 @@ void Widget::checkStatusSessionColor(const QString& text){
 
   if(!static_cast<bool>(SW::Helper_t::sessionStatus_)){
 
-    ( text == themeType.value(SW::Theme::Dark_Mode) )
-    ? setLabelInfo(SW::Theme::Dark_Mode, SW::Helper_t::current_user_)
-    : setLabelInfo(SW::Theme::Light_Mode, SW::Helper_t::current_user_);
+    ( text == themeType.value(Qt::ColorScheme::Dark) )
+    ? setLabelInfo(Qt::ColorScheme::Dark, SW::Helper_t::current_user_)
+    : setLabelInfo(Qt::ColorScheme::Light, SW::Helper_t::current_user_);
   }else{
-    ( text == themeType.value(SW::Theme::Light_Mode) )
-    ? setLabelInfo(SW::Theme::Light_Mode, SW::Helper_t::current_user_)
-    : setLabelInfo(SW::Theme::Dark_Mode, SW::Helper_t::current_user_);
+    ( text == themeType.value(Qt::ColorScheme::Light) )
+    ? setLabelInfo(Qt::ColorScheme::Light, SW::Helper_t::current_user_)
+    : setLabelInfo(Qt::ColorScheme::Dark, SW::Helper_t::current_user_);
 
   }
 
@@ -793,7 +793,7 @@ void Widget::checkStatusSessionColor(const QString& text){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void Widget::setLabelInfo(SW::Theme color, const QString& userName) noexcept{
+void Widget::setLabelInfo(Qt::ColorScheme color, const QString& userName) noexcept{
 
   // auto userName_ = SW::Helper_t::currentUser_.value(userName);
 
@@ -819,9 +819,11 @@ void Widget::loadListCategory(uint32_t user_id) noexcept{
 
 void Widget::loadThemeComboBox() noexcept{
 
-  ui->cboTheme->addItem(QIcon{":/img/whitetheme.png"}, themeType.value(SW::Theme::Light_Mode));
-  ui->cboTheme->addItem(QIcon{":/img/darktheme.png"}, themeType.value(SW::Theme::Dark_Mode));
+  ui->cboTheme->addItem(QIcon{":/img/flat_seo-47-64.png"}, themeType.value(Qt::ColorScheme::Unknown));
+  ui->cboTheme->addItem(QIcon{":/img/whitetheme.png"}, themeType.value(Qt::ColorScheme::Light));
+  ui->cboTheme->addItem(QIcon{":/img/darktheme.png"}, themeType.value(Qt::ColorScheme::Dark));
 
+  ui->cboTheme->setItemData(0, false, Qt::UserRole-1);
 }
 
 
