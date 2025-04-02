@@ -3,6 +3,7 @@
 #include <QStringView>
 #include <QSqlError>
 #include <QtDebug>
+#include <QFile>
 
 
 namespace SW {

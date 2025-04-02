@@ -1,6 +1,8 @@
 #include "acercadedialog.hpp"
 #include "ui_acercadedialog.h"
 #include <QMessageBox>
+#include <QFile>
+
 
 
 AcercaDeDialog::AcercaDeDialog(Qt::ColorScheme colorMode, QWidget *parent) :
@@ -11,9 +13,16 @@ AcercaDeDialog::AcercaDeDialog(Qt::ColorScheme colorMode, QWidget *parent) :
   setTextToAbout();
   ui->tabWidget->setCurrentIndex(0);
 
-  (static_cast<bool>(colorMode)) ? ui->lblLogo->setPixmap(QPixmap(":/img/logoEmpresa_1.png").scaled(490, 338))
-                                 : ui->lblLogo->setPixmap(QPixmap(":/img/logoEmpresa.png").scaled(490, 338));
+  if(colorMode == Qt::ColorScheme::Unknown){
 
+    auto retSyscolorScheme = SW::Helper_t::checkSystemColorScheme();
+
+    setImage(retSyscolorScheme);
+
+  }else{
+
+    setImage(colorMode);
+  }
 
   loadInfo_app();
   ui->lblLicencia->setText(QStringLiteral("<a href='message'>Ver licencia.</a>"));
@@ -34,7 +43,7 @@ AcercaDeDialog::AcercaDeDialog(Qt::ColorScheme colorMode, QWidget *parent) :
         }
 
 
-      teLicencia->setFont(font_);
+      teLicencia->setFont(customFont);
       teLicencia->setAcceptRichText(true);
       teLicencia->setOpenExternalLinks(true);
       teLicencia->setHtml(fileName.readAll());
@@ -51,7 +60,7 @@ AcercaDeDialog::AcercaDeDialog(Qt::ColorScheme colorMode, QWidget *parent) :
       QMessageBox::aboutQt(this);
     });
 
-  ui->tbLicencia->setFont(font_);
+  ui->tbLicencia->setFont(customFont);
 }
 
 AcercaDeDialog::~AcercaDeDialog()
@@ -60,6 +69,7 @@ AcercaDeDialog::~AcercaDeDialog()
 }
 
 void AcercaDeDialog::loadInfo_app() const noexcept{
+  ui->tbLicencia->setFont(customFont);
   ui->tbLicencia->setAcceptRichText(true);
   ui->tbLicencia->setOpenExternalLinks(true);
   ui->tbLicencia->setHtml(
@@ -79,7 +89,7 @@ void AcercaDeDialog::loadInfo_app() const noexcept{
 }
 
 void AcercaDeDialog::setTextToAbout() const{
-  ui->tbAcercaDe->setFont(font_);
+  ui->tbAcercaDe->setFont(customFont);
   ui->tbAcercaDe->setOpenExternalLinks(true);
   ui->tbAcercaDe->setHtml("<p>Powered by:"
                           "<ul>"
@@ -106,5 +116,12 @@ void AcercaDeDialog::setTextToAbout() const{
                           "<p>Repositorio del programa:"
                           "<ul><li><a href=\"https://github.com/lincolningaroca/xxxApp\">xxxApp</a></li></ul>"
                           "</p>");
+
+}
+
+void AcercaDeDialog::setImage(Qt::ColorScheme colorMode){
+
+  (colorMode == Qt::ColorScheme::Dark) ? ui->lblLogo->setPixmap(QPixmap(":/img/logoEmpresa_1.png").scaled(490, 338))
+                                 : ui->lblLogo->setPixmap(QPixmap(":/img/logoEmpresa.png").scaled(490, 338));
 
 }

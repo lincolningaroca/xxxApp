@@ -1,5 +1,6 @@
 #pragma once
-#include <QtCore>
+#include <QStandardPaths>
+#include <QCryptographicHash>
 #include <QStringView>
 #include <QDesktopServices>
 #include <QApplication>
@@ -46,6 +47,9 @@ struct Helper_t{
 
   static QPalette set_Theme(Qt::ColorScheme theme) noexcept;
 
+  [[nodiscard]]static Qt::ColorScheme checkSystemColorScheme() noexcept;
+
+
 
   //var member
 
@@ -89,6 +93,7 @@ private:
   // inline static const QByteArray key_{"AbCdEfGhIjKlMnOpQrStUvWxYz@!#$%&/()=?¡1234567890"};
   // inline static const QByteArray iv_{"AbCdEfGhIjKlMnOpQrStUvWxYz@!#$%&/()=?¡1234567890"};
 
+  static Qt::ColorScheme detectSystemColorScheme();
 
   //variables y constantes de encriptacion
   //inline static QAESEncryption encrypt{QAESEncryption::AES_256, QAESEncryption::CBC};

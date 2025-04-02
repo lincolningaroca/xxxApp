@@ -8,6 +8,8 @@
 #include <QAction>
 #include <QFileDialog>
 #include <QSqlTableModel>
+#include <QFile>
+#include <QProcess>
 
 //#include <QProcess>
 #include "dlgnewcategory.hpp"
@@ -299,11 +301,18 @@ Widget::Widget(QWidget *parent)
   //cboTheme
   QObject::connect(ui->cboTheme, &QComboBox::currentTextChanged, this, [&](const QString& text){
 
-    ( text == themeType.value(Qt::ColorScheme::Dark) ) ? setTheme(Qt::ColorScheme::Dark) : setTheme(Qt::ColorScheme::Light);
-    checkStatusSessionColor(text);
+    if(text == themeType.value(Qt::ColorScheme::Unknown)){
+      auto retSysTheme = SW::Helper_t::checkSystemColorScheme();
+      setTheme(retSysTheme);
+      checkStatusSessionColor(themeType.value(retSysTheme));
+    }else{
+      ( text == themeType.value(Qt::ColorScheme::Dark) ) ? setTheme(Qt::ColorScheme::Dark) : setTheme(Qt::ColorScheme::Light);
 
-
+      checkStatusSessionColor(text);
+    }
   });
+
+
   //cboCategory connection
   QObject::connect(ui->cboCategory, &QComboBox::currentIndexChanged, this, [&](){
     setUpTable(categoryList.key(ui->cboCategory->currentText()));
@@ -333,10 +342,16 @@ Widget::Widget(QWidget *parent)
 
       // (ui->cboTheme->currentText() == QStringLiteral("Modo Oscuro") ) ? setLabelInfo(SW::Helper_t::darkModeColor.data(), logDialog.userName()) : setLabelInfo(SW::Helper_t::lightModeColor.data(), logDialog.userName());
 
-      (ui->cboTheme->currentText() == themeType.value(Qt::ColorScheme::Dark) )
+      if(ui->cboTheme->currentText().contains(themeType.value(Qt::ColorScheme::Unknown))){
+
+        setLabelInfo(SW::Helper_t::checkSystemColorScheme(), SW::Helper_t::current_user_);
+
+      }else{
+
+        (ui->cboTheme->currentText() == themeType.value(Qt::ColorScheme::Dark) )
         ? setLabelInfo(Qt::ColorScheme::Dark, SW::Helper_t::current_user_)
         : setLabelInfo(Qt::ColorScheme::Light, SW::Helper_t::current_user_);
-
+      }
       ui->btnLogOut->setEnabled(true);
       ui->btnLogIn->setDisabled(true);
       // setWindowTitle(QApplication::applicationName().append(QStringLiteral(" - Sesión inicada como: ")+logDialog.userName()));
@@ -354,10 +369,16 @@ Widget::Widget(QWidget *parent)
   QObject::connect(ui->btnLogOut, &QToolButton::clicked, this, [&](){
     userId_ = helperdb_.getUser_id(SW::Helper_t::defaultUser, SW::User::U_public);
 
-    (ui->cboTheme->currentText() == themeType.value(Qt::ColorScheme::Dark ))
+    if(ui->cboTheme->currentText().contains(themeType.value(Qt::ColorScheme::Unknown))){
+
+      setLabelInfo(SW::Helper_t::checkSystemColorScheme(), SW::Helper_t::current_user_);
+
+    }else{
+
+      (ui->cboTheme->currentText() == themeType.value(Qt::ColorScheme::Dark ))
       ? setLabelInfo(Qt::ColorScheme::Dark)
       : setLabelInfo(Qt::ColorScheme::Light);
-
+    }
     ui->btnLogOut->setDisabled(true);
     ui->btnLogIn->setEnabled(true);
     setWindowTitle(QApplication::applicationName());
@@ -709,21 +730,35 @@ void Widget::setTheme(Qt::ColorScheme theme) const noexcept{
 void Widget::writeSettings() const noexcept{
   QSettings settings(qApp->organizationName(), SW::Helper_t::appName());
   settings.beginGroup(QStringLiteral("Theme"));
-  Qt::ColorScheme theme;
-  QString color;
+  Qt::ColorScheme themeValue_{};
+  QString lblColor_{};
+  QString themeName_{};
 
-  if(ui->cboTheme->currentText() == themeType.value(Qt::ColorScheme::Light)){
-    theme=Qt::ColorScheme::Light;
-    color=SW::Helper_t::lblColorMode.value(theme);
+  if(ui->cboTheme->currentText().contains(themeType.value(Qt::ColorScheme::Unknown))){
+    auto retSystemColorScheme = SW::Helper_t::checkSystemColorScheme();
+
+    themeName_ = themeType.value(Qt::ColorScheme::Unknown);
+    lblColor_ = SW::Helper_t::lblColorMode.value(retSystemColorScheme);
+    themeValue_ = retSystemColorScheme;
+
+
+  }else if(ui->cboTheme->currentText().contains(themeType.value(Qt::ColorScheme::Light))){
+
+    themeName_ = themeType.value(Qt::ColorScheme::Light);
+    lblColor_ = SW::Helper_t::lblColorMode.value(Qt::ColorScheme::Light);
+    themeValue_ = Qt::ColorScheme::Light;
+
   }else{
-    theme=Qt::ColorScheme::Dark;
-    color=SW::Helper_t::lblColorMode.value(theme);
 
+    themeName_ = themeType.value(Qt::ColorScheme::Dark);
+    lblColor_ = SW::Helper_t::lblColorMode.value(Qt::ColorScheme::Dark);
+    themeValue_ = Qt::ColorScheme::Dark;
   }
 
 
-  settings.setValue(QStringLiteral("theme Value"), static_cast<uint32_t>(theme));
-  settings.setValue(QStringLiteral("lblColor"), SW::Helper_t::setColorReg(color));
+  settings.setValue(QStringLiteral("theme name"), themeName_);
+  settings.setValue(QStringLiteral("theme Value"), static_cast<uint32_t>(themeValue_));
+  settings.setValue(QStringLiteral("lblColor"), SW::Helper_t::setColorReg(lblColor_));
   settings.endGroup();
   settings.setValue(QStringLiteral("position"), saveGeometry());
 }
@@ -734,12 +769,14 @@ void Widget::readSettings() noexcept{
   settings.beginGroup(QStringLiteral("Theme"));
   const auto theme = settings.value(QStringLiteral("theme Value")).toUInt();
   const auto lblColor = SW::Helper_t::getColorReg(settings.value(QStringLiteral("lblColor")).toByteArray());
+  const auto name = settings.value("theme name").toString();
+
   setLabelInfo(SW::Helper_t::lblColorMode.key(lblColor));
 
   setTheme(static_cast<Qt::ColorScheme>(theme));
   settings.endGroup();
 
-  ui->cboTheme->setCurrentIndex(static_cast<int>(theme));
+  ui->cboTheme->setCurrentIndex(static_cast<int>(themeType.key(name)));
   restoreGeometry(settings.value(QStringLiteral("position")).toByteArray());
 }
 
@@ -823,7 +860,7 @@ void Widget::loadThemeComboBox() noexcept{
   ui->cboTheme->addItem(QIcon{":/img/whitetheme.png"}, themeType.value(Qt::ColorScheme::Light));
   ui->cboTheme->addItem(QIcon{":/img/darktheme.png"}, themeType.value(Qt::ColorScheme::Dark));
 
-  ui->cboTheme->setItemData(0, false, Qt::UserRole-1);
+  // ui->cboTheme->setItemData(0, false, Qt::UserRole-1);
 }
 
 

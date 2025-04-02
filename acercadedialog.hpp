@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QDialog>
+#include <QFontDataBase>
 #include "util/helper.hpp"
 
 namespace Ui {
@@ -18,12 +19,16 @@ public:
 
 private:
   Ui::AcercaDeDialog *ui;
-  const QFont font_{"Fira Code", 11};
-
 
 private:
   void loadInfo_app() const noexcept;
   void setTextToAbout() const;
+
+  void setImage(Qt::ColorScheme colorMode);
+
+  int id = QFontDatabase::addApplicationFont(":/font/FiraCode-Regular.ttf");
+  QString family = QFontDatabase::applicationFontFamilies(id).at(0);
+  const QFont customFont{family, 10};
 
 };
 

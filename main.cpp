@@ -5,8 +5,9 @@
 
 #include <QLocalServer>
 #include <QLocalSocket>
-
+#include <QDir>
 #include <QMessageBox>
+#include <QFontDatabase>
 
 struct SingleIntsanceManager{
 

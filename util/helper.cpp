@@ -2,13 +2,37 @@
 #include <QPalette>
 #include <QApplication>
 #include <QCryptographicHash>
+#include <QIODevice>
 #include <QStyle>
+#include <QRegularExpression>
+#include <QDir>
+#include <QSettings>
+#include <random>
+#include <windows.h>
 
 extern "C"{
 #include "openssl/rand.h"
 }
 
 namespace SW {
+
+Qt::ColorScheme Helper_t::detectSystemColorScheme() {
+  HKEY hKey;
+  DWORD dwType = REG_DWORD;
+  DWORD dwValue = 0;
+  DWORD dwSize = sizeof(dwValue);
+
+  // Ruta del registro de Windows para el tema del sistema
+  const wchar_t* subKey = L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
+
+  if (RegOpenKeyExW(HKEY_CURRENT_USER, subKey, 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
+    RegQueryValueExW(hKey, L"AppsUseLightTheme", nullptr, &dwType, reinterpret_cast<LPBYTE>(&dwValue), &dwSize);
+    RegCloseKey(hKey);
+  }
+
+  // Retorna Qt::ColorScheme::Light para modo claro o Qt::ColorScheme::Dark para modo oscuro
+  return dwValue == 1 ? Qt::ColorScheme::Light : Qt::ColorScheme::Dark;
+}
 
 QString Helper_t::hashGenerator(const QByteArray &data) noexcept{
   QCryptographicHash crypto(QCryptographicHash::Sha3_512);
@@ -136,6 +160,13 @@ QPalette  Helper_t::set_Theme(Qt::ColorScheme theme) noexcept
   }
 
   return mPalette;
+
+}
+
+Qt::ColorScheme Helper_t::checkSystemColorScheme() noexcept{
+
+  return detectSystemColorScheme();
+
 
 }
 
