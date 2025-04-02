@@ -26,5 +26,10 @@
         <file>img/logoEmpresa_1.png</file>
         <file>licencia/licencia.txt</file>
         <file>img/flat_seo-47-64.png</file>
+        <file>font/FiraCode-Bold.ttf</file>
+        <file>font/FiraCode-Light.ttf</file>
+        <file>font/FiraCode-Medium.ttf</file>
+        <file>font/FiraCode-Regular.ttf</file>
+        <file>font/FiraCode-SemiBold.ttf</file>
     </qresource>
 </RCC>
