@@ -27,7 +27,7 @@ private:
   void setImage(Qt::ColorScheme colorMode);
 
   int id = QFontDatabase::addApplicationFont(":/font/FiraCode-Regular.ttf");
-  QString family = QFontDatabase::applicationFontFamilies(id).at(0);
+  const QString family = QFontDatabase::applicationFontFamilies(id).at(0);
   const QFont customFont{family, 10};
 
 };
