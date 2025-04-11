@@ -13,7 +13,7 @@ QT_END_NAMESPACE
 class QAction;
 // class QSqlTableModel;
 class QMenu;
-class SWTableModel;
+struct SWTableModel;
 
 class Widget : public QWidget{
   Q_OBJECT
@@ -40,7 +40,7 @@ private:
   QMenu* contextMenu{nullptr};
 
   const QHash<Qt::ColorScheme, QString> themeType{
-    {Qt::ColorScheme::Unknown, "Prederterminado del sistema"},
+    {Qt::ColorScheme::Unknown, "Predeterminado del sistema"},
     {Qt::ColorScheme::Light, "Modo Claro"},
     {Qt::ColorScheme::Dark, "Modo Oscuro"}
   };

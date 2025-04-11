@@ -22,7 +22,7 @@ QVariant SWTableModel::data(const QModelIndex& index, int role) const{
       // QSqlRecord record = QSqlTableModel::record(index.row());
       // auto encryptedText = record.value(1).toString();
 
-      auto decryptedData = QSqlTableModel::data(index, role);
+      const auto decryptedData = QSqlTableModel::data(index, role);
       return SW::Helper_t::decrypt(decryptedData.toString());
 
     }

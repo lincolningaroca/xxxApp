@@ -2,7 +2,7 @@
 
 #include <QSqlTableModel>
 
-class SWTableModel : public QSqlTableModel{
+struct SWTableModel : public QSqlTableModel{
 
   Q_OBJECT
 public:
