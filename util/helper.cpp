@@ -223,7 +223,7 @@ void Helper_t::setLastOpenedDirectory(const QString &directory){
   settings.setValue("lastOpenedDirectory", writeData(directory));
 }
 
-QByteArray Helper_t::writeData( QVariant data){
+QByteArray Helper_t::writeData(const QVariant &data){
   QByteArray data_{};
   QDataStream out{&data_, QIODevice::WriteOnly};
   out.setVersion(QDataStream::Qt_6_2);
@@ -232,10 +232,10 @@ QByteArray Helper_t::writeData( QVariant data){
 
 }
 
-QVariant Helper_t::readData(QByteArray data){
+QVariant Helper_t::readData(QByteArray &&data){
 
   QVariant data_{};
-  QDataStream in{&data, QIODevice::ReadOnly};
+  QDataStream in(&data, QIODevice::ReadOnly);
   in.setVersion(QDataStream::Qt_6_2);
   in >> data_;
   return data_;

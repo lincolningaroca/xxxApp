@@ -27,25 +27,25 @@ struct Helper_t{
 
 
 
-  static bool verify_Values(const QStringView text1, const QStringView text2) noexcept{return (text1.toString() == text2.toString());}
-  static bool open_Url(const QUrl& url) noexcept{return QDesktopServices::openUrl(url);}
-  static bool urlValidate(QStringView url) noexcept;
+  [[nodiscard]]static bool verify_Values(const QStringView text1, const QStringView text2) noexcept{return (text1.toString() == text2.toString());}
+  [[nodiscard]]static bool open_Url(const QUrl& url) noexcept{return QDesktopServices::openUrl(url);}
+  [[nodiscard]]static bool urlValidate(QStringView url) noexcept;
 
 
-  static bool createDataBase_dir() noexcept;
+  [[nodiscard]]static bool createDataBase_dir() noexcept;
 
-  static QString generateSecurePassword(uint32_t length = 8) noexcept;
-  static bool isPasswordSecure(const QString& password) noexcept;
+  [[nodiscard]]static QString generateSecurePassword(uint32_t length = 8) noexcept;
+  [[nodiscard]]static bool isPasswordSecure(const QString& password) noexcept;
 
 
-  static QByteArray setColorReg(const QString &color) noexcept;
-  static QString getColorReg(QByteArray dataColor) noexcept;
+  [[nodiscard]]static QByteArray setColorReg(const QString &color) noexcept;
+  [[nodiscard]]static QString getColorReg(QByteArray dataColor) noexcept;
 
-  static QString hashGenerator(const QByteArray&) noexcept;
+  [[nodiscard]]static QString hashGenerator(const QByteArray&) noexcept;
   // static QByteArray encrypt_txt(const QString& txt) noexcept;
   // static QString decrypt_txt(const QByteArray &txt) noexcept;
 
-  static QPalette set_Theme(Qt::ColorScheme theme) noexcept;
+  [[nodiscard]]static QPalette set_Theme(Qt::ColorScheme theme) noexcept;
 
   [[nodiscard]]static Qt::ColorScheme checkSystemColorScheme() noexcept;
 
@@ -60,15 +60,15 @@ struct Helper_t{
     {Qt::ColorScheme::Light, "#ff7e00"},
     {Qt::ColorScheme::Dark, "#2e8b57"}
   };
-  static QString AppLocalDataLocation(){return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation).append(dbDir_name);}
-  static QString app_pathLocation(){return QApplication::applicationDirPath();}
-  static QString appName(){return QApplication::applicationName();}
+  [[nodiscard]]static QString AppLocalDataLocation(){return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation).append(dbDir_name);}
+  [[nodiscard]]static QString app_pathLocation(){return QApplication::applicationDirPath();}
+  [[nodiscard]]static QString appName(){return QApplication::applicationName();}
 
   static void setLastOpenedDirectory(const QString &directory);
-  static QString getLastOpenedDirectory();
+  [[nodiscard]]static QString getLastOpenedDirectory();
 
-  static QVariant readData(QByteArray data);
-  static QByteArray writeData(QVariant data);
+  [[nodiscard]] static QVariant readData(QByteArray&& data);
+  [[nodiscard]]static QByteArray writeData(const QVariant& data);
 
   //encryp/decrypt metods
 
