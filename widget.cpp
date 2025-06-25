@@ -335,7 +335,8 @@ Widget::Widget(QWidget *parent)
       SW::Helper_t::current_user_ = logDialog.userName();
 
       // userId_ = helperdb_.getUser_id(logDialog.userName(),QStringLiteral("USER"));
-      userId_ = helperdb_.getUser_id(SW::Helper_t::current_user_, SW::User::U_user);
+      auto user = SW::Helper_t::hashGenerator(logDialog.userName().toLatin1());
+      userId_ = helperdb_.getUser_id(user, SW::User::U_user);
 
       ui->cboCategory->clear();
       loadListCategory(userId_);
