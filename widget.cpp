@@ -631,9 +631,10 @@ void Widget::editAction(bool op) noexcept{
   ui->btnQuit->setDisabled(op);
   ui->btnopen->setDisabled(op);
   ui->tvUrl->setDisabled(op);
+  // ui->tvUrl->setState();
+  contextMenu->setDisabled(op);
 
   ui->btnCancel->setEnabled(op);
-
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -911,7 +912,15 @@ bool Widget::eventFilter(QObject* watched, QEvent* event){
     QContextMenuEvent* contextMenuEvent = dynamic_cast<QContextMenuEvent*>(event);
     if(contextMenuEvent){
       contextMenu->exec(contextMenuEvent->globalPos());
+
+      // auto act_action = contextMenu->activeAction();
+
+      // auto text = act_action->text();
+      // qInfo() << contextMenu->activeAction()->text() << '\n';
+
+
       return true;
+
     }
   }
   return QWidget::eventFilter(watched, event);
