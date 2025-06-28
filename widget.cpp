@@ -22,6 +22,7 @@
 #include <QDebug>
 #include <QMenu>
 #include "swlabel.hpp"
+#include "util/excelerporter.hpp"
 
 Widget::Widget(QWidget *parent)
   : QWidget(parent), ui(new Ui::Widget),
@@ -56,8 +57,28 @@ Widget::Widget(QWidget *parent)
   });
 
 
+  //conect to export to excel file
+  QObject::connect(exportToExcelFile_, &QAction::triggered, this, [&](){
+
+    auto filePath = QFileDialog::getSaveFileName(this, "Guardar archivo excel", SW::Helper_t::getLastOpenedDirectory(), "Hojas de calculo (*.xlsx)" );
+    if(filePath.isEmpty())
+      return;
+
+    if(!SW::ExcelErporter::exportTableView(ui->tvUrl, filePath)){
+
+      QMessageBox::warning(this, SW::Helper_t::appName(), tr("Error al exportar el archivo.\n").arg(SW::ExcelErporter::lastError()));
+      return;
+    }
+
+    QFileInfo fileInfo(filePath);
+
+    SW::Helper_t::setLastOpenedDirectory(fileInfo.absolutePath());
+    QMessageBox::information(this, SW::Helper_t::appName(), tr("El archivo fue guardado en:\n%1").arg(filePath));
+
+  });
+
   //action delete category
-  QObject::connect(delCategory, &QAction::triggered, this, [&](){
+  QObject::connect(delCategory_, &QAction::triggered, this, [&](){
     QMessageBox msgBox;
     msgBox.setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - Advertencia")));
     msgBox.setText(QStringLiteral("<p style='color:#FB4934;'>"
@@ -872,8 +893,8 @@ void Widget::setUpCboCategoryContextMenu() noexcept{
 
   const QIcon icon(QStringLiteral(":/img/118277.png"));
   ui->cboCategory->setContextMenuPolicy(Qt::ActionsContextMenu);
-  delCategory = new QAction(icon, QStringLiteral("Forzar eliminación de categoría"),this);
-  ui->cboCategory->addAction(delCategory);
+  delCategory_ = new QAction(icon, QStringLiteral("Forzar eliminación de categoría"),this);
+  ui->cboCategory->addAction(delCategory_);
 
 
 
@@ -895,6 +916,11 @@ void Widget::setUptvUrlContextMenu() noexcept{
 
   contextMenu->addSeparator();
   moveUrl_ = contextMenu->addAction(QStringLiteral("Mover url, a otra categoría"));
+
+  //add a export to excel context menu
+
+  contextMenu->addSeparator();
+  exportToExcelFile_ = contextMenu->addAction(QIcon(QStringLiteral(":/img/excelDocument.png")), QStringLiteral("Exportar datos a excel"));
 
   ui->tvUrl->installEventFilter(this);
 
@@ -945,7 +971,7 @@ void Widget::verifyContextMenu() noexcept{
   auto categoryId=categoryList.key(ui->cboCategory->currentText());
   auto [res, errMessage] = helperdb_.verifyDeleteCategory(categoryId);
   //      qDebug()<<count;
-  (res) ? delCategory->setDisabled(true) : delCategory->setEnabled(true);
+  (res) ? delCategory_->setDisabled(true) : delCategory_->setEnabled(true);
 }
 
 void Widget::setCboCategoryToolTip() noexcept{
@@ -1009,6 +1035,7 @@ void Widget::hastvUrlData() noexcept{
     quittUrl_->setDisabled(true);
     moveUrl_->setVisible(false);
     showDescDetail_->setVisible(false);
+    exportToExcelFile_->setVisible(false);
   }else{
     openUrl_->setEnabled(true);
     ui->btnopen->setEnabled(true);
@@ -1018,6 +1045,7 @@ void Widget::hastvUrlData() noexcept{
     quittUrl_->setEnabled(true);
     moveUrl_->setVisible(true);
     showDescDetail_->setVisible(true);
+    exportToExcelFile_->setVisible(true);
   }
 }
 

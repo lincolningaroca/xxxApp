@@ -29,13 +29,17 @@ public:
 private:
   Ui::Widget *ui;
   const QSqlDatabase db_{};
-  QAction* delCategory{ nullptr };
+  QAction* delCategory_{ nullptr };
   QAction* openUrl_{ nullptr };
   QAction* editUrl_{ nullptr };
   QAction* quittUrl_{ nullptr };
   QAction* showDescDetail_{ nullptr };
   QAction* showPublicUrl_{ nullptr };
   QAction* moveUrl_{ nullptr };
+
+  //excel exporter action
+
+  QAction* exportToExcelFile_{nullptr};
 
   QMenu* contextMenu{nullptr};
 
