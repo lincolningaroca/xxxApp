@@ -27,5 +27,6 @@
         <file>licencia/licencia.txt</file>
         <file>img/flat_seo-47-64.png</file>
         <file>font/FiraCode-Regular.ttf</file>
+        <file>img/excelDocument.png</file>
     </qresource>
 </RCC>
