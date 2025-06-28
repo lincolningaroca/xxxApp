@@ -1,4 +1,4 @@
-#include "excelerporter.hpp"
+#include "excelexporter.hpp"
 
 #include <QAbstractItemModel>
 #include <QTableView>
@@ -12,9 +12,9 @@
 namespace  SW {
 
 
-// ExcelErporter::ExcelErporter() {}
+// ExcelExporter::ExcelExporter() {}
 
-bool ExcelErporter::exportTableView(QTableView *tableView, const QString &filePath){
+bool ExcelExporter::exportTableView(QTableView *tableView, const QString &filePath){
 
   lastError_.clear();
 
@@ -25,10 +25,6 @@ bool ExcelErporter::exportTableView(QTableView *tableView, const QString &filePa
     return false;
   }
 
-  if(filePath.isEmpty()){
-    lastError_ = "No se proporcionó una ruta de archivo para guardar.";
-    return false;
-  }
 
   auto savePath = filePath;
   if(!savePath.endsWith(".xlsx", Qt::CaseInsensitive)){
@@ -61,10 +57,6 @@ bool ExcelErporter::exportTableView(QTableView *tableView, const QString &filePa
   QXlsx::Document xlsxDocument;
   auto *model =tableView->model();
 
-  // for (auto col = 0; col < model->columnCount(); ++col) {
-  //   auto header = model->headerData(col, Qt::Horizontal).toString();
-  //   xlsxDocument.write(1, col + 1, header);
-  // }
 
   auto colExcel = 1;
   for (auto col = 0; col < model->columnCount(); ++col) {
@@ -78,14 +70,6 @@ bool ExcelErporter::exportTableView(QTableView *tableView, const QString &filePa
     QString header = model->headerData(col, Qt::Horizontal).toString();
     xlsxDocument.write(1, colExcel++, header);
   }
-
-
-  // for (auto row = 0; row < model->rowCount(); ++row) {
-  //   for (auto col = 0; col < model->columnCount(); ++col) {
-  //     auto data = model->data(model->index(row, col));
-  //     xlsxDocument.write(row + 2, col + 1, data);
-  //   }
-  // }
 
   for (auto row = 0; row < model->rowCount(); ++row) {
     colExcel = 1;

@@ -22,7 +22,7 @@
 #include <QDebug>
 #include <QMenu>
 #include "swlabel.hpp"
-#include "util/excelerporter.hpp"
+#include "util/excelexporter.hpp"
 
 Widget::Widget(QWidget *parent)
   : QWidget(parent), ui(new Ui::Widget),
@@ -64,9 +64,9 @@ Widget::Widget(QWidget *parent)
     if(filePath.isEmpty())
       return;
 
-    if(!SW::ExcelErporter::exportTableView(ui->tvUrl, filePath)){
+    if(!SW::ExcelExporter::exportTableView(ui->tvUrl, filePath)){
 
-      QMessageBox::warning(this, SW::Helper_t::appName(), tr("Error al exportar el archivo.\n").arg(SW::ExcelErporter::lastError()));
+      QMessageBox::warning(this, SW::Helper_t::appName(), tr("Error al exportar el archivo.\n").arg(SW::ExcelExporter::lastError()));
       return;
     }
 

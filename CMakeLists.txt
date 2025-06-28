@@ -60,7 +60,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     acercadedialog.hpp
     acercadedialog.cpp
     acercadedialog.ui
-    util/excelerporter.hpp util/excelerporter.cpp
+    util/excelexporter.hpp util/excelexporter.cpp
     # qaesencryption.cpp qaesencryption.h
   )
 add_custom_command(

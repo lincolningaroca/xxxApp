@@ -7,9 +7,9 @@ class QTableView;
 
 namespace SW {
 
-struct ExcelErporter{
+struct ExcelExporter{
 public:
-  explicit ExcelErporter() = default;
+  explicit ExcelExporter() = default;
 
   static bool exportTableView(QTableView *tableView, const QString &filePath);
   static const QString& lastError(){return lastError_;}
