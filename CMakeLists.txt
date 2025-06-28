@@ -22,21 +22,21 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Sql Network)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Sql Network)
 
 set(PROJECT_SOURCES
-    main.cpp
-    widget.cpp
-    widget.hpp
-    widget.ui
-    dlgnewcategory.cpp
-    dlgnewcategory.hpp
-    dlgnewcategory.ui
-    logindialog.hpp
-    logindialog.cpp
-    logindialog.ui
-    util/helper.cpp
-    util/helper.hpp
-    helperdatabase/helperdb.cpp
-    helperdatabase/helperdb.hpp
-    ${APP_ICON})
+  main.cpp
+  widget.cpp
+  widget.hpp
+  widget.ui
+  dlgnewcategory.cpp
+  dlgnewcategory.hpp
+  dlgnewcategory.ui
+  logindialog.hpp
+  logindialog.cpp
+  logindialog.ui
+  util/helper.cpp
+  util/helper.hpp
+  helperdatabase/helperdb.cpp
+  helperdatabase/helperdb.hpp
+  ${APP_ICON})
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
   qt_add_executable(
@@ -60,23 +60,24 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     acercadedialog.hpp
     acercadedialog.cpp
     acercadedialog.ui
+    util/excelerporter.hpp util/excelerporter.cpp
     # qaesencryption.cpp qaesencryption.h
   )
-  add_custom_command(
-    TARGET xxxapp
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory
-            "$<TARGET_FILE_DIR:xxxapp>/tools/sqlite-tools-win-x64-3450100"
-    COMMAND
-      ${CMAKE_COMMAND} -E copy_directory
-      "${CMAKE_CURRENT_SOURCE_DIR}/tools/sqlite-tools-win-x64-3450100"
-      "$<TARGET_FILE_DIR:xxxapp>/tools/sqlite-tools-win-x64-3450100"
-    COMMENT "Copiando herramientas SQLite al directorio de salida")
+add_custom_command(
+  TARGET xxxapp
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E make_directory
+  "$<TARGET_FILE_DIR:xxxapp>/tools/sqlite-tools-win-x64-3450100"
+  COMMAND
+  ${CMAKE_COMMAND} -E copy_directory
+  "${CMAKE_CURRENT_SOURCE_DIR}/tools/sqlite-tools-win-x64-3450100"
+  "$<TARGET_FILE_DIR:xxxapp>/tools/sqlite-tools-win-x64-3450100"
+  COMMENT "Copiando herramientas SQLite al directorio de salida")
 
-  # Define target properties for Android with Qt 6 as: set_property(TARGET
-  # xxxapp APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-  # ${CMAKE_CURRENT_SOURCE_DIR}/android) For more information, see
-  # https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
+# Define target properties for Android with Qt 6 as: set_property(TARGET
+# xxxapp APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
+# ${CMAKE_CURRENT_SOURCE_DIR}/android) For more information, see
+# https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 else()
   if(ANDROID)
     add_library(xxxapp SHARED ${PROJECT_SOURCES})
@@ -88,22 +89,25 @@ else()
 endif()
 
 target_include_directories(${PROJECT_NAME}
-                           PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/QXlsx/QXlsxQt6)
+
 
 target_link_libraries(
   xxxapp
   PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Sql
-          ${CMAKE_CURRENT_SOURCE_DIR}/lib/libcrypto.lib
-          Qt${QT_VERSION_MAJOR}::Network)
+  ${CMAKE_CURRENT_SOURCE_DIR}/lib/libcrypto.lib
+  Qt${QT_VERSION_MAJOR}::Network
+  ${CMAKE_CURRENT_SOURCE_DIR}/lib/libQXlsxQt6.a)
 
 set_target_properties(
   xxxapp
   PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
-             MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-             MACOSX_BUNDLE_SHORT_VERSION_STRING
-             ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-             MACOSX_BUNDLE TRUE
-             WIN32_EXECUTABLE TRUE)
+  MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+  MACOSX_BUNDLE_SHORT_VERSION_STRING
+  ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+  MACOSX_BUNDLE TRUE
+  WIN32_EXECUTABLE TRUE)
 
 install(
   TARGETS xxxapp
