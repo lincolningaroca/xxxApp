@@ -386,6 +386,7 @@ Widget::Widget(QWidget *parent)
       }
       ui->btnLogOut->setEnabled(true);
       ui->btnLogIn->setDisabled(true);
+      ui->btnResetPassword->setVisible(false);
       // setWindowTitle(QApplication::applicationName().append(QStringLiteral(" - Sesión inicada como: ")+logDialog.userName()));
       setWindowTitle(QApplication::applicationName().append(QStringLiteral(" - Sesión inicada como: ").append(SW::Helper_t::current_user_)));
       ui->lblIcon->setPixmap(QPixmap(QStringLiteral(":/img/user.png")).scaled(16,16));
@@ -413,6 +414,7 @@ Widget::Widget(QWidget *parent)
     }
     ui->btnLogOut->setDisabled(true);
     ui->btnLogIn->setEnabled(true);
+    ui->btnResetPassword->setVisible(true);
     setWindowTitle(QApplication::applicationName());
     ui->cboCategory->clear();
     loadListCategory(userId_);
