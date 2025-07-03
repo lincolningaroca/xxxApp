@@ -140,9 +140,21 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
       return;
     }
     if(!SW::Helper_t::isPasswordSecure(ui->txtRePassword->text().simplified())){
-      QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral(
-                                                            "<span><strong><em>La clave o password no es seguro.<br>"
-                                                            "Debe contener al menos una Letra Mayuscula, una miniscula, numeros y caracteres especiales.</em></strong></span>"));
+      QMessageBox::warning(this, SW::Helper_t::appName(),
+                           QStringLiteral("<span>"
+                                          "<em>"
+                                          "Debe ingresar un password o clave segura!<br>"
+                                          "Nota:<br>"
+                                          "Para que un password o clave se considere seguro(a), debe cumplir con lo siguiente:"
+                                          "<ul>"
+                                          "<li>Debe contener al menos un caracter en mayuscula.</li>"
+                                          "<li>Debe contener al menos un caracter en minuscula.</li>"
+                                          "<li>Debe contener al menos un número.</li>"
+                                          "<li>Debe contener al menos un caracter especial por ejemplo: \"#$%&@\" etc...</li>"
+                                          "</ul>"
+                                          "Ejemplo de calve segura: <strong>\"MiClave@123\"</strong>"
+                                          "</em>"
+                                          "</span>"));
       ui->txtRePassword->selectAll();
       ui->txtRePassword->setFocus();
       return;
