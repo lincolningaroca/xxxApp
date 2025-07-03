@@ -23,6 +23,7 @@
 #include <QMenu>
 #include "swlabel.hpp"
 #include "util/excelexporter.hpp"
+#include "resetpassworddialog.hpp"
 
 Widget::Widget(QWidget *parent)
   : QWidget(parent), ui(new Ui::Widget),
@@ -54,6 +55,15 @@ Widget::Widget(QWidget *parent)
     AcercaDeDialog acercaDe{themeType.key(ui->cboTheme->currentText()), this};
     acercaDe.setWindowTitle(SW::Helper_t::appName().append(" - Acerca de"));
     acercaDe.exec();
+  });
+
+  //connect to btnResetPassword
+
+  QObject::connect(ui->btnResetPassword, &QToolButton::clicked, this, [&](){
+
+    ResetPasswordDialog resetDialog(this);
+    resetDialog.setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - Restablecer clave o password")));
+    resetDialog.exec();
   });
 
 

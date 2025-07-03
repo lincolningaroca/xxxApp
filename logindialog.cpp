@@ -184,7 +184,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
   QObject::connect(ui->btnResetPassword, &QPushButton::clicked, this, [&](){
     ResetPasswordDialog resetPassword{this};
-    resetPassword.setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - Resetear clave o password")));
+    resetPassword.setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - Restablecer clave o password")));
     resetPassword.exec();
 
   });
