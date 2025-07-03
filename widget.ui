@@ -74,7 +74,7 @@
         <item>
          <widget class="QToolButton" name="btnResetPassword">
           <property name="toolTip">
-           <string>Resetear clave o password</string>
+           <string>Restablecer clave o password (Ctrl+Shift+P)</string>
           </property>
           <property name="text">
            <string>...</string>
