@@ -116,7 +116,7 @@ Widget::Widget(QWidget *parent)
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
   //connect to slot to btnDeleteCategory
   QObject::connect(ui->btnDeleteCategory, &QPushButton::clicked, this, [&](){
-    auto categoryId=categoryList.key(ui->cboCategory->currentText());
+    const auto categoryId=categoryList.key(ui->cboCategory->currentText());
     auto [res, errMessage] = helperdb_.verifyDeleteCategory(categoryId);
     if(!res){
       QMessageBox::warning(this, SW::Helper_t::appName().append(QStringLiteral(" - Advertencia")),
@@ -183,7 +183,7 @@ Widget::Widget(QWidget *parent)
         return;
       }
 
-      auto categoryId = categoryList.key(ui->cboCategory->currentText());
+      const auto categoryId = categoryList.key(ui->cboCategory->currentText());
 
       if(helperdb_.urlExists(ui->txtUrl->text(), categoryId)){
         QMessageBox::warning(this, SW::Helper_t::appName(),
@@ -209,14 +209,14 @@ Widget::Widget(QWidget *parent)
 
       QSqlQuery qry(db_);
       [[maybe_unused]] auto res=qry.prepare(QStringLiteral("UPDATE  urls SET url=?, desc=? WHERE url_id=? AND categoryid=?"));
-      auto encryptedData = SW::Helper_t::encrypt(ui->txtUrl->text());
+      const auto encryptedData = SW::Helper_t::encrypt(ui->txtUrl->text());
       qry.addBindValue(encryptedData, QSql::In);
-      auto descData = SW::Helper_t::encrypt(ui->pteDesc->toPlainText().simplified().toUpper());
+      const auto descData = SW::Helper_t::encrypt(ui->pteDesc->toPlainText().simplified().toUpper());
       qry.addBindValue(descData, QSql::In);
       auto currentRow = ui->tvUrl->currentIndex().row();
       auto id = ui->tvUrl->model()->index(currentRow,0).data().toInt();
       qry.addBindValue(id, QSql::In);
-      auto categoryId = categoryList.key(ui->cboCategory->currentText());
+      const auto categoryId = categoryList.key(ui->cboCategory->currentText());
       qry.addBindValue(categoryId, QSql::In);
       if(!qry.exec()){
         QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Fallo la ejecución de la sentencia!\n")
@@ -262,7 +262,7 @@ Widget::Widget(QWidget *parent)
   //btn edit category
   QObject::connect(ui->btnEditCategory, &QPushButton::clicked, this, [&](){
 
-    auto id = categoryList.key(ui->cboCategory->currentText());
+    const auto id = categoryList.key(ui->cboCategory->currentText());
     const QStringList data = helperdb_.dataCategory(id);
     dlgNewCategory editCategory(dlgNewCategory::OpenMode::Edit, data, this);
     if(editCategory.exec() == QDialog::Rejected){
@@ -366,7 +366,7 @@ Widget::Widget(QWidget *parent)
       SW::Helper_t::current_user_ = logDialog.userName();
 
       // userId_ = helperdb_.getUser_id(logDialog.userName(),QStringLiteral("USER"));
-      auto user = SW::Helper_t::hashGenerator(logDialog.userName().toLatin1());
+      const auto user = SW::Helper_t::hashGenerator(logDialog.userName().toLatin1());
       userId_ = helperdb_.getUser_id(user, SW::User::U_user);
 
       ui->cboCategory->clear();
@@ -429,12 +429,12 @@ Widget::Widget(QWidget *parent)
 
   //connect boton crear copia de seguridad
   QObject::connect(ui->btnBackUp, &QToolButton::clicked, this, [&](){
-    QProcess process;
+    QProcess process(this);
     const auto path_app {SW::Helper_t::app_pathLocation().append("/tools/sqlite-tools-win-x64-3450100/sqlite3.exe")};
-    qInfo() << path_app << '\n';
+    // qInfo() << path_app << '\n';
 
-    auto databasePath = SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase.db"));
-    auto filePath = QFileDialog::getSaveFileName(this, QStringLiteral("Crear una copia de seguridad"), SW::Helper_t::getLastOpenedDirectory(),
+    const auto databasePath = SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase.db"));
+    const auto filePath = QFileDialog::getSaveFileName(this, QStringLiteral("Crear una copia de seguridad"), SW::Helper_t::getLastOpenedDirectory(),
                                                  QStringLiteral("Archivos de copia de seguridad (*.bak)"));
 
 
@@ -449,13 +449,13 @@ Widget::Widget(QWidget *parent)
     const QFileInfo fileInfo(filePath);
 
 
-    auto absolutePath{fileInfo.absolutePath()};
-    auto baseName{fileInfo.baseName()};
-    auto extension{fileInfo.suffix()};
+    const auto absolutePath{fileInfo.absolutePath()};
+    const auto baseName{fileInfo.baseName()};
+    const auto extension{fileInfo.suffix()};
 
-    auto fecha{QDateTime::currentDateTime().toString("yyyy-MM-dd_hhmmss")};
+    const auto fecha{QDateTime::currentDateTime().toString("yyyy-MM-dd_hhmmss")};
     // QString path{".backup %1/%2-%3.%4"};
-    auto backupCommand = QString(".backup '%1/%2-%3.%4'").arg(absolutePath, baseName, fecha, extension);
+    const auto backupCommand = QString(".backup '%1/%2-%3.%4'").arg(absolutePath, baseName, fecha, extension);
 
     // Verificar si el ejecutable sqlite3 existe
     if(!QFile::exists(path_app)) {
@@ -489,7 +489,7 @@ Widget::Widget(QWidget *parent)
       return;
     }
 
-    QMessageBox::information(this, SW::Helper_t::appName(), QStringLiteral("La copia de seguridad fue creada."));
+    QMessageBox::information(this, SW::Helper_t::appName(), QStringLiteral("La copia de seguridad fue creada en:\n%1").arg(filePath));
 
 
   });
@@ -539,7 +539,7 @@ Widget::Widget(QWidget *parent)
 
     QProcess process{this};
 
-    QFileInfo fileInfo{pathBackup};
+    const QFileInfo fileInfo{pathBackup};
     SW::Helper_t::setLastOpenedDirectory(fileInfo.absolutePath());
 
     if(!process.startDetached(app, args)){
@@ -821,10 +821,10 @@ void Widget::showAlldescription() noexcept{
 
   // auto* otherModel = dynamic_cast<QSqlTableModel*>(ui->tvUrl->model());
   auto row = ui->tvUrl->currentIndex().row();
-  auto desc = ui->tvUrl->model()->index(row,2).data().toString();
-  auto url = ui->tvUrl->model()->index(row,1).data().toString();
+  const auto desc = ui->tvUrl->model()->index(row,2).data().toString();
+  const auto url = ui->tvUrl->model()->index(row,1).data().toString();
 
-  QMessageBox msgDescription;
+  QMessageBox msgDescription(this);
 
   // msgDescription.setIcon(QMessageBox::Information);
   QPixmap pixMap(QStringLiteral(":/img/desc.png"));
@@ -973,7 +973,7 @@ bool Widget::eventFilter(QObject* watched, QEvent* event){
 
 
 bool Widget::deleteAll() noexcept{
-  auto categoryId=categoryList.key(ui->cboCategory->currentText());
+  const auto categoryId=categoryList.key(ui->cboCategory->currentText());
   if(helperdb_.deleteUrls(1, categoryId)){
     if(helperdb_.deleteCategory(categoryId))
       return true;
@@ -982,14 +982,14 @@ bool Widget::deleteAll() noexcept{
 }
 
 void Widget::verifyContextMenu() noexcept{
-  auto categoryId=categoryList.key(ui->cboCategory->currentText());
+  const auto categoryId=categoryList.key(ui->cboCategory->currentText());
   auto [res, errMessage] = helperdb_.verifyDeleteCategory(categoryId);
   //      qDebug()<<count;
   (res) ? delCategory_->setDisabled(true) : delCategory_->setEnabled(true);
 }
 
 void Widget::setCboCategoryToolTip() noexcept{
-  auto id = categoryList.key(ui->cboCategory->currentText());
+  const auto id = categoryList.key(ui->cboCategory->currentText());
   const auto categoryData = helperdb_.dataCategory(id);
   const auto desc=categoryData.value(1);
   //  QString desc{};
@@ -1019,7 +1019,7 @@ void Widget::quitUrl() noexcept{
 
   const auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
 
-  QMessageBox msgBox;
+  QMessageBox msgBox(this);
   msgBox.setText(QString("<span>Confirma que desea eliminar esta dirección:<br>"
                          " <cite style='color:#ff0800;'><strong>%1</strong></cite></span>").arg(url));
   msgBox.setIcon(QMessageBox::Question);
@@ -1030,7 +1030,7 @@ void Widget::quitUrl() noexcept{
   if(msgBox.exec() == QMessageBox::Yes){
     //      auto currentRow = ui->tvUrl->currentIndex().row();
     //      auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
-    auto urlId=urlList.key(url);
+    const auto urlId=urlList.key(url);
     if(helperdb_.deleteUrls(2, 0, urlId)){
       ui->tvUrl->model()->removeRow(ui->tvUrl->currentIndex().row());
       setUpTable(categoryList.key(ui->cboCategory->currentText()));

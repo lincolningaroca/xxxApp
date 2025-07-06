@@ -15,7 +15,7 @@ AcercaDeDialog::AcercaDeDialog(Qt::ColorScheme colorMode, QWidget *parent) :
 
   if(colorMode == Qt::ColorScheme::Unknown){
 
-    auto retSyscolorScheme = SW::Helper_t::checkSystemColorScheme();
+    const auto retSyscolorScheme = SW::Helper_t::checkSystemColorScheme();
 
     setImage(retSyscolorScheme);
 

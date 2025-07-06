@@ -32,8 +32,8 @@ PublicUrlDialog::PublicUrlDialog(QWidget *parent) :
         }
 
 
-      auto row_ = ui->urlTableView->currentIndex().row();
-      auto url_ = ui->urlTableView->model()->index(row_, 1).data().toString();
+      const auto row_ = ui->urlTableView->currentIndex().row();
+      const auto url_ = ui->urlTableView->model()->index(row_, 1).data().toString();
 
       if(!QDesktopServices::openUrl(QUrl(url_))){
           QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error al abrir la dirección url.\n"));
@@ -59,7 +59,7 @@ void PublicUrlDialog::loadDataComboBox(){
 
 void PublicUrlDialog::loadDataTableView(){
 
-  auto categoryId_ = data_.key(ui->categoryComboBox->currentText());
+  const auto categoryId_ = data_.key(ui->categoryComboBox->currentText());
   SWTableModel* xxxModel_ = new SWTableModel(this, db_);
   xxxModel_->setTable(QStringLiteral("urls"));
   xxxModel_->setFilter(QString("categoryid=%1").arg(categoryId_));
