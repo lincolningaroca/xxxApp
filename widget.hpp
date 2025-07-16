@@ -23,6 +23,10 @@ public:
   explicit Widget(QWidget *parent = nullptr);
   ~Widget();
 
+   void applyPreferredTheme(int pref);
+   int loadSchemePreference();
+   void loadLblSchemePreference();
+
   // inline static QString currentUser_{SW::Helper_t::currentUser_.value(SW::User::U_public)};
   // inline static SW::SessionStatus sessionStatus_{SW::SessionStatus::Session_closed};
 

@@ -10,6 +10,7 @@
 #include <QSqlTableModel>
 #include <QFile>
 #include <QProcess>
+#include <QStyleHints>
 
 //#include <QProcess>
 #include "dlgnewcategory.hpp"
@@ -25,12 +26,14 @@
 #include "util/excelexporter.hpp"
 #include "resetpassworddialog.hpp"
 
+
 Widget::Widget(QWidget *parent)
   : QWidget(parent), ui(new Ui::Widget),
   db_{QSqlDatabase::database(QStringLiteral("xxxConection"))}{
   ui->setupUi(this);
   userId_ = helperdb_.getUser_id(SW::Helper_t::defaultUser, SW::User::U_public);
   ui->lblIcon->setPixmap(QPixmap(QStringLiteral(":/img/7278151.png")).scaled(16,16));
+
   initFrm();
 
   loadListCategory(userId_);
@@ -329,18 +332,14 @@ Widget::Widget(QWidget *parent)
     openUrl();
   });
 
-  //cboTheme
-  QObject::connect(ui->cboTheme, &QComboBox::currentTextChanged, this, [&](const QString& text){
 
-    if(text == themeType.value(Qt::ColorScheme::Unknown)){
-      auto retSysTheme = SW::Helper_t::checkSystemColorScheme();
-      setTheme(retSysTheme);
-      checkStatusSessionColor(themeType.value(retSysTheme));
-    }else{
-      ( text == themeType.value(Qt::ColorScheme::Dark) ) ? setTheme(Qt::ColorScheme::Dark) : setTheme(Qt::ColorScheme::Light);
+  QObject::connect(ui->cboTheme, &QComboBox::currentIndexChanged, this, [&](int index){
 
-      checkStatusSessionColor(text);
-    }
+    Qt::ColorScheme scheme = themeType.key(ui->cboTheme->currentText());
+    applyPreferredTheme(index);
+    checkStatusSessionColor(themeType.value(scheme));
+    writeSettings();
+
   });
 
 
@@ -365,14 +364,11 @@ Widget::Widget(QWidget *parent)
 
       SW::Helper_t::current_user_ = logDialog.userName();
 
-      // userId_ = helperdb_.getUser_id(logDialog.userName(),QStringLiteral("USER"));
       const auto user = SW::Helper_t::hashGenerator(logDialog.userName().toLatin1());
       userId_ = helperdb_.getUser_id(user, SW::User::U_user);
 
       ui->cboCategory->clear();
       loadListCategory(userId_);
-
-      // (ui->cboTheme->currentText() == QStringLiteral("Modo Oscuro") ) ? setLabelInfo(SW::Helper_t::darkModeColor.data(), logDialog.userName()) : setLabelInfo(SW::Helper_t::lightModeColor.data(), logDialog.userName());
 
       if(ui->cboTheme->currentText().contains(themeType.value(Qt::ColorScheme::Unknown))){
 
@@ -404,6 +400,7 @@ Widget::Widget(QWidget *parent)
 
     if(ui->cboTheme->currentText().contains(themeType.value(Qt::ColorScheme::Unknown))){
 
+      // setLabelInfo(themeType.key(ui->cboTheme->currentText()), SW::Helper_t::current_user_);
       setLabelInfo(SW::Helper_t::checkSystemColorScheme(), SW::Helper_t::current_user_);
 
     }else{
@@ -435,7 +432,7 @@ Widget::Widget(QWidget *parent)
 
     const auto databasePath = SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase.db"));
     const auto filePath = QFileDialog::getSaveFileName(this, QStringLiteral("Crear una copia de seguridad"), SW::Helper_t::getLastOpenedDirectory(),
-                                                 QStringLiteral("Archivos de copia de seguridad (*.bak)"));
+                                                       QStringLiteral("Archivos de copia de seguridad (*.bak)"));
 
 
     if(filePath.isEmpty())
@@ -474,13 +471,6 @@ Widget::Widget(QWidget *parent)
     qint64 pid = 0;
     bool started = QProcess::startDetached(path_app, argv, QDir::currentPath(), &pid);
 
-
-    // if(!process.startDetached(path_app, argv)){
-    //   QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error en la ejecución.\n")+
-    //                                                          process.errorString());
-    //   return;
-
-    // }
 
     if(!started || pid == 0) {
       QMessageBox::critical(this, SW::Helper_t::appName(),
@@ -627,6 +617,40 @@ Widget::~Widget()
   delete ui;
 }
 
+void Widget::applyPreferredTheme(int pref){
+
+  Qt::ColorScheme scheme;
+  switch (pref) {
+    case 1: scheme = Qt::ColorScheme::Light; break;
+    case 2: scheme = Qt::ColorScheme::Dark; break;
+    default: scheme = QGuiApplication::styleHints()->colorScheme(); break;
+  }
+
+  qApp->setPalette(SW::Helper_t::set_Theme(scheme));
+
+  // writeSettings();
+
+}
+
+int Widget::loadSchemePreference(){
+
+  QSettings settings(qApp->organizationName(), SW::Helper_t::appName());
+  settings.beginGroup(QStringLiteral("Theme"));
+  const auto theme = settings.value(QStringLiteral("theme Value")).toUInt();
+  settings.endGroup();
+
+  return theme;
+
+
+}
+
+void Widget::loadLblSchemePreference(){
+
+  auto retSystem = SW::Helper_t::checkSystemColorScheme();
+  setLabelInfo(retSystem);
+
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -767,34 +791,28 @@ void Widget::setTheme(Qt::ColorScheme theme) const noexcept{
 void Widget::writeSettings() const noexcept{
   QSettings settings(qApp->organizationName(), SW::Helper_t::appName());
   settings.beginGroup(QStringLiteral("Theme"));
-  Qt::ColorScheme themeValue_{};
+
+  settings.setValue(QStringLiteral("theme name"), themeType.value(static_cast<Qt::ColorScheme>(ui->cboTheme->currentIndex())));
+  settings.setValue(QStringLiteral("theme Value"), static_cast<uint32_t>(themeType.key(ui->cboTheme->currentText())));
+
   QString lblColor_{};
-  QString themeName_{};
 
   if(ui->cboTheme->currentText().contains(themeType.value(Qt::ColorScheme::Unknown))){
     auto retSystemColorScheme = SW::Helper_t::checkSystemColorScheme();
 
-    themeName_ = themeType.value(Qt::ColorScheme::Unknown);
     lblColor_ = SW::Helper_t::lblColorMode.value(retSystemColorScheme);
-    themeValue_ = retSystemColorScheme;
-
 
   }else if(ui->cboTheme->currentText().contains(themeType.value(Qt::ColorScheme::Light))){
 
-    themeName_ = themeType.value(Qt::ColorScheme::Light);
     lblColor_ = SW::Helper_t::lblColorMode.value(Qt::ColorScheme::Light);
-    themeValue_ = Qt::ColorScheme::Light;
 
   }else{
 
-    themeName_ = themeType.value(Qt::ColorScheme::Dark);
     lblColor_ = SW::Helper_t::lblColorMode.value(Qt::ColorScheme::Dark);
-    themeValue_ = Qt::ColorScheme::Dark;
+
   }
 
-
-  settings.setValue(QStringLiteral("theme name"), themeName_);
-  settings.setValue(QStringLiteral("theme Value"), static_cast<uint32_t>(themeValue_));
+  // settings.setValue(QStringLiteral("lblColor"), SW::Helper_t::setColorReg(SW::Helper_t::lblColorMode.value(themeType.key(ui->cboTheme->currentText()))));
   settings.setValue(QStringLiteral("lblColor"), SW::Helper_t::setColorReg(lblColor_));
   settings.endGroup();
   settings.setValue(QStringLiteral("position"), saveGeometry());
@@ -806,14 +824,13 @@ void Widget::readSettings() noexcept{
   settings.beginGroup(QStringLiteral("Theme"));
   const auto theme = settings.value(QStringLiteral("theme Value")).toUInt();
   const auto lblColor = SW::Helper_t::getColorReg(settings.value(QStringLiteral("lblColor")).toByteArray());
-  const auto name = settings.value("theme name").toString();
 
   setLabelInfo(SW::Helper_t::lblColorMode.key(lblColor));
 
-  setTheme(static_cast<Qt::ColorScheme>(theme));
   settings.endGroup();
 
-  ui->cboTheme->setCurrentIndex(static_cast<int>(themeType.key(name)));
+  ui->cboTheme->setCurrentIndex(theme);
+  applyPreferredTheme(theme);
   restoreGeometry(settings.value(QStringLiteral("position")).toByteArray());
 }
 
@@ -910,8 +927,6 @@ void Widget::setUpCboCategoryContextMenu() noexcept{
   delCategory_ = new QAction(icon, QStringLiteral("Forzar eliminación de categoría"),this);
   ui->cboCategory->addAction(delCategory_);
 
-
-
 }
 
 void Widget::setUptvUrlContextMenu() noexcept{
@@ -940,11 +955,6 @@ void Widget::setUptvUrlContextMenu() noexcept{
 
   checkStatusContextMenu();
 
-  // ui->tvUrl->addAction(openUrl_);
-  // ui->tvUrl->addAction(editUrl_);
-  // ui->tvUrl->addAction(quittUrl_);
-
-
 }
 
 bool Widget::eventFilter(QObject* watched, QEvent* event){
@@ -952,12 +962,6 @@ bool Widget::eventFilter(QObject* watched, QEvent* event){
     QContextMenuEvent* contextMenuEvent = dynamic_cast<QContextMenuEvent*>(event);
     if(contextMenuEvent){
       contextMenu->exec(contextMenuEvent->globalPos());
-
-      // auto act_action = contextMenu->activeAction();
-
-      // auto text = act_action->text();
-      // qInfo() << contextMenu->activeAction()->text() << '\n';
-
 
       return true;
 
@@ -1028,8 +1032,6 @@ void Widget::quitUrl() noexcept{
   msgBox.button(QMessageBox::No)->setText("Cancelar");
 
   if(msgBox.exec() == QMessageBox::Yes){
-    //      auto currentRow = ui->tvUrl->currentIndex().row();
-    //      auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
     const auto urlId=urlList.key(url);
     if(helperdb_.deleteUrls(2, 0, urlId)){
       ui->tvUrl->model()->removeRow(ui->tvUrl->currentIndex().row());

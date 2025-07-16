@@ -39,6 +39,8 @@ set(PROJECT_SOURCES
   ${APP_ICON})
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+  find_package(Qt6 REQUIRED COMPONENTS Core)
+
   qt_add_executable(
     xxxapp
     MANUAL_FINALIZATION
@@ -61,6 +63,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     acercadedialog.cpp
     acercadedialog.ui
     util/excelexporter.hpp util/excelexporter.cpp
+    util/systemthemewatcher.hpp util/systemthemewatcher.cpp
     # qaesencryption.cpp qaesencryption.h
   )
 add_custom_command(
@@ -99,6 +102,7 @@ target_link_libraries(
   ${CMAKE_CURRENT_SOURCE_DIR}/lib/libcrypto.lib
   Qt${QT_VERSION_MAJOR}::Network
   ${CMAKE_CURRENT_SOURCE_DIR}/lib/libQXlsxQt6.a)
+target_link_libraries(xxxapp PRIVATE Qt6::Core)
 
 set_target_properties(
   xxxapp

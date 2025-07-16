@@ -131,7 +131,7 @@ QPalette  Helper_t::set_Theme(Qt::ColorScheme theme) noexcept
 
   if(theme == Qt::ColorScheme::Light){
     qApp->setStyle("Windowsvista");
-    mPalette = standardPalette_;
+    // mPalette = standardPalette_;
   }
 
   else{
@@ -148,8 +148,10 @@ QPalette  Helper_t::set_Theme(Qt::ColorScheme theme) noexcept
     mPalette.setColor(QPalette::ButtonText, Qt::white);
     mPalette.setColor(QPalette::BrightText, Qt::red);
     mPalette.setColor(QPalette::Link, QColor(42, 130, 218));
-    mPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
-    mPalette.setColor(QPalette::HighlightedText, Qt::black);
+    // mPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
+    mPalette.setColor(QPalette::Highlight, QColor(0, 76, 135,200));
+
+    mPalette.setColor(QPalette::HighlightedText, Qt::white);
     mPalette.setColor(QPalette::Disabled, QPalette::Text, QColor(164, 166, 168));
     mPalette.setColor(QPalette::Disabled, QPalette::WindowText, QColor(164, 166, 168));
     mPalette.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(164, 166, 168));
@@ -164,9 +166,7 @@ QPalette  Helper_t::set_Theme(Qt::ColorScheme theme) noexcept
 }
 
 Qt::ColorScheme Helper_t::checkSystemColorScheme() noexcept{
-
   return detectSystemColorScheme();
-
 
 }
 
