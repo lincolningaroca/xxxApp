@@ -39,6 +39,8 @@ Widget::Widget(QWidget *parent)
   loadListCategory(userId_);
   loadThemeComboBox();
   setUpTable(categoryList.key(ui->cboCategory->currentText()));
+  canCreateBackUp();
+  canStartSession();
 
   has_data();
 
@@ -543,6 +545,8 @@ Widget::Widget(QWidget *parent)
     ui->cboCategory->clear();
     loadListCategory(userId_);
     has_data();
+    canCreateBackUp();
+    canStartSession();
 
 
   });
@@ -778,6 +782,27 @@ void  Widget::has_data() noexcept{
 void Widget::canRestoreDataBase() const noexcept{
 
   (static_cast<bool>(SW::Helper_t::sessionStatus_)) ? ui->btnRestore->setVisible(true) : ui->btnRestore->setVisible(false);
+}
+
+void Widget::canCreateBackUp() const noexcept{
+
+  auto model = ui->tvUrl->model();
+  (model->rowCount() > 0) ? ui->btnBackUp->setEnabled(true) : ui->btnBackUp->setDisabled(true);
+
+}
+
+void Widget::canStartSession() const noexcept{
+
+  auto model = ui->tvUrl->model();
+
+  if(model->rowCount() > 0){
+    ui->btnLogIn->setEnabled(true);
+    ui->btnResetPassword->setEnabled(true);
+  }else{
+    ui->btnLogIn->setDisabled(true);
+    ui->btnResetPassword->setDisabled(true);
+  }
+
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////

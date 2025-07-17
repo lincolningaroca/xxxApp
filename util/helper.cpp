@@ -9,6 +9,7 @@
 #include <QSettings>
 #include <random>
 #include <windows.h>
+#include <QStyleFactory>
 
 extern "C"{
 #include "openssl/rand.h"
@@ -130,35 +131,27 @@ QPalette  Helper_t::set_Theme(Qt::ColorScheme theme) noexcept
   QPalette mPalette{};
 
   if(theme == Qt::ColorScheme::Light){
-    qApp->setStyle("Windowsvista");
-    // mPalette = standardPalette_;
-  }
+    qApp->setStyle(QStyleFactory::create("Windowsvista"));
+    // qApp->setPalette(QGuiApplication::palette());
+    mPalette.setColor(QPalette::Highlight, QColor(204, 232, 255));
+    mPalette.setColor(QPalette::HighlightedText, Qt::black);
+    mPalette.setColor(QPalette::Link, QColor(0, 109, 255));
+  }else{
+    qApp->setStyle(QStyleFactory::create("Fusion"));
+    mPalette.setColor(QPalette::Window, QColor(30, 30, 30));
+    mPalette.setColor(QPalette::Base, QColor(40, 40, 40));
+    mPalette.setColor(QPalette::AlternateBase, QColor(50, 50, 50));
+    mPalette.setColor(QPalette::Text, QColor(220, 220, 220));
+    mPalette.setColor(QPalette::Button, QColor(45, 45, 45));
+    mPalette.setColor(QPalette::ButtonText, QColor(220, 220, 220));
+    mPalette.setColor(QPalette::Highlight, QColor(39, 191, 115, 60));
+    mPalette.setColor(QPalette::HighlightedText, QColor(255, 255, 255));
+    mPalette.setColor(QPalette::BrightText, QColor(255, 0, 0));
+    mPalette.setColor(QPalette::Link, QColor(39, 191, 115, 250));
+    mPalette.setColor(QPalette::PlaceholderText, QColor(150, 150, 150));
+    mPalette.setColor(QPalette::Disabled, QPalette::Text, QColor(130, 130, 130));
+    mPalette.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(130, 130, 130));
 
-  else{
-    qApp->setStyle("Fusion");
-    mPalette.setColor(QPalette::Window, QColor(53, 53, 53));
-    mPalette.setColor(QPalette::WindowText, Qt::white);
-    mPalette.setColor(QPalette::Base, QColor(25, 25, 25));
-    mPalette.setColor(QPalette::AlternateBase, QColor(53, 53, 53));
-    mPalette.setColor(QPalette::ToolTipBase, QColor(53, 53, 53));
-    mPalette.setColor(QPalette::ToolTipText, Qt::white);
-    mPalette.setColor(QPalette::Text, Qt::white);
-    mPalette.setColor(QPalette::PlaceholderText,QColor(127,127,127));
-    mPalette.setColor(QPalette::Button, QColor(53, 53, 53));
-    mPalette.setColor(QPalette::ButtonText, Qt::white);
-    mPalette.setColor(QPalette::BrightText, Qt::red);
-    mPalette.setColor(QPalette::Link, QColor(42, 130, 218));
-    // mPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
-    mPalette.setColor(QPalette::Highlight, QColor(0, 76, 135,200));
-
-    mPalette.setColor(QPalette::HighlightedText, Qt::white);
-    mPalette.setColor(QPalette::Disabled, QPalette::Text, QColor(164, 166, 168));
-    mPalette.setColor(QPalette::Disabled, QPalette::WindowText, QColor(164, 166, 168));
-    mPalette.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(164, 166, 168));
-    mPalette.setColor(QPalette::Disabled, QPalette::HighlightedText, QColor(164, 166, 168));
-    mPalette.setColor(QPalette::Disabled, QPalette::Base, QColor(68, 68, 68));
-    mPalette.setColor(QPalette::Disabled, QPalette::Window, QColor(68, 68, 68));
-    mPalette.setColor(QPalette::Disabled, QPalette::Highlight, QColor(68, 68, 68));
   }
 
   return mPalette;

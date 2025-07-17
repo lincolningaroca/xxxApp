@@ -57,7 +57,8 @@ struct Helper_t{
   // static constexpr std::string_view lightModeColor{"#ff7e00"};
 
   inline static const QHash<Qt::ColorScheme, QString> lblColorMode{
-    {Qt::ColorScheme::Light, "#ff7e00"},
+    // {Qt::ColorScheme::Light, "#ff7e00"},
+    {Qt::ColorScheme::Light, "#008cf9"},
     {Qt::ColorScheme::Dark, "#2e8b57"}
   };
   [[nodiscard]]static QString AppLocalDataLocation(){return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation).append(dbDir_name);}

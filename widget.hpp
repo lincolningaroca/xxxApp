@@ -101,6 +101,8 @@ private:
 
   void has_data() noexcept;
   void canRestoreDataBase() const noexcept;
+  void canCreateBackUp() const noexcept;
+  void canStartSession() const noexcept;
 
 
   // QWidget interface
