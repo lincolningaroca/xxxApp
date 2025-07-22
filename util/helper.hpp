@@ -5,6 +5,7 @@
 #include <QDesktopServices>
 #include <QApplication>
 #include <QPalette>
+#include <windows.h>
 
 
 
@@ -70,6 +71,8 @@ struct Helper_t{
 
   [[nodiscard]] static QVariant readData(QByteArray&& data);
   [[nodiscard]]static QByteArray writeData(const QVariant& data);
+
+  static bool nativeRegistryKeyExists(HKEY hive, const QString& subKey);
 
   //encryp/decrypt metods
 

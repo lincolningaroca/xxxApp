@@ -115,9 +115,10 @@ int main(int argc, char *argv[]){
 
   Widget w;
 
-
-  auto prefColor = w.loadSchemePreference();
-  w.applyPreferredTheme(prefColor);
+  if(SW::Helper_t::nativeRegistryKeyExists(HKEY_CURRENT_USER, "Software\\SWSystem's\\xxxApp\\Theme")){
+    auto prefColor = w.loadSchemePreference();
+    w.applyPreferredTheme(prefColor);
+  }
 
   SW::SystemThemeWatcher watcher;
 

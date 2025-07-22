@@ -44,7 +44,14 @@ Widget::Widget(QWidget *parent)
 
   has_data();
 
-  readSettings();
+  if(!SW::Helper_t::nativeRegistryKeyExists(HKEY_CURRENT_USER, "Software\\SWSystem's\\xxxApp\\Theme") &&
+      ui->cboTheme->currentIndex() == 0){
+
+    auto retSystem = SW::Helper_t::checkSystemColorScheme();
+    setLabelInfo(retSystem);
+  }else{
+    readSettings();
+  }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   /// ////////////////////////////////////////////////////////////////////////////////////////////////////////////

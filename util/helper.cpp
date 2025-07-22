@@ -225,6 +225,19 @@ QByteArray Helper_t::writeData(const QVariant &data){
 
 }
 
+bool Helper_t::nativeRegistryKeyExists(HKEY hive, const QString &subKey){
+
+  HKEY hKey;
+  LONG result = RegOpenKeyExW(hive, subKey.toStdWString().c_str(), 0, KEY_READ, &hKey);
+
+  if (result == ERROR_SUCCESS) {
+    RegCloseKey(hKey);
+    return true;
+  }
+  return false;
+
+}
+
 QVariant Helper_t::readData(QByteArray &&data){
 
   QVariant data_{};
