@@ -19,3 +19,16 @@ QVariant SWTableModel::data(const QModelIndex& index, int role) const{
   return QSqlTableModel::data(index, role);
 
 }
+
+QVariant SWTableModel::headerData(int section, Qt::Orientation orientation, int role) const{
+
+  Q_UNUSED(section)
+  if(orientation == Qt::Vertical && role == Qt::DisplayRole){
+    return QVariant();
+  }
+  if(role == Qt::SizeHintRole){
+    return QSize(10,0);
+  }
+  return QSqlTableModel::headerData(section, orientation, role);
+
+}
