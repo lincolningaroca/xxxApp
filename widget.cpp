@@ -101,7 +101,7 @@ Widget::Widget(QWidget *parent)
 
   //action delete category
   QObject::connect(delCategory_, &QAction::triggered, this, [&](){
-    QMessageBox msgBox;
+    QMessageBox msgBox(this);
     msgBox.setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - Advertencia")));
     msgBox.setText(QStringLiteral("<p style='color:#FB4934;'>"
                                   "<cite><strong>Esta a punto eliminar ésta categoría y todo su contenido.<br>"
@@ -368,7 +368,7 @@ Widget::Widget(QWidget *parent)
 
   //conect btn login
   QObject::connect(ui->btnLogIn, &QToolButton::clicked, this, [&](){
-    LogInDialog logDialog;
+    LogInDialog logDialog(this);
     if(logDialog.exec() == QDialog::Accepted){
 
       SW::Helper_t::current_user_ = logDialog.userName();
