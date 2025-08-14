@@ -37,7 +37,7 @@ AcercaDeDialog::AcercaDeDialog(Qt::ColorScheme colorMode, QWidget *parent) :
 
       QFile fileName(":/licencia/licencia.txt");
       if (!fileName.open(QFile::ReadOnly | QFile::Text)) {
-          QMessageBox::warning(nullptr, SW::Helper_t::appName(), "Error al abrir el archivo.\n" +
+          QMessageBox::warning(this, SW::Helper_t::appName(), "Error al abrir el archivo.\n" +
                                fileName.errorString());
           return;
         }

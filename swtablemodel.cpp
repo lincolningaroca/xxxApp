@@ -2,7 +2,7 @@
 #include <QSqlRecord>
 #include "util/helper.hpp"
 
-SWTableModel::SWTableModel(QObject *parent, QSqlDatabase db)
+SWTableModel::SWTableModel(QObject *parent, const QSqlDatabase &db)
   : QSqlTableModel{parent, db}
 {
 

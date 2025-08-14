@@ -26,7 +26,7 @@ public:
 private:
   Ui::dlgNewCategory *ui;
 
-  bool validateData() const noexcept;
+  bool validateData() noexcept;
 
 };
 

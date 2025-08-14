@@ -82,9 +82,9 @@ QString dlgNewCategory::descriptionToolTip() const noexcept{
 }
 
 
-bool dlgNewCategory::validateData() const noexcept{
+bool dlgNewCategory::validateData()  noexcept{
   if(ui->txtCategory->text().simplified().isEmpty()){
-      QMessageBox::warning(nullptr, SW::Helper_t::appName(), QStringLiteral("Debe ingresar un nombre de categoría!\n"));
+      QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("Debe ingresar un nombre de categoría!\n"));
       ui->txtCategory->setFocus(Qt::OtherFocusReason);
       return false;
     }
