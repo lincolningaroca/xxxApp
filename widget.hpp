@@ -36,7 +36,7 @@ private:
   QAction* delCategory_{ nullptr };
   QAction* openUrl_{ nullptr };
   QAction* editUrl_{ nullptr };
-  QAction* quittUrl_{ nullptr };
+  QAction* quitUrl_{ nullptr };
   QAction* showDescDetail_{ nullptr };
   QAction* showPublicUrl_{ nullptr };
   QAction* moveUrl_{ nullptr };

@@ -132,22 +132,22 @@ Widget::Widget(QWidget *parent)
     auto [res, errMessage] = helperdb_.verifyDeleteCategory(categoryId);
     if(!res){
       QMessageBox::warning(this, SW::Helper_t::appName().append(QStringLiteral(" - Advertencia")),
-                           QString("<p>"
-                                   "<cite>"
-                                   "No se puede eliminar ésta categoría.<br>"
-                                   "Esto es debido a que ésta categoría tiene asociado uno o mas"
-                                   " elementos.<br><br>"
-                                   "<strong>Sugerencia:"
-                                   "</strong><br>"
-                                   "Si desea eliminar una categoría y todo su contenido, "
-                                   "puede optar por dar click derecho sobre el nombre de la categoría y"
-                                   " del menú contextual elegir:<br><br>"
-                                   "<strong>"
-                                   "<mark style='background:#FFFF00;color:#FF5500;'>"
-                                   "->Forzar eliminación de categoría.</mark>"
-                                   "</strong>"
-                                   "</cite>"
-                                   "</p>"));
+                           QStringLiteral("<p>"
+                                          "<cite>"
+                                          "No se puede eliminar ésta categoría.<br>"
+                                          "Esto es debido a que ésta categoría tiene asociado uno o mas"
+                                          " elementos.<br><br>"
+                                          "<strong>Sugerencia:"
+                                          "</strong><br>"
+                                          "Si desea eliminar una categoría y todo su contenido, "
+                                          "puede optar por dar click derecho sobre el nombre de la categoría y"
+                                          " del menú contextual elegir:<br><br>"
+                                          "<strong>"
+                                          "<mark style='background:#FFFF00;color:#FF5500;'>"
+                                          "->Forzar eliminación de categoría.</mark>"
+                                          "</strong>"
+                                          "</cite>"
+                                          "</p>"));
       //            qDebug()<<count<<'\n';
       return;
 
@@ -174,22 +174,22 @@ Widget::Widget(QWidget *parent)
     if(ui->btnAdd->text().compare("Agregar") == 0){
       if(!SW::Helper_t::urlValidate(ui->txtUrl->text())){
         QMessageBox::warning(this, SW::Helper_t::appName(),
-                             QString("<p>"
-                                     "<span>"
-                                     "La dirección: <strong>\"%1\"</strong>, no es válida!<br>"
-                                     "una dirección url válida debe tener una de las siguiente formas:"
-                                     "<ol>"
-                                     "<li><strong>(http://www.)url.dominio</strong></li>"
-                                     "<li><strong>(https://www.)url.dominio</strong></li>"
-                                     "<li><strong>(ftp://)url.dominio</strong></li>"
-                                     "<li><strong>(ftp://www.)url.dominio</strong></li>"
-                                     "</ol>"
-                                     "<br>Nota:<br>"
-                                     "Tenga en cuenta que "
-                                     "<strong>http://, https://, ftp://, www.</strong> son opcionales<br>"
-                                     "Lo mínimo que se espera es una direccón de la forma: <strong>\"url.domino\"</strong>"
-                                     "</span>"
-                                     "</p>").arg(ui->txtUrl->text()));
+                             QStringLiteral("<p>"
+                                            "<span>"
+                                            "La dirección: <strong>\"%1\"</strong>, no es válida!<br>"
+                                            "una dirección url válida debe tener una de las siguiente formas:"
+                                            "<ol>"
+                                            "<li><strong>(http://www.)url.dominio</strong></li>"
+                                            "<li><strong>(https://www.)url.dominio</strong></li>"
+                                            "<li><strong>(ftp://)url.dominio</strong></li>"
+                                            "<li><strong>(ftp://www.)url.dominio</strong></li>"
+                                            "</ol>"
+                                            "<br>Nota:<br>"
+                                            "Tenga en cuenta que "
+                                            "<strong>http://, https://, ftp://, www.</strong> son opcionales<br>"
+                                            "Lo mínimo que se espera es una direccón de la forma: <strong>\"url.domino\"</strong>"
+                                            "</span>"
+                                            "</p>").arg(ui->txtUrl->text()));
         ui->txtUrl->selectAll();
         ui->txtUrl->setFocus(Qt::OtherFocusReason);
         return;
@@ -250,7 +250,7 @@ Widget::Widget(QWidget *parent)
 
   //btnAddNewCategory
   QObject::connect(ui->btnNewCategory, &QPushButton::clicked, this, [&](){
-    dlgNewCategory newCategory(dlgNewCategory::OpenMode::New);
+    dlgNewCategory newCategory(dlgNewCategory::OpenMode::New, QStringList(), this);
 
     if(newCategory.exec() == QDialog::Rejected)
       return;
@@ -309,7 +309,7 @@ Widget::Widget(QWidget *parent)
 
   });
 
-  QObject::connect(quittUrl_, &QAction::triggered,this, [&](){
+  QObject::connect(quitUrl_, &QAction::triggered,this, [&](){
     if(!validateSelectedRow()) return;
 
     quitUrl();
@@ -542,8 +542,7 @@ Widget::Widget(QWidget *parent)
     SW::Helper_t::setLastOpenedDirectory(fileInfo.absolutePath());
 
     if(!process.startDetached(app, args)){
-      QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error en la ejecución.\n")+
-                                                             process.errorString());
+      QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error en la ejecución.\n%1").arg(process.errorString()));
       return;
 
     }
@@ -594,12 +593,11 @@ Widget::Widget(QWidget *parent)
       auto categoryid = cDialog.getCategoryId();
       if(helperdb_.urlExists(url_, categoryid)){
 
-        QMessageBox::warning(this, SW::Helper_t::appName(),
-                             QStringLiteral("<p>"
-                                            "La url: <cite>"
-                                            "<strong>%1</strong>"
-                                            "</cite>"
-                                            "</p> ya esta registrada, en la categoría a la que desea mover!!").arg(url_));
+        QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("<p>"
+                                                                           "La url: <cite>"
+                                                                           "<strong>%1</strong>"
+                                                                           "</cite>"
+                                                                           "</p> ya esta registrada, en la categoría a la que desea mover!!").arg(url_));
         return;
 
       }
@@ -673,9 +671,9 @@ void Widget::initFrm() noexcept{
   ui->btnEditCategory->setToolTip(QStringLiteral("Edit Category Data!"));
   //btnAdd disabled
   ui->btnAdd->setDisabled(true);
-  ui->btnLogIn->setShortcut(QKeySequence("Ctrl+L"));
+  ui->btnLogIn->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_L));
   ui->btnLogOut->setDisabled(true);
-  ui->btnLogOut->setShortcut(QKeySequence("Ctrl+Q"));
+  ui->btnLogOut->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Q));
 
   ui->btnCancel->setDisabled(true);
 
@@ -821,20 +819,23 @@ void Widget::setTheme(Qt::ColorScheme theme) const noexcept{
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Widget::writeSettings() const noexcept{
+
+  const auto currentText = ui->cboTheme->currentText();
+
   QSettings settings(qApp->organizationName(), SW::Helper_t::appName());
   settings.beginGroup(QStringLiteral("Theme"));
 
   settings.setValue(QStringLiteral("theme name"), themeType.value(static_cast<Qt::ColorScheme>(ui->cboTheme->currentIndex())));
-  settings.setValue(QStringLiteral("theme Value"), static_cast<uint32_t>(themeType.key(ui->cboTheme->currentText())));
+  settings.setValue(QStringLiteral("theme Value"), static_cast<uint32_t>(themeType.key(currentText)));
 
   QString lblColor_{};
 
-  if(ui->cboTheme->currentText().contains(themeType.value(Qt::ColorScheme::Unknown))){
+  if(currentText.contains(themeType.value(Qt::ColorScheme::Unknown))){
     auto retSystemColorScheme = SW::Helper_t::checkSystemColorScheme();
 
     lblColor_ = SW::Helper_t::lblColorMode.value(retSystemColorScheme);
 
-  }else if(ui->cboTheme->currentText().contains(themeType.value(Qt::ColorScheme::Light))){
+  }else if(currentText.contains(themeType.value(Qt::ColorScheme::Light))){
 
     lblColor_ = SW::Helper_t::lblColorMode.value(Qt::ColorScheme::Light);
 
@@ -942,9 +943,13 @@ void Widget::loadListCategory(uint32_t user_id) noexcept{
 
 void Widget::loadThemeComboBox() noexcept{
 
-  ui->cboTheme->addItem(QIcon{":/img/flat_seo-47-64.png"}, themeType.value(Qt::ColorScheme::Unknown));
-  ui->cboTheme->addItem(QIcon{":/img/whitetheme.png"}, themeType.value(Qt::ColorScheme::Light));
-  ui->cboTheme->addItem(QIcon{":/img/darktheme.png"}, themeType.value(Qt::ColorScheme::Dark));
+  const auto unknownIcon = QIcon{QStringLiteral(":/img/flat_seo-47-64.png")};
+  const auto whiteIcon = QIcon{QStringLiteral(":/img/whitetheme.png")};
+  const auto darkIcon = QIcon{QStringLiteral(":/img/darktheme.png")};
+
+  ui->cboTheme->addItem(unknownIcon, themeType.value(Qt::ColorScheme::Unknown));
+  ui->cboTheme->addItem(whiteIcon, themeType.value(Qt::ColorScheme::Light));
+  ui->cboTheme->addItem(darkIcon, themeType.value(Qt::ColorScheme::Dark));
 
   // ui->cboTheme->setItemData(0, false, Qt::UserRole-1);
 }
@@ -966,9 +971,13 @@ void Widget::setUptvUrlContextMenu() noexcept{
   // ui->tvUrl->setContextMenuPolicy(Qt::ActionsContextMenu);
   contextMenu = new QMenu(this);
 
-  openUrl_ = contextMenu->addAction(QIcon(QStringLiteral(":/img/openurl.png")), QStringLiteral("Abrir url en el navegador"));
-  editUrl_ = contextMenu->addAction(QIcon(QStringLiteral(":/img/editurl.png")), QStringLiteral("Editar url"));
-  quittUrl_ = contextMenu->addAction(QIcon(QStringLiteral(":/img/quiturl.png")), QStringLiteral("Quitar url"));
+  const auto openUrlIcon = QIcon(QStringLiteral(":/img/openurl.png"));
+  const auto editUrlIcon = QIcon(QStringLiteral(":/img/editurl.png"));
+  const auto quitUrlIcon = QIcon(QStringLiteral(":/img/quiturl.png"));
+
+  openUrl_ = contextMenu->addAction(openUrlIcon, QStringLiteral("Abrir url en el navegador"));
+  editUrl_ = contextMenu->addAction(editUrlIcon, QStringLiteral("Editar url"));
+  quitUrl_ = contextMenu->addAction(quitUrlIcon, QStringLiteral("Quitar url"));
   contextMenu->addSeparator();
   showDescDetail_ = contextMenu->addAction(QStringLiteral("Ver descripción de URL completa"));
 
@@ -981,7 +990,8 @@ void Widget::setUptvUrlContextMenu() noexcept{
   //add a export to excel context menu
 
   contextMenu->addSeparator();
-  exportToExcelFile_ = contextMenu->addAction(QIcon(QStringLiteral(":/img/excelDocument.png")), QStringLiteral("Exportar datos a excel"));
+  const auto exportToExcelFileIcon = QIcon(QStringLiteral(":/img/excelDocument.png"));
+  exportToExcelFile_ = contextMenu->addAction(exportToExcelFileIcon, QStringLiteral("Exportar datos a excel"));
 
   ui->tvUrl->installEventFilter(this);
 
@@ -1035,9 +1045,9 @@ void Widget::setCboCategoryToolTip() noexcept{
     return;
   }
 
-  ui->cboCategory->setToolTip(QString("<p>"
-                                      "<cite><strong>Descripción de la categoría:</strong>"
-                                      "<br><br>%1</cite></p>").arg(desc));
+  ui->cboCategory->setToolTip(QStringLiteral("<p>"
+                                             "<cite><strong>Descripción de la categoría:</strong>"
+                                             "<br><br>%1</cite></p>").arg(desc));
 
 }
 
@@ -1056,8 +1066,8 @@ void Widget::quitUrl() noexcept{
   const auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
 
   QMessageBox msgBox(this);
-  msgBox.setText(QString("<span>Confirma que desea eliminar esta dirección:<br>"
-                         " <cite style='color:#ff0800;'><strong>%1</strong></cite></span>").arg(url));
+  msgBox.setText(QStringLiteral("<span>Confirma que desea eliminar esta dirección:<br>"
+                                " <cite style='color:#ff0800;'><strong>%1</strong></cite></span>").arg(url));
   msgBox.setIcon(QMessageBox::Question);
   msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
   msgBox.button(QMessageBox::Yes)->setText("Eliminar");
@@ -1080,7 +1090,7 @@ void Widget::hastvUrlData() noexcept{
     ui->btnEdit->setDisabled(true);
     ui->btnQuit->setDisabled(true);
     editUrl_->setDisabled(true);
-    quittUrl_->setDisabled(true);
+    quitUrl_->setDisabled(true);
     moveUrl_->setVisible(false);
     showDescDetail_->setVisible(false);
     exportToExcelFile_->setVisible(false);
@@ -1090,7 +1100,7 @@ void Widget::hastvUrlData() noexcept{
     ui->btnEdit->setEnabled(true);
     ui->btnQuit->setEnabled(true);
     editUrl_->setEnabled(true);
-    quittUrl_->setEnabled(true);
+    quitUrl_->setEnabled(true);
     moveUrl_->setVisible(true);
     showDescDetail_->setVisible(true);
     exportToExcelFile_->setVisible(true);
