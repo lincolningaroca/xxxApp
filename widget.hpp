@@ -61,6 +61,7 @@ private:
 
   SW::HelperDataBase_t helperdb_{};
 
+  void verifyAppColorScheme();
   //custom functions
   void initFrm() noexcept;
   void editAction(bool op) noexcept;

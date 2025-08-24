@@ -347,6 +347,7 @@ Widget::Widget(QWidget *parent)
     Qt::ColorScheme scheme = themeType.key(ui->cboTheme->currentText());
     applyPreferredTheme(index);
     checkStatusSessionColor(themeType.value(scheme));
+    verifyAppColorScheme();
     writeSettings();
 
   });
@@ -379,26 +380,22 @@ Widget::Widget(QWidget *parent)
       ui->cboCategory->clear();
       loadListCategory(userId_);
 
-      if(ui->cboTheme->currentText().contains(themeType.value(Qt::ColorScheme::Unknown))){
 
-        setLabelInfo(SW::Helper_t::checkSystemColorScheme(), SW::Helper_t::current_user_);
+      // checkStatusSessionColor(ui->cboTheme->currentText());
 
-      }else{
-
-        (ui->cboTheme->currentText() == themeType.value(Qt::ColorScheme::Dark) )
-        ? setLabelInfo(Qt::ColorScheme::Dark, SW::Helper_t::current_user_)
-        : setLabelInfo(Qt::ColorScheme::Light, SW::Helper_t::current_user_);
-      }
       ui->btnLogOut->setEnabled(true);
       ui->btnLogIn->setDisabled(true);
       ui->btnResetPassword->setVisible(false);
       // setWindowTitle(QApplication::applicationName().append(QStringLiteral(" - Sesión inicada como: ")+logDialog.userName()));
-      setWindowTitle(QApplication::applicationName().append(QStringLiteral(" - Sesión inicada como: ").append(SW::Helper_t::current_user_)));
+      const auto userDes = QString(" - Sesión inicada como: '%1'").arg(SW::Helper_t::current_user_);
+      setWindowTitle(QApplication::applicationName().append(userDes));
+
       ui->lblIcon->setPixmap(QPixmap(QStringLiteral(":/img/user.png")).scaled(16,16));
       SW::Helper_t::sessionStatus_ = SW::SessionStatus::Session_start;
       has_data();
       checkStatusContextMenu();
       canRestoreDataBase();
+      verifyAppColorScheme();
     }
 
   });
@@ -407,17 +404,6 @@ Widget::Widget(QWidget *parent)
   QObject::connect(ui->btnLogOut, &QToolButton::clicked, this, [&](){
     userId_ = helperdb_.getUser_id(SW::Helper_t::defaultUser, SW::User::U_public);
 
-    if(ui->cboTheme->currentText().contains(themeType.value(Qt::ColorScheme::Unknown))){
-
-      // setLabelInfo(themeType.key(ui->cboTheme->currentText()), SW::Helper_t::current_user_);
-      setLabelInfo(SW::Helper_t::checkSystemColorScheme(), SW::Helper_t::current_user_);
-
-    }else{
-
-      (ui->cboTheme->currentText() == themeType.value(Qt::ColorScheme::Dark ))
-      ? setLabelInfo(Qt::ColorScheme::Dark)
-      : setLabelInfo(Qt::ColorScheme::Light);
-    }
     ui->btnLogOut->setDisabled(true);
     ui->btnLogIn->setEnabled(true);
     ui->btnResetPassword->setVisible(true);
@@ -430,6 +416,8 @@ Widget::Widget(QWidget *parent)
     checkStatusContextMenu();
     SW::Helper_t::current_user_ = SW::Helper_t::defaultUser;
     canRestoreDataBase();
+
+    verifyAppColorScheme();
 
   });
 
@@ -660,6 +648,24 @@ void Widget::loadLblSchemePreference(){
 
 }
 
+void Widget::verifyAppColorScheme(){
+
+  auto sessionStatus = SW::Helper_t::sessionStatus_;
+  auto u_public = SW::Helper_t::currentUser_.value(SW::User::U_public);
+
+  if(ui->cboTheme->currentText() == themeType.value(Qt::ColorScheme::Unknown)){
+
+    setLabelInfo(SW::Helper_t::checkSystemColorScheme(), ((sessionStatus == SW::SessionStatus::Session_start) ? SW::Helper_t::current_user_ : u_public ));
+
+  }else{
+
+    (ui->cboTheme->currentText() == themeType.value(Qt::ColorScheme::Dark))
+    ? setLabelInfo(Qt::ColorScheme::Dark, ((sessionStatus == SW::SessionStatus::Session_start) ? SW::Helper_t::current_user_ : u_public ))
+    : setLabelInfo(Qt::ColorScheme::Light, ((sessionStatus == SW::SessionStatus::Session_start) ? SW::Helper_t::current_user_ : u_public ));
+
+  }
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -786,13 +792,13 @@ void  Widget::has_data() noexcept{
 
 void Widget::canRestoreDataBase() const noexcept{
 
-  (static_cast<bool>(SW::Helper_t::sessionStatus_)) ? ui->btnRestore->setVisible(true) : ui->btnRestore->setVisible(false);
+  ui->btnRestore->setVisible(static_cast<bool>(SW::Helper_t::sessionStatus_));
 }
 
 void Widget::canCreateBackUp() const noexcept{
 
   auto model = ui->tvUrl->model();
-  (model->rowCount() > 0) ? ui->btnBackUp->setEnabled(true) : ui->btnBackUp->setDisabled(true);
+  ui->btnBackUp->setEnabled(model->rowCount() > 0);
 
 }
 
@@ -830,12 +836,12 @@ void Widget::writeSettings() const noexcept{
 
   QString lblColor_{};
 
-  if(currentText.contains(themeType.value(Qt::ColorScheme::Unknown))){
+  if(currentText == themeType.value(Qt::ColorScheme::Unknown)){
     auto retSystemColorScheme = SW::Helper_t::checkSystemColorScheme();
 
     lblColor_ = SW::Helper_t::lblColorMode.value(retSystemColorScheme);
 
-  }else if(currentText.contains(themeType.value(Qt::ColorScheme::Light))){
+  }else if(currentText == themeType.value(Qt::ColorScheme::Light)){
 
     lblColor_ = SW::Helper_t::lblColorMode.value(Qt::ColorScheme::Light);
 
@@ -907,9 +913,10 @@ void Widget::checkStatusSessionColor(const QString& text){
     ? setLabelInfo(Qt::ColorScheme::Dark, SW::Helper_t::current_user_)
     : setLabelInfo(Qt::ColorScheme::Light, SW::Helper_t::current_user_);
   }else{
+    auto u_public = SW::Helper_t::currentUser_.value(SW::User::U_public);
     ( text == themeType.value(Qt::ColorScheme::Light) )
-    ? setLabelInfo(Qt::ColorScheme::Light, SW::Helper_t::current_user_)
-    : setLabelInfo(Qt::ColorScheme::Dark, SW::Helper_t::current_user_);
+      ? setLabelInfo(Qt::ColorScheme::Light, u_public)
+      : setLabelInfo(Qt::ColorScheme::Dark, u_public);
 
   }
 
