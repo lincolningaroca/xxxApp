@@ -216,6 +216,7 @@ Widget::Widget(QWidget *parent)
 
         hastvUrlData();
         checkStatusContextMenu();
+        canCreateBackUp();
       }
     }else{
 
@@ -797,22 +798,31 @@ void Widget::canRestoreDataBase() const noexcept{
 
 void Widget::canCreateBackUp() const noexcept{
 
-  auto model = ui->tvUrl->model();
-  ui->btnBackUp->setEnabled(model->rowCount() > 0);
+  ui->btnBackUp->setVisible(hasValidTableData());
 
 }
 
-void Widget::canStartSession() const noexcept{
+bool Widget::hasValidTableData() const noexcept {
 
-  auto model = ui->tvUrl->model();
+  const auto tables = db_.tables(QSql::Tables);
+  const QStringList excludedTables{"users", "sqlite_sequence"};
 
-  if(model->rowCount() > 0){
-    ui->btnLogIn->setEnabled(true);
-    ui->btnResetPassword->setEnabled(true);
-  }else{
-    ui->btnLogIn->setDisabled(true);
-    ui->btnResetPassword->setDisabled(true);
-  }
+  return std::any_of(tables.cbegin(), tables.cend(),
+                     [&excludedTables, this](const QString& tableName) -> bool {
+                       if (excludedTables.contains(tableName)) {
+                         return false;
+                       }
+
+                       QSqlQuery query(db_);
+                       return query.exec(QString("SELECT 1 FROM %1 LIMIT 1").arg(tableName)) &&
+                              query.next();
+                     });
+}
+
+void Widget::canStartSession() noexcept{
+
+  ui->btnLogIn->setEnabled(helperdb_.userExists());
+  ui->btnResetPassword->setEnabled(helperdb_.userExists());
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////

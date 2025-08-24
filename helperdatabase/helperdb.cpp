@@ -27,6 +27,21 @@ namespace SW {
     return (qry_.value(0).toUInt() == 1);
   }
 
+  bool HelperDataBase_t::userExists() noexcept{
+
+    auto res{0};
+    [[maybe_unused]] auto ret = qry_.prepare("SELECT COUNT(user) FROM users WHERE user <> ?");
+    qry_.addBindValue(SW::Helper_t::defaultUser, QSql::In);
+
+    if(qry_.exec()){
+      qry_.first();
+      res = qry_.value(0).toUInt();
+    }
+
+    return (res >= 1);
+
+  }
+
   bool HelperDataBase_t::categoryExists(QStringView category, uint32_t userId) noexcept{
     [[maybe_unused]]
         auto ret = qry_.prepare(QStringLiteral("SELECT COUNT(*) FROM category WHERE category_name = ? AND userid = ?"));
