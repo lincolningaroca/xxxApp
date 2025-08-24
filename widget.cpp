@@ -697,6 +697,11 @@ void Widget::initFrm() noexcept{
 
   ui->btnResetPassword->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_P));
 
+  ui->firstTimeLogInBtn->setToolTip("<p>Crear un usuario: <br>"
+                                    "<cite>\"Este boton se muestra solo por una vez; "
+                                    "esto es por la razón de que, al abrir la aplicación por primera vez no existen usuarios,"
+                                    " aparte del usario por defecto\"</cite></p>");
+
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////

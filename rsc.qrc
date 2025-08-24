@@ -29,5 +29,6 @@
         <file>font/FiraCode-Regular.ttf</file>
         <file>img/excelDocument.png</file>
         <file>img/Change_password-256.png</file>
+        <file>img/Add_User.png</file>
     </qresource>
 </RCC>
