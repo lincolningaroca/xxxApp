@@ -16,7 +16,7 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
 
   QObject::connect(ui->stackedWidget, &QStackedWidget::currentChanged, this, [&](int index){
 
-    (index == 0) ? ui->btnAtras->setDisabled(true) : ui->btnAtras->setEnabled(true);
+    ui->btnAtras->setDisabled(index == 0);
 
   });
 
@@ -195,7 +195,9 @@ void ResetPasswordDialog::setInit_Form() noexcept{
 
   if(ui->stackedWidget->currentIndex() == 0)   ui->btnAtras->setDisabled(true);
 
-  auto* validator = new QRegularExpressionValidator(QRegularExpression(QStringLiteral("^\\d{4}$")), this);
+  const auto re = QRegularExpression(QStringLiteral("^\\d{4}$"));
+
+  auto* validator = new QRegularExpressionValidator(re, this);
   ui->txtPIN->setValidator(validator);
 
   ui->txtPIN->setEchoMode(QLineEdit::Password);
