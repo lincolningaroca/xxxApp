@@ -10,7 +10,7 @@
 #include <QSettings>
 
 
-LogInDialog::LogInDialog(QWidget *parent) :
+LogInDialog::LogInDialog(QWidget *parent, OpenMode op) :
   QDialog(parent), ui(new Ui::LogInDialog){
 
   ui->setupUi(this);
@@ -74,6 +74,7 @@ LogInDialog::LogInDialog(QWidget *parent) :
 
   //connect to create user button
   QObject::connect(ui->btnCreateUser, &QAbstractButton::clicked, this, [&](){
+
     if(Validate_hasNoEmpty()){
       QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("<span><em>Todos los campos son requeridos!</em></span>"));
       ui->txtNewUser->setFocus();
@@ -177,7 +178,11 @@ LogInDialog::LogInDialog(QWidget *parent) :
                              ui->cboRestoreType->currentText(), first_value, confirm_value)){
       QMessageBox::information(this, SW::Helper_t::appName(), QStringLiteral("<span><em>El nuevo usuario fue creado con éxito!</em></span>"));
       clearControls();
-      ui->btnOtherOptions->toggle();
+
+      if(op == NO_STATE)
+        ui->btnOtherOptions->toggle();
+      else
+        accept();
     }
 
 
@@ -243,6 +248,17 @@ LogInDialog::~LogInDialog()
   delete ui;
 }
 
+void LogInDialog::setToggledToButton(bool op){
+
+  setWindowTitle("Crear nuevo usuario.");
+  ui->groupBox->setDisabled(op);
+  // ui->btnOtherOptions->setChecked(op);
+  ui->btnOtherOptions->toggle();
+  ui->btnOtherOptions->setDisabled(op);
+  ui->btnResetPassword->setVisible(!op);
+
+}
+
 
 
 void LogInDialog::setUp_Form() noexcept{
@@ -298,6 +314,7 @@ void LogInDialog::setUp_Form() noexcept{
 }
 
 void LogInDialog::setStateControls(bool op) noexcept{
+
   ui->txtPassword->setDisabled(op);
   ui->txtUser->setDisabled(op);
   ui->pbCancel->setDisabled(op);
