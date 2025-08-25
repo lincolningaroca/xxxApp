@@ -276,8 +276,8 @@ Widget::Widget(QWidget *parent)
   QObject::connect(ui->btnEditCategory, &QPushButton::clicked, this, [&](){
 
     const auto id = categoryList.key(ui->cboCategory->currentText());
-    const QStringList data = helperdb_.dataCategory(id);
-    dlgNewCategory editCategory(dlgNewCategory::OpenMode::Edit, data, this);
+    const QStringList dataLocal = helperdb_.dataCategory(id);
+    dlgNewCategory editCategory(dlgNewCategory::OpenMode::Edit, dataLocal, this);
     if(editCategory.exec() == QDialog::Rejected){
       return;
     }
@@ -370,6 +370,7 @@ Widget::Widget(QWidget *parent)
 
   //conect btn login
   QObject::connect(ui->btnLogIn, &QToolButton::clicked, this, [&](){
+    // LogInDialog logDialog(LogInDialog::NO_STATE, this);
     LogInDialog logDialog(this);
     if(logDialog.exec() == QDialog::Accepted){
 
@@ -603,6 +604,17 @@ Widget::Widget(QWidget *parent)
 
   });
 
+  QObject::connect(ui->firstTimeLogInBtn, &QToolButton::clicked, this, [&](){
+
+    LogInDialog login(this, LogInDialog::FIRST_TIME);
+    login.setToggledToButton(true);
+    if(login.exec() == QDialog::Accepted){
+      canStartSession();
+      ui->firstTimeLogInBtn->setVisible(false);
+    }
+
+  });
+
   // qInfo() << helperdb_.isDataBase_empty();
 
 }//Fin del constructor
@@ -699,7 +711,7 @@ void Widget::initFrm() noexcept{
 
   ui->firstTimeLogInBtn->setToolTip("<p>Crear un usuario: <br>"
                                     "<cite>\"Este boton se muestra solo por una vez; "
-                                    "esto es por la razón de que, al abrir la aplicación por primera vez no existen usuarios,"
+                                    "esto es por la razón de que, al abrir la aplicación por primera vez, no existen usuarios,"
                                     " aparte del usario por defecto\"</cite></p>");
 
 }
@@ -828,6 +840,7 @@ void Widget::canStartSession() noexcept{
 
   ui->btnLogIn->setEnabled(helperdb_.userExists());
   ui->btnResetPassword->setEnabled(helperdb_.userExists());
+  ui->firstTimeLogInBtn->setVisible(!helperdb_.userExists());
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////

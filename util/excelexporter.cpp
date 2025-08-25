@@ -54,7 +54,7 @@ bool ExcelExporter::exportTableView(QTableView *tableView, const QString &filePa
     return false;
   }
 
-  QXlsx::Document xlsxDocument;
+  QXlsx::Document xlsxDocument(tableView);
   auto *model =tableView->model();
 
 
