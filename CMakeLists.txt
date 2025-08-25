@@ -13,12 +13,12 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Wextra -Wconversion")
+
 
 # set the application icon
 set(APP_ICON "${CMAKE_CURRENT_SOURCE_DIR}/appIcon.rc")
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Sql Network)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Sql Network )
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Sql Network)
 
 set(PROJECT_SOURCES
@@ -112,6 +112,21 @@ set_target_properties(
   ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
   MACOSX_BUNDLE TRUE
   WIN32_EXECUTABLE TRUE)
+
+target_compile_options(${PROJECT_NAME} PRIVATE
+  -Wall
+  -Wpedantic
+  -Wextra
+  -Wconversion
+  -Wshadow
+  -Wnon-virtual-dtor
+  -Wold-style-cast
+  -Wcast-align
+  -Wunused
+  -Woverloaded-virtual
+  -Wno-unused-parameter
+
+)
 
 install(
   TARGETS xxxapp
