@@ -99,8 +99,8 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(
   xxxapp
   PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Sql
-  ${CMAKE_CURRENT_SOURCE_DIR}/lib/libcrypto.lib
   Qt${QT_VERSION_MAJOR}::Network
+  ${CMAKE_CURRENT_SOURCE_DIR}/lib/libcrypto.lib
   ${CMAKE_CURRENT_SOURCE_DIR}/lib/libQXlsxQt6.a)
 target_link_libraries(xxxapp PRIVATE Qt6::Core)
 
