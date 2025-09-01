@@ -259,7 +259,7 @@ Widget::Widget(QWidget *parent)
     // auto userid = helperdb_.getUser_id(QStringLiteral("public"), SW::User::U_public);
 
     if(!helperdb_.saveCategoryData(newCategory.category(), newCategory.description(), userId_)){
-      QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error alguardar los datos!\n"));
+      QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error al guardar los datos!\n"));
       return;
     }
     ui->cboCategory->clear();

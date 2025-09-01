@@ -29,7 +29,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Category</string>
+      <string/>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="leftMargin">
@@ -47,14 +47,14 @@
       <item>
        <widget class="QLineEdit" name="txtCategory">
         <property name="placeholderText">
-         <string>Category name</string>
+         <string>Nombre de categoría</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPlainTextEdit" name="pteDesc">
         <property name="placeholderText">
-         <string>Category description.</string>
+         <string>Descripción</string>
         </property>
        </widget>
       </item>
@@ -64,7 +64,7 @@
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
      </property>
     </widget>
    </item>

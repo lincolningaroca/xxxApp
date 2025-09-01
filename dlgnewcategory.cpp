@@ -1,22 +1,33 @@
 #include "dlgnewcategory.hpp"
 #include "ui_dlgnewcategory.h"
 #include <QMessageBox>
+#include <QPushButton>
 #include "util/helper.hpp"
 #include "helperdatabase/helperdb.hpp"
 
 
 dlgNewCategory::dlgNewCategory(OpenMode mode, const QStringList &list, QWidget *parent) :
   QDialog(parent), ui(new Ui::dlgNewCategory){
+
   ui->setupUi(this);
+
   setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
+
+  auto cancelButton = ui->buttonBox->button(QDialogButtonBox::Cancel);
+  cancelButton->setText("Cancelar");
+  auto okButton = ui->buttonBox->button(QDialogButtonBox::Ok);
 
 
   if(static_cast<bool>(mode)){
-      setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - Edit category data.")));
+      setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - Editar datos de la categoría")));
       ui->txtCategory->setText(list.value(0));
       ui->pteDesc->setPlainText(list.value(1));
+      okButton->setText("Actualizar datos");
+
     }else{
-      setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - New category.")));
+
+      setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - Nueva categoría")));
+      okButton->setText("Crear categoría");
     }
 
 
