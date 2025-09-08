@@ -74,7 +74,7 @@ Widget::Widget(QWidget *parent)
   QObject::connect(ui->btnResetPassword, &QToolButton::clicked, this, [&](){
 
     ResetPasswordDialog resetDialog(this);
-    resetDialog.setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - Restablecer clave o password")));
+    resetDialog.setWindowTitle(SW::Helper_t::appName().append(" - Restablecer clave o password"));
     resetDialog.exec();
   });
 
@@ -198,8 +198,9 @@ Widget::Widget(QWidget *parent)
       const auto categoryId = categoryList.key(ui->cboCategory->currentText());
 
       if(helperdb_.urlExists(ui->txtUrl->text(), categoryId)){
-        QMessageBox::warning(this, SW::Helper_t::appName(),
-                             QStringLiteral("<p>La url: <cite><strong>%1</strong></cite></p> ya esta registrada!!").arg(ui->txtUrl->text()));
+
+        auto warningMsg = QString("<p>La url: <cite><strong>%1</strong></cite></p> ya esta registrada!!").arg(ui->txtUrl->text());
+        QMessageBox::warning(this, SW::Helper_t::appName(), warningMsg);
         ui->txtUrl->selectAll();
         ui->txtUrl->setFocus(Qt::OtherFocusReason);
         return;
@@ -221,7 +222,7 @@ Widget::Widget(QWidget *parent)
     }else{
 
       QSqlQuery qry(db_);
-      [[maybe_unused]] auto res=qry.prepare(QStringLiteral("UPDATE  urls SET url=?, desc=? WHERE url_id=? AND categoryid=?"));
+      [[maybe_unused]] auto res=qry.prepare(R"(UPDATE  urls SET url=?, desc=? WHERE url_id=? AND categoryid=?)");
       const auto encryptedData = SW::Helper_t::encrypt(ui->txtUrl->text());
       qry.addBindValue(encryptedData, QSql::In);
       const auto descData = SW::Helper_t::encrypt(ui->pteDesc->toPlainText().simplified().toUpper());
@@ -232,8 +233,8 @@ Widget::Widget(QWidget *parent)
       const auto categoryId = categoryList.key(ui->cboCategory->currentText());
       qry.addBindValue(categoryId, QSql::In);
       if(!qry.exec()){
-        QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Fallo la ejecución de la sentencia!\n")
-                                                               +qry.lastError().text());
+        QMessageBox::critical(this, SW::Helper_t::appName(), tr("Fallo la ejecución de la sentencia!\n%1").arg(
+                                                               qry.lastError().text()));
         return;
 
       }
@@ -429,7 +430,7 @@ Widget::Widget(QWidget *parent)
     const auto path_app {SW::Helper_t::app_pathLocation().append("/tools/sqlite-tools-win-x64-3450100/sqlite3.exe")};
     // qInfo() << path_app << '\n';
 
-    const auto databasePath = SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase.db"));
+    const auto databasePath = SW::Helper_t::AppLocalDataLocation().append("/xdatabase.db");
     const auto filePath = QFileDialog::getSaveFileName(this, QStringLiteral("Crear una copia de seguridad"), SW::Helper_t::getLastOpenedDirectory(),
                                                        QStringLiteral("Archivos de copia de seguridad (*.bak)"));
 
@@ -438,7 +439,7 @@ Widget::Widget(QWidget *parent)
       return;
 
     if(filePath.contains(' ')){
-      QMessageBox::warning(this, SW::Helper_t::appName(), "El nombre del archivo no puede contener espacios.");
+      QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("El nombre del archivo no puede contener espacios."));
       return;
     }
 
@@ -455,7 +456,7 @@ Widget::Widget(QWidget *parent)
 
     // Verificar si el ejecutable sqlite3 existe
     if(!QFile::exists(path_app)) {
-      QMessageBox::critical(this, SW::Helper_t::appName(), "No se encontró el ejecutable sqlite3");
+      QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("No se encontró el ejecutable sqlite3"));
       return;
     }
 
@@ -472,13 +473,11 @@ Widget::Widget(QWidget *parent)
 
 
     if(!started || pid == 0) {
-      QMessageBox::critical(this, SW::Helper_t::appName(),
-                            "Error al crear la copia de seguridad.\n" +
-                              process.errorString());
+      QMessageBox::critical(this, SW::Helper_t::appName(), tr("Error al crear la copia de seguridad.\n").arg(process.errorString()));
       return;
     }
 
-    QMessageBox::information(this, SW::Helper_t::appName(), QStringLiteral("La copia de seguridad fue creada en:\n%1").arg(filePath));
+    QMessageBox::information(this, SW::Helper_t::appName(), tr("La copia de seguridad fue creada en:\n%1").arg(filePath));
 
 
   });
@@ -486,7 +485,7 @@ Widget::Widget(QWidget *parent)
   //restore database
   QObject::connect(ui->btnRestore, &QToolButton::clicked, this, [&](){
 
-    const auto dbasePath{SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase.db"))};
+    const auto dbasePath{SW::Helper_t::AppLocalDataLocation().append("/xdatabase.db")};
 
     if(!helperdb_.isDataBase_empty()){
 
@@ -532,7 +531,7 @@ Widget::Widget(QWidget *parent)
     SW::Helper_t::setLastOpenedDirectory(fileInfo.absolutePath());
 
     if(!process.startDetached(app, args)){
-      QMessageBox::critical(this, SW::Helper_t::appName(), QStringLiteral("Error en la ejecución.\n%1").arg(process.errorString()));
+      QMessageBox::critical(this, SW::Helper_t::appName(), tr("Error en la ejecución.\n%1").arg(process.errorString()));
       return;
 
     }
@@ -583,11 +582,13 @@ Widget::Widget(QWidget *parent)
       auto categoryid = cDialog.getCategoryId();
       if(helperdb_.urlExists(url_, categoryid)){
 
-        QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("<p>"
-                                                                           "La url: <cite>"
-                                                                           "<strong>%1</strong>"
-                                                                           "</cite>"
-                                                                           "</p> ya esta registrada, en la categoría a la que desea mover!!").arg(url_));
+        auto warningMsg = QString("<p>"
+                                  "La url: <cite>"
+                                  "<strong>%1</strong>"
+                                  "</cite>"
+                                  "</p> ya esta registrada, en la categoría a la que desea mover!!").arg(url_);
+
+        QMessageBox::warning(this, SW::Helper_t::appName(), warningMsg);
         return;
 
       }
@@ -748,7 +749,7 @@ void Widget::setUpTable(uint32_t categoryId) noexcept{
 
   xxxModel_ = new SWTableModel(this, db_);
   xxxModel_->setTable("urls");
-  xxxModel_->setFilter(QStringLiteral("categoryid=%1").arg(categoryId));
+  xxxModel_->setFilter(QString("categoryid=%1").arg(categoryId));
   xxxModel_->select();
 
   ui->tvUrl->setModel(xxxModel_);
@@ -956,14 +957,14 @@ void Widget::setLabelInfo(Qt::ColorScheme color, const QString& userName) noexce
 
   // auto userName_ = SW::Helper_t::currentUser_.value(userName);
 
-  ui->lblInfo->setText(QStringLiteral("<span style='color:%1;'>"
-                                      "<strong>SWSystem's - Lincoln Ingaroca"
-                                      "</strong></span>").arg(SW::Helper_t::lblColorMode.value(color)));
+  ui->lblInfo->setText(QString("<span style='color:%1;'>"
+                               "<strong>SWSystem's - Lincoln Ingaroca"
+                               "</strong></span>").arg(SW::Helper_t::lblColorMode.value(color)));
 
 
-  ui->lblState->setText(QStringLiteral("<span style='color:%1;'>"
-                                       "<strong>User: %2"
-                                       "</strong></span>").arg(SW::Helper_t::lblColorMode.value(color), userName));
+  ui->lblState->setText(QString("<span style='color:%1;'>"
+                                "<strong>User: %2"
+                                "</strong></span>").arg(SW::Helper_t::lblColorMode.value(color), userName));
 
 }
 
@@ -1080,9 +1081,9 @@ void Widget::setCboCategoryToolTip() noexcept{
     return;
   }
 
-  ui->cboCategory->setToolTip(QStringLiteral("<p>"
-                                             "<cite><strong>Descripción de la categoría:</strong>"
-                                             "<br><br>%1</cite></p>").arg(desc));
+  ui->cboCategory->setToolTip(QString("<p>"
+                                      "<cite><strong>Descripción de la categoría:</strong>"
+                                      "<br><br>%1</cite></p>").arg(desc));
 
 }
 
@@ -1101,8 +1102,8 @@ void Widget::quitUrl() noexcept{
   const auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
 
   QMessageBox msgBox(this);
-  msgBox.setText(QStringLiteral("<span>Confirma que desea eliminar esta dirección:<br>"
-                                " <cite style='color:#ff0800;'><strong>%1</strong></cite></span>").arg(url));
+  msgBox.setText(QString("<span>Confirma que desea eliminar esta dirección:<br>"
+                         " <cite style='color:#ff0800;'><strong>%1</strong></cite></span>").arg(url));
   msgBox.setIcon(QMessageBox::Question);
   msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
   msgBox.button(QMessageBox::Yes)->setText("Eliminar");

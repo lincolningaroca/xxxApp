@@ -42,34 +42,35 @@ bool validate{false};
 
 bool createDataBase(){
   QSqlDatabase db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), QStringLiteral("xxxConection"));
-  db.setDatabaseName(SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase.db")));
+  db.setDatabaseName(SW::Helper_t::AppLocalDataLocation().append("/xdatabase.db"));
   return db.open();
 }
 bool dataBaseExists(){
-  const auto path = SW::Helper_t::AppLocalDataLocation().append(QStringLiteral("/xdatabase.db"));
+  const auto path = SW::Helper_t::AppLocalDataLocation().append("/xdatabase.db");
   QFile file(path);
   return file.exists();
 }
 bool createTables(){
   QSqlQuery qry(QSqlDatabase::database(QStringLiteral("xxxConection")));
-  return(qry.exec(QStringLiteral("CREATE TABLE users(user_id integer primary key autoincrement,"
-                                  "user text not null unique,"
-                                  "password text not null,"
-                                  "user_profile varchar(20) not null,"
-                                  "rescue_type varchar(40) not null,"
-                                  "first_value text not null,"
-                                  "confirm_value text not null);")) &&
+  return(qry.exec(R"(CREATE TABLE users(user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                  user TEXT NOT NULL UNIQUE,
+                                  password TEXT NOT NULL,
+                                  user_profile VARCHAR(20) NOT NULL,
+                                  rescue_type VARCHAR(40) NOT NULL,
+                                  first_value TEXT NOT NULL,
+                                  confirm_value TEXT NOT NULL))") &&
 
-          qry.exec(QStringLiteral("INSERT INTO users VALUES(1,'public','public','PUBLIC','PUBLIC','PUBLIC','PUBLIC');")) &&
-          qry.exec(QStringLiteral("CREATE TABLE urls(url_id integer primary key autoincrement,"
-                                  "url text not null,"
-                                  "desc text,"
-                                  "categoryid integer references category(category_id));")) &&
+          qry.exec(R"(INSERT INTO users VALUES(1,'public','public','PUBLIC','PUBLIC','PUBLIC','PUBLIC'))") &&
+          qry.exec(R"(CREATE TABLE urls(url_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                  url TEXT NOT NULL,
+                                  desc TEXT,
+                                  categoryid INTEGER REFERENCES category(category_id)))") &&
 
-          qry.exec(QStringLiteral("CREATE TABLE category(category_id integer primary key autoincrement,"
-                                  "category_name text not null,"
-                                  "desc text,"
-                                  "userid integer references users(user_id));")));
+          qry.exec(R"(CREATE TABLE category(category_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                  category_name TEXT NOT NULL,
+                                  desc TEXT,
+                                  userid INTEGER REFERENCES users(user_id)))")
+          );
 
 
 }

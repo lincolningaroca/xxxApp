@@ -19,14 +19,14 @@ dlgNewCategory::dlgNewCategory(OpenMode mode, const QStringList &list, QWidget *
 
 
   if(static_cast<bool>(mode)){
-      setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - Editar datos de la categoría")));
+      setWindowTitle(SW::Helper_t::appName().append(" - Editar datos de la categoría"));
       ui->txtCategory->setText(list.value(0));
       ui->pteDesc->setPlainText(list.value(1));
       okButton->setText("Actualizar datos");
 
     }else{
 
-      setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - Nueva categoría")));
+      setWindowTitle(SW::Helper_t::appName().append(" - Nueva categoría"));
       okButton->setText("Crear categoría");
     }
 

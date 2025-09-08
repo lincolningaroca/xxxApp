@@ -35,10 +35,10 @@ AcercaDeDialog::AcercaDeDialog(Qt::ColorScheme colorMode, QWidget *parent) :
       QScopedPointer<QVBoxLayout> mainLayOut(new QVBoxLayout(&licenciaDlg));
       QScopedPointer<QTextBrowser> teLicencia(new QTextBrowser(&licenciaDlg));
 
-      QFile fileName(":/licencia/licencia.txt");
+      QFile fileName(QStringLiteral(":/licencia/licencia.txt"));
       if (!fileName.open(QFile::ReadOnly | QFile::Text)) {
-          QMessageBox::warning(this, SW::Helper_t::appName(), "Error al abrir el archivo.\n" +
-                               fileName.errorString());
+        QMessageBox::warning(this, SW::Helper_t::appName(), tr("Error al abrir el archivo.\n%1").arg(
+                               fileName.errorString()));
           return;
         }
 
@@ -72,7 +72,7 @@ void AcercaDeDialog::loadInfo_app() const noexcept{
   ui->tbLicencia->setFont(customFont);
   ui->tbLicencia->setAcceptRichText(true);
   ui->tbLicencia->setOpenExternalLinks(true);
-  ui->tbLicencia->setHtml(
+  ui->tbLicencia->setHtml(QStringLiteral(
         "<p>xxxApp:<br><br>Es software libre, puede "
         "redistribuirlo y/o modificarlo bajo los términos de la Licencia Pública "
         "General de GNU según se encuentra publicada por la <a "
@@ -84,14 +84,14 @@ void AcercaDeDialog::loadInfo_app() const noexcept{
         "GARANTÍA</strong>, incluso sin la garantía <strong>MERCANTIL</strong> implícita ni la de "
         "garantizar la <strong>ADECUACIÓN A UN PROPÓSITO PARTICULAR.</strong> Véase la <a "
         "href=\"https://www.gnu.org/licenses/\">Licencia "
-        "Pública General</a> de GNU para más detalles.</p>");
+        "Pública General</a> de GNU para más detalles.</p>"));
 
 }
 
 void AcercaDeDialog::setTextToAbout() const{
   ui->tbAcercaDe->setFont(customFont);
   ui->tbAcercaDe->setOpenExternalLinks(true);
-  ui->tbAcercaDe->setHtml("<p>Powered by:"
+  ui->tbAcercaDe->setHtml(QStringLiteral("<p>Powered by:"
                           "<ul>"
                           "<li>Lincoln Ingaroca De La Cruz.</li>"
                           "<li>SWSystem's.</li>"
@@ -115,7 +115,7 @@ void AcercaDeDialog::setTextToAbout() const{
                           "</p>"
                           "<p>Repositorio del programa:"
                           "<ul><li><a href=\"https://github.com/lincolningaroca/xxxApp\">xxxApp</a></li></ul>"
-                          "</p>");
+                          "</p>"));
 
 }
 

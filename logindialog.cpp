@@ -110,8 +110,7 @@ LogInDialog::LogInDialog(QWidget *parent, OpenMode op) :
     if(!ui->chkGenPassword->isChecked()){
 
       if(!SW::Helper_t::isPasswordSecure(ui->txtRePassword->text())){
-        QMessageBox::warning(this,
-                             SW::Helper_t::appName(),
+        QMessageBox::warning(this, SW::Helper_t::appName(),
                              QStringLiteral("<span>"
                                             "<em>"
                                             "Debe ingresar un password o clave segura!<br>"
@@ -190,7 +189,7 @@ LogInDialog::LogInDialog(QWidget *parent, OpenMode op) :
 
   QObject::connect(ui->btnResetPassword, &QPushButton::clicked, this, [&](){
     ResetPasswordDialog resetPassword{this};
-    resetPassword.setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - Restablecer clave o password")));
+    resetPassword.setWindowTitle(SW::Helper_t::appName().append(" - Restablecer clave o password"));
     resetPassword.exec();
 
   });
@@ -263,7 +262,7 @@ void LogInDialog::setToggledToButton(bool op){
 
 void LogInDialog::setUp_Form() noexcept{
 
-  setWindowTitle(SW::Helper_t::appName().append(QStringLiteral(" - inicio de sesión")));
+  setWindowTitle(SW::Helper_t::appName().append(" - inicio de sesión"));
 
   ui->txtUser->setPlaceholderText("Usuario");
   ui->txtUser->setClearButtonEnabled(true);

@@ -120,7 +120,7 @@ QString Helper_t::generateSecurePassword(uint32_t length) noexcept{
 
 bool Helper_t::isPasswordSecure(const QString &password) noexcept{
 
-  static QRegularExpression passwordRegex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#$%^&*(),.?\":{}|<>]{8,}$");
+  static QRegularExpression passwordRegex(R"(^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?\":{}|<>])[A-Za-z\d!@#$%^&*(),.?\":{}|<>]{8,}$)");
 
   return passwordRegex.match(password).hasMatch();
 
