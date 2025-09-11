@@ -2,7 +2,6 @@
 
 #include <QDialog>
 #include <QSqlDatabase>
-#include <QHash>
 
 namespace Ui {
   class PublicUrlDialog;

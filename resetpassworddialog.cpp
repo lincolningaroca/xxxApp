@@ -1,10 +1,12 @@
 #include "resetpassworddialog.hpp"
 #include "ui_resetpassworddialog.h"
-#include "widget.hpp"
-#include <logindialog.hpp>
+
 #include <QMessageBox>
 #include <QRegularExpressionValidator>
 #include <QAction>
+
+#include "logindialog.hpp"
+#include "widget.hpp"
 #include "util/helper.hpp"
 
 ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
@@ -195,7 +197,7 @@ void ResetPasswordDialog::setInit_Form() noexcept{
 
   if(ui->stackedWidget->currentIndex() == 0)   ui->btnAtras->setDisabled(true);
 
-  const auto re = QRegularExpression(QStringLiteral("^\\d{4}$"));
+  const auto re = QRegularExpression(R"(^\d{4}$)");
 
   auto* validator = new QRegularExpressionValidator(re, this);
   ui->txtPIN->setValidator(validator);

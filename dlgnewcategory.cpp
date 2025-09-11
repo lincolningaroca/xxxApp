@@ -1,7 +1,9 @@
 #include "dlgnewcategory.hpp"
 #include "ui_dlgnewcategory.h"
+
 #include <QMessageBox>
 #include <QPushButton>
+
 #include "util/helper.hpp"
 #include "helperdatabase/helperdb.hpp"
 

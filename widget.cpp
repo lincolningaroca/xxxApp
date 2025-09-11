@@ -18,7 +18,6 @@
 #include "logindialog.hpp"
 #include "publicurldialog.hpp"
 #include "categorydialog.hpp"
-#include "util/helper.hpp"
 #include "swtablemodel.hpp"
 #include "swlabel.hpp"
 #include "util/excelexporter.hpp"

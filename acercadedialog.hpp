@@ -2,6 +2,7 @@
 
 #include <QDialog>
 #include <QFontDataBase>
+
 #include "util/helper.hpp"
 
 namespace Ui {

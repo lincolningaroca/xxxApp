@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QDialog>
-#include <QHash>
 
 namespace Ui {
   class CategoryDialog;

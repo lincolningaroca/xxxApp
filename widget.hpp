@@ -2,16 +2,15 @@
 
 #include <QWidget>
 #include <QSqlDatabase>
-#include <QHash>
-#include <util/helper.hpp>
-#include <helperdatabase/helperdb.hpp>
+
+#include "util/helper.hpp"
+#include "helperdatabase/helperdb.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
 QT_END_NAMESPACE
 
 class QAction;
-// class QSqlTableModel;
 class QMenu;
 struct SWTableModel;
 
@@ -32,7 +31,9 @@ public:
 
 private:
   Ui::Widget *ui;
+
   const QSqlDatabase db_{};
+
   QAction* delCategory_{ nullptr };
   QAction* openUrl_{ nullptr };
   QAction* editUrl_{ nullptr };

@@ -1,13 +1,13 @@
 #pragma once
+
+#include <windows.h>
+
 #include <QStandardPaths>
 #include <QCryptographicHash>
 #include <QStringView>
 #include <QDesktopServices>
 #include <QApplication>
 #include <QPalette>
-#include <windows.h>
-
-
 
 namespace SW {
 

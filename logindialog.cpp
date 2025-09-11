@@ -2,12 +2,12 @@
 #include "ui_logindialog.h"
 
 #include <QMessageBox>
-#include "resetpassworddialog.hpp"
-#include <QDebug>
 #include <QLineEdit>
 #include <QCheckBox>
 #include <QCloseEvent>
 #include <QSettings>
+
+#include "resetpassworddialog.hpp"
 
 
 LogInDialog::LogInDialog(QWidget *parent, OpenMode op) :

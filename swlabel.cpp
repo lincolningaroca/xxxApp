@@ -1,4 +1,5 @@
 #include "swlabel.hpp"
+
 #include <QMouseEvent>
 
 SWLabel::SWLabel(QWidget* parent):

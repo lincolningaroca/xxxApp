@@ -1,5 +1,7 @@
 #include "swtablemodel.hpp"
+
 #include <QSqlRecord>
+
 #include "util/helper.hpp"
 
 SWTableModel::SWTableModel(QObject *parent, const QSqlDatabase &db)

@@ -1,15 +1,16 @@
-#include "widget.hpp"
+
 #include <QApplication>
 #include <QSqlDatabase>
-#include <util/helper.hpp>
-
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QDir>
 #include <QMessageBox>
 #include <QFontDatabase>
 #include <QStyleHints>
+
+#include "util/helper.hpp"
 #include "util/systemthemewatcher.hpp"
+#include "widget.hpp"
 
 struct SingleIntsanceManager{
 

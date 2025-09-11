@@ -1,13 +1,14 @@
 #pragma once
 
 #include <QDialog>
-#include <helperdatabase/helperdb.hpp>
-// #include <QCloseEvent>
-#include <util/helper.hpp>
+
+#include "helperdatabase/helperdb.hpp"
+#include "util/helper.hpp"
 
 namespace Ui {
 class LogInDialog;
 }
+
 class QLineEdit;
 class QCheckBox;
 class QCloseEvent;

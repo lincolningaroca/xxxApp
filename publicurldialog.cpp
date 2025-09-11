@@ -2,7 +2,6 @@
 #include "ui_publicurldialog.h"
 
 #include <QSqlTableModel>
-#include <QDebug>
 #include <QDesktopServices>
 #include <QMessageBox>
 

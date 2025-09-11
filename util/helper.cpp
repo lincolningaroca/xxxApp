@@ -1,14 +1,13 @@
 #include "helper.hpp"
-#include <QPalette>
-#include <QApplication>
-#include <QCryptographicHash>
+
+#include <random>
+#include <windows.h>
+
 #include <QIODevice>
 #include <QStyle>
 #include <QRegularExpression>
 #include <QDir>
 #include <QSettings>
-#include <random>
-#include <windows.h>
 #include <QStyleFactory>
 
 extern "C"{
