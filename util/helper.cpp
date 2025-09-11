@@ -86,7 +86,7 @@ QString Helper_t::generateSecurePassword(uint32_t length) noexcept{
   //     throw std::invalid_argument("La longitud mínima de la contraseña debe ser 4");
   //   }
 
-  const QString chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*?:{}|<>~-_=+[]/;\\";
+  const QString chars = R"(abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*?:{}|<>~-_=+[]/;\)";
   const int lowercaseEnd = 26;
   const int uppercaseEnd = 52;
   const int numbersEnd = 62;

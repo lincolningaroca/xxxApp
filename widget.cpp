@@ -11,8 +11,8 @@
 #include <QFile>
 #include <QProcess>
 #include <QStyleHints>
+#include <QMenu>
 
-//#include <QProcess>
 #include "dlgnewcategory.hpp"
 #include "acercadedialog.hpp"
 #include "logindialog.hpp"
@@ -20,8 +20,6 @@
 #include "categorydialog.hpp"
 #include "util/helper.hpp"
 #include "swtablemodel.hpp"
-#include <QDebug>
-#include <QMenu>
 #include "swlabel.hpp"
 #include "util/excelexporter.hpp"
 #include "resetpassworddialog.hpp"
@@ -44,7 +42,7 @@ Widget::Widget(QWidget *parent)
 
   has_data();
 
-  if(!SW::Helper_t::nativeRegistryKeyExists(HKEY_CURRENT_USER, "Software\\SWSystem's\\xxxApp\\Theme") &&
+  if(!SW::Helper_t::nativeRegistryKeyExists(HKEY_CURRENT_USER, R"(Software\SWSystem's\xxxApp\Theme)") &&
       ui->cboTheme->currentIndex() == 0){
 
     auto retSystem = SW::Helper_t::checkSystemColorScheme();
@@ -171,25 +169,26 @@ Widget::Widget(QWidget *parent)
   //connect to slots to btnAdd new url
   QObject::connect(ui->btnAdd,&QPushButton::clicked, this, [&](){
 
+    const auto invalidUrlMsg = QString("<p>"
+                                       "<span>"
+                                       "La dirección: <strong>\"%1\"</strong>, no es válida!<br>"
+                                       "una dirección url válida debe tener una de las siguiente formas:"
+                                       "<ol>"
+                                       "<li><strong>(http://www.)url.dominio</strong></li>"
+                                       "<li><strong>(https://www.)url.dominio</strong></li>"
+                                       "<li><strong>(ftp://)url.dominio</strong></li>"
+                                       "<li><strong>(ftp://www.)url.dominio</strong></li>"
+                                       "</ol>"
+                                       "<br>Nota:<br>"
+                                       "Tenga en cuenta que "
+                                       "<strong>http://, https://, ftp://, www.</strong> son opcionales<br>"
+                                       "Lo mínimo que se espera es una direccón de la forma: <strong>\"url.domino\"</strong>"
+                                       "</span>"
+                                       "</p>").arg(ui->txtUrl->text());
+
     if(ui->btnAdd->text().compare("Agregar") == 0){
       if(!SW::Helper_t::urlValidate(ui->txtUrl->text())){
-        QMessageBox::warning(this, SW::Helper_t::appName(),
-                             QStringLiteral("<p>"
-                                            "<span>"
-                                            "La dirección: <strong>\"%1\"</strong>, no es válida!<br>"
-                                            "una dirección url válida debe tener una de las siguiente formas:"
-                                            "<ol>"
-                                            "<li><strong>(http://www.)url.dominio</strong></li>"
-                                            "<li><strong>(https://www.)url.dominio</strong></li>"
-                                            "<li><strong>(ftp://)url.dominio</strong></li>"
-                                            "<li><strong>(ftp://www.)url.dominio</strong></li>"
-                                            "</ol>"
-                                            "<br>Nota:<br>"
-                                            "Tenga en cuenta que "
-                                            "<strong>http://, https://, ftp://, www.</strong> son opcionales<br>"
-                                            "Lo mínimo que se espera es una direccón de la forma: <strong>\"url.domino\"</strong>"
-                                            "</span>"
-                                            "</p>").arg(ui->txtUrl->text()));
+        QMessageBox::warning(this, SW::Helper_t::appName(), invalidUrlMsg);
         ui->txtUrl->selectAll();
         ui->txtUrl->setFocus(Qt::OtherFocusReason);
         return;
@@ -220,6 +219,14 @@ Widget::Widget(QWidget *parent)
         canCreateBackUp();
       }
     }else{
+
+
+      if(!SW::Helper_t::urlValidate(ui->txtUrl->text())){
+        QMessageBox::warning(this, SW::Helper_t::appName(), invalidUrlMsg);
+        ui->txtUrl->selectAll();
+        ui->txtUrl->setFocus(Qt::OtherFocusReason);
+        return;
+      }
 
       QSqlQuery qry(db_);
       [[maybe_unused]] auto res=qry.prepare(R"(UPDATE  urls SET url=?, desc=? WHERE url_id=? AND categoryid=?)");
@@ -914,7 +921,7 @@ void Widget::showAlldescription() noexcept{
   // msgDescription.setIcon(QMessageBox::Information);
   QPixmap pixMap(QStringLiteral(":/img/desc.png"));
   // pixMap.scaled(32,32);
-  msgDescription.setWindowTitle(qApp->applicationName().append(QStringLiteral(" - Descripción completa de la URL")));
+  msgDescription.setWindowTitle(qApp->applicationName().append(" - Descripción completa de la URL"));
   msgDescription.setIconPixmap(pixMap.scaled(64, 64));
   msgDescription.setText(desc);
   msgDescription.setDetailedText(url);
