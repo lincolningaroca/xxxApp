@@ -30,7 +30,6 @@ Qt::ColorScheme Helper_t::detectSystemColorScheme() {
     RegCloseKey(hKey);
   }
 
-  // Retorna Qt::ColorScheme::Light para modo claro o Qt::ColorScheme::Dark para modo oscuro
   return dwValue == 1 ? Qt::ColorScheme::Light : Qt::ColorScheme::Dark;
 }
 
@@ -53,7 +52,6 @@ QByteArray Helper_t::setColorReg(const QString& color) noexcept
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 QString Helper_t::getColorReg(QByteArray dataColor) noexcept
 {
-  //  QByteArray data(dataColor);
   QDataStream dataStream(&dataColor, QIODevice::ReadOnly);
   QString color;
   dataStream >> color;
@@ -64,7 +62,6 @@ QString Helper_t::getColorReg(QByteArray dataColor) noexcept
 
 bool Helper_t::urlValidate(QStringView url) noexcept
 {
-  // static QRegularExpression regex(R"(^(https?|ftp)://[^\s/$.?#].[^\s]*$)");
   static QRegularExpression regex(R"(^(https?://|ftp://)?(www\.)?[a-zA-Z0-9.-]+(\.[a-zA-Z]{2,6})(/[^\s]*)?$)");
   auto match = regex.matchView(url);
   return match.hasMatch();
@@ -80,10 +77,6 @@ bool Helper_t::createDataBase_dir() noexcept{
 }
 
 QString Helper_t::generateSecurePassword(uint32_t length) noexcept{
-
-  // if (length < 4) {
-  //     throw std::invalid_argument("La longitud mínima de la contraseña debe ser 4");
-  //   }
 
   const QString chars = R"(abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*?:{}|<>~-_=+[]/;\)";
   const int lowercaseEnd = 26;

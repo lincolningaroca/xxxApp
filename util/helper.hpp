@@ -18,7 +18,7 @@ enum class AuthType{ Numeric_pin, Secret_Question };
 
 struct Helper_t{
 
-  explicit Helper_t() = default;
+  explicit Helper_t() = delete;
 
   Helper_t(const Helper_t&) = delete;
   Helper_t(Helper_t&&) = delete;
@@ -43,8 +43,6 @@ struct Helper_t{
   [[nodiscard]]static QString getColorReg(QByteArray dataColor) noexcept;
 
   [[nodiscard]]static QString hashGenerator(const QByteArray&) noexcept;
-  // static QByteArray encrypt_txt(const QString& txt) noexcept;
-  // static QString decrypt_txt(const QByteArray &txt) noexcept;
 
   [[nodiscard]]static QPalette set_Theme(Qt::ColorScheme theme) noexcept;
 
@@ -54,14 +52,12 @@ struct Helper_t{
 
   //var member
 
-  // static constexpr std::string_view darkModeColor{"#2e8b57"};
-  // static constexpr std::string_view lightModeColor{"#ff7e00"};
-
   inline static const QHash<Qt::ColorScheme, QString> lblColorMode{
-    // {Qt::ColorScheme::Light, "#ff7e00"},
+
     {Qt::ColorScheme::Light, "#008cf9"},
-    {Qt::ColorScheme::Dark, "#2e8b57"}
+      {Qt::ColorScheme::Dark, "#2e8b57"}
   };
+
   [[nodiscard]]static QString AppLocalDataLocation(){return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation).append(dbDir_name);}
   [[nodiscard]]static QString app_pathLocation(){return QApplication::applicationDirPath();}
   [[nodiscard]]static QString appName(){return QApplication::applicationName();}
@@ -76,8 +72,6 @@ struct Helper_t{
 
   //encryp/decrypt metods
 
-  // static QString encrypt(const QString& text, const QString& key=key_);
-  // static QString decrypt(const QString& encryptedText, const QString& key=key_);
   static QString encrypt(const QString& plainText, const QByteArray& key = hashKey, const QByteArray& iv = hashIv);
   static QString decrypt(const QString& encryptedText, const QByteArray& key = hashKey, const QByteArray& iv = hashIv);
   inline static const QHash<SW::User, QString> currentUser_{
@@ -91,16 +85,14 @@ struct Helper_t{
 
 
 private:
+
   inline static const QString dbDir_name{"/xxxdatabase"};
   inline static const QPalette standardPalette_{QGuiApplication::palette()};
-  // inline static const QString key_{"AbCdEfGhIjKlMnOpQrStUvWxYz@!#$%&/()=?¡1234567890"};
-  // inline static const QByteArray key_{"AbCdEfGhIjKlMnOpQrStUvWxYz@!#$%&/()=?¡1234567890"};
-  // inline static const QByteArray iv_{"AbCdEfGhIjKlMnOpQrStUvWxYz@!#$%&/()=?¡1234567890"};
 
   static Qt::ColorScheme detectSystemColorScheme();
 
   //variables y constantes de encriptacion
-  //inline static QAESEncryption encrypt{QAESEncryption::AES_256, QAESEncryption::CBC};
+
   inline static const QString key {"AbCdEfGhIjKlMnOpQrStUvWxYz@!#$%&/()=?¡1234567890"};
   inline static const QString iv {"lincoln_carolina@m1am0r"};
   inline static const QByteArray hashKey {QCryptographicHash::hash(key.toLatin1(), QCryptographicHash::Sha256)};
