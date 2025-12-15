@@ -80,6 +80,8 @@ void PublicUrlDialog::loadDataTableView(){
 
   ui->urlTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
+  ui->urlTableView->setMouseTracking(true);
+
 }
 
 
