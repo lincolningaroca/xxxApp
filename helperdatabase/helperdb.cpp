@@ -71,8 +71,8 @@ namespace SW {
   bool HelperDataBase_t::createUser( QStringView user,  QStringView password,  QStringView user_prof,
                                      QStringView rescue_type,  QStringView val1,  QStringView val2) noexcept{
 
-   qry_.prepare(R"(INSERT INTO users(user,password,user_profile,rescue_type,first_value,confirm_value) "
-                                               "VALUES(?,?,?,?,?,?))");
+   qry_.prepare(R"(INSERT INTO users(user,password,user_profile,rescue_type,first_value,confirm_value)
+                                               VALUES(?,?,?,?,?,?))");
     qry_.addBindValue(user.toString());
     qry_.addBindValue(password.toString());
     qry_.addBindValue(user_prof.toString());
