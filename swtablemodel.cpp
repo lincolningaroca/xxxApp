@@ -12,12 +12,12 @@ SWTableModel::SWTableModel(QObject *parent, const QSqlDatabase &db)
 
 QVariant SWTableModel::data(const QModelIndex& index, int role) const{
 
-  if(role == Qt::DisplayRole && (index.column() == 1 || index.column() == 2) ){
+  if((role == Qt::DisplayRole || role == Qt::ToolTipRole) && (index.column() == 1 || index.column() == 2) ){
 
-      const auto decryptedData = QSqlTableModel::data(index, role);
-      return SW::Helper_t::decrypt(decryptedData.toString());
+    return SW::Helper_t::decrypt(QSqlTableModel::data(index, Qt::DisplayRole).toString());
 
-    }
+  }
+
   return QSqlTableModel::data(index, role);
 
 }
