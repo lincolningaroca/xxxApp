@@ -12,6 +12,7 @@ class LogInDialog;
 class QLineEdit;
 class QCheckBox;
 class QCloseEvent;
+class QPropertyAnimation;
 
 class LogInDialog : public QDialog
 {
@@ -37,7 +38,10 @@ private:
   Ui::LogInDialog *ui;
 
   QString userName_{};
-  SW::HelperDataBase_t helperdb_;
+  SW::HelperDataBase_t helperdb_{};
+
+  QPropertyAnimation* collapseAnimation_{nullptr};
+  bool isExpanded_{};
 
 
   void setUp_Form() noexcept;
@@ -53,6 +57,9 @@ private:
   void reject_form() noexcept;
 
   void setFeatures(QLineEdit *w, QCheckBox *b, bool checked) noexcept;
+
+  void handleToggleAnimation(bool checked);
+  void setupAnimation();
 
   // QWidget interface
 protected:
