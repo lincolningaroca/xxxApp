@@ -6,14 +6,20 @@
 #include <QCheckBox>
 #include <QCloseEvent>
 #include <QSettings>
+#include <QPropertyAnimation>
+#include <QTimer>
 
 #include "resetpassworddialog.hpp"
 
 
 LogInDialog::LogInDialog(QWidget *parent, OpenMode op) :
-  QDialog(parent), ui(new Ui::LogInDialog){
+  QDialog(parent), ui(new Ui::LogInDialog), isExpanded_(false){
 
   ui->setupUi(this);
+
+  setupAnimation();
+
+
   setUp_Form();
   readSettings();
   ui->pbLogIn->setDefault(true);
@@ -21,7 +27,7 @@ LogInDialog::LogInDialog(QWidget *parent, OpenMode op) :
 
   QObject::connect(ui->pbCancel, &QPushButton::clicked, this, &LogInDialog::reject_form);
 
-  QObject::connect(ui->pbLogIn, &QPushButton::clicked, this, [&](){
+  QObject::connect(ui->pbLogIn, &QPushButton::clicked, this, [this](){
 
     if(!helperdb_.logIn(ui->txtUser->text().simplified(), ui->txtPassword->text().simplified())){
       QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("<span>"
@@ -44,36 +50,15 @@ LogInDialog::LogInDialog(QWidget *parent, OpenMode op) :
   //coneccion del boton de mas opciones
   ui->btnOtherOptions->setCheckable(true);
 
-  QObject::connect(ui->btnOtherOptions, &QToolButton::toggled, ui->widget, [&](){
-    if(ui->btnOtherOptions->isChecked()){
-      ui->btnOtherOptions->setIcon(QIcon(QStringLiteral(":/img/up.png")));
-      ui->widget->setVisible(true);
-      setStateControls(true);
-      ui->txtNewUser->setFocus(Qt::OtherFocusReason);
-      ui->btnOtherOptions->setToolTip("<span>"
-                                      "Volver a Inicio de sesión!"
-                                      "</span>");
-      ui->btnCreateUser->setDefault(true);
-    }else{
-      ui->btnOtherOptions->setIcon(QIcon(":/img/down.png"));
-      ui->widget->setVisible(false);
-      ui->groupBox->setEnabled(true);
-      setStateControls(false);
-      ui->txtUser->setFocus(Qt::OtherFocusReason);
-      ui->btnOtherOptions->setToolTip("<span>"
-                                      "Crear un nuevo usuario y/o<br>"
-                                      "restablecer clave o password!"
-                                      "</span>");
-      ui->pbLogIn->setDefault(true);
-    }
-  });
+
+  QObject::connect(ui->btnOtherOptions, &QToolButton::toggled, this, &LogInDialog::handleToggleAnimation);
 
   //coneccion de combo box metodo de recuperacion
   QObject::connect(ui->cboRestoreType, &QComboBox::activated, this, &LogInDialog::setOptionsToComboBox);
-  ui->widget->hide();
+
 
   //connect to create user button
-  QObject::connect(ui->btnCreateUser, &QAbstractButton::clicked, this, [&](){
+  QObject::connect(ui->btnCreateUser, &QAbstractButton::clicked, this, [this, op](){
 
     if(Validate_hasNoEmpty()){
       QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("<span><em>Todos los campos son requeridos!</em></span>"));
@@ -187,7 +172,7 @@ LogInDialog::LogInDialog(QWidget *parent, OpenMode op) :
 
   });
 
-  QObject::connect(ui->btnResetPassword, &QPushButton::clicked, this, [&](){
+  QObject::connect(ui->btnResetPassword, &QPushButton::clicked, this, [this](){
     ResetPasswordDialog resetPassword{this};
     resetPassword.setWindowTitle(SW::Helper_t::appName().append(" - Restablecer clave o password"));
     resetPassword.exec();
@@ -195,16 +180,16 @@ LogInDialog::LogInDialog(QWidget *parent, OpenMode op) :
   });
 
 
-  QObject::connect(ui->checkBox_2, &QCheckBox::clicked, this, [&](bool checked){
+  QObject::connect(ui->checkBox_2, &QCheckBox::clicked, this, [this](bool checked){
     setFeatures(ui->txtNewPassword, ui->checkBox_2, checked);
   });
-  QObject::connect(ui->checkBox_3, &QCheckBox::clicked, this, [&](bool checked){
+  QObject::connect(ui->checkBox_3, &QCheckBox::clicked, this, [this](bool checked){
     setFeatures(ui->txtRePassword, ui->checkBox_3, checked);
   });
-  QObject::connect(ui->checkBox_4, &QCheckBox::clicked, this, [&](bool checked){
+  QObject::connect(ui->checkBox_4, &QCheckBox::clicked, this, [this](bool checked){
     setFeatures(ui->txtfirstValue, ui->checkBox_4, checked);
   });
-  QObject::connect(ui->checkBox_5, &QCheckBox::clicked, this, [&](bool checked){
+  QObject::connect(ui->checkBox_5, &QCheckBox::clicked, this, [this](bool checked){
     setFeatures(ui->txtConfirmValue, ui->checkBox_5, checked);
   });
 
@@ -394,6 +379,77 @@ void LogInDialog::setFeatures(QLineEdit *w, QCheckBox *b, bool checked) noexcept
     b->setToolTip("Mostrar los caracteres.");
 
   }
+
+}
+
+void LogInDialog::handleToggleAnimation(bool checked){
+
+  if(checked){
+
+    ui->btnOtherOptions->setIcon(QIcon(":/img/up.png"));
+    ui->btnOtherOptions->setToolTip("<span>Volver a Inicio de sesión!</span>");
+
+    ui->widget->setMaximumHeight(QWIDGETSIZE_MAX);
+    auto targetHeight = ui->widget->sizeHint().height();
+
+    ui->widget->setMaximumHeight(0);
+
+    collapseAnimation_->setStartValue(0);
+    collapseAnimation_->setEndValue(targetHeight);
+
+    collapseAnimation_->start();
+    setStateControls(true);
+
+    ui->txtNewUser->setFocus(Qt::OtherFocusReason);
+    ui->btnCreateUser->setDefault(true);
+
+    isExpanded_ = true;
+
+  }else{
+
+    // Cambiar icono a "abajo" para indicar que puede expandirse
+    ui->btnOtherOptions->setIcon(QIcon(":/img/down.png"));
+
+    // Actualizar tooltip
+    ui->btnOtherOptions->setToolTip("<span>"
+                                    "Crear un nuevo usuario y/o<br>"
+                                    "restablecer clave o password!"
+                                    "</span>");
+
+    collapseAnimation_->setStartValue(ui->widget->height());
+    collapseAnimation_->setEndValue(0);
+
+    // Iniciar la animación
+    collapseAnimation_->start();
+
+    // Habilitar el groupBox de inicio de sesión
+    ui->groupBox->setEnabled(true);
+
+    // Actualizar estado de controles
+    setStateControls(false);
+
+    // Devolver el foco al campo de usuario
+    ui->txtUser->setFocus(Qt::OtherFocusReason);
+
+    // Cambiar botón default
+    ui->pbLogIn->setDefault(true);
+
+    // Actualizar variable de estado
+    isExpanded_ = false;
+  }
+
+  QTimer::singleShot(collapseAnimation_->duration(), this, &LogInDialog::adjustSize);
+
+}
+
+void LogInDialog::setupAnimation(){
+
+  collapseAnimation_ = new QPropertyAnimation(ui->widget, "maximumHeight", this);
+  collapseAnimation_->setDuration(300);
+  collapseAnimation_->setEasingCurve(QEasingCurve::InOutQuad);
+
+  ui->widget->setMaximumHeight(0);
+  ui->widget->setVisible(true);
 
 }
 
