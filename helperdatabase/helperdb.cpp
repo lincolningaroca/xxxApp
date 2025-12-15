@@ -304,7 +304,7 @@ namespace SW {
 
   QString HelperDataBase_t::getQuestion(uint32_t userId) noexcept{
 
-    qry_.prepare(R"("SELECT first_value FROM users WHERE user_id = ?)");
+    qry_.prepare(R"(SELECT first_value FROM users WHERE user_id = ?)");
 
     qry_.addBindValue(userId, QSql::In);
     if(qry_.exec())
