@@ -30,7 +30,7 @@ AcercaDeDialog::AcercaDeDialog(Qt::ColorScheme colorMode, QWidget *parent) :
   ui->lblAcercaQt->setText(QStringLiteral("<a href='message'>Acerca de Qt.</a>"));
   QObject::connect(ui->btnCerrar, &QPushButton::clicked, this, &AcercaDeDialog::close);
 
-  QObject::connect(ui->lblLicencia, &QLabel::linkActivated, this, [&](){
+  QObject::connect(ui->lblLicencia, &QLabel::linkActivated, this, [this](){
       QDialog licenciaDlg(this);
 
       QScopedPointer<QVBoxLayout> mainLayOut(new QVBoxLayout(&licenciaDlg));
@@ -57,7 +57,7 @@ AcercaDeDialog::AcercaDeDialog(Qt::ColorScheme colorMode, QWidget *parent) :
       fileName.close();
     });
 
-  QObject::connect(ui->lblAcercaQt, &QLabel::linkActivated, this, [&](){
+  QObject::connect(ui->lblAcercaQt, &QLabel::linkActivated, this, [this](){
       QMessageBox::aboutQt(this);
     });
 
