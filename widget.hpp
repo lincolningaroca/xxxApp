@@ -29,6 +29,30 @@ public:
   // inline static QString currentUser_{SW::Helper_t::currentUser_.value(SW::User::U_public)};
   // inline static SW::SessionStatus sessionStatus_{SW::SessionStatus::Session_closed};
 
+ private slots:
+   void load_aboutDialog();
+   void load_resetPasswordDialog();
+   void load_loginForm();
+   void load_PublicUrlDialog();
+   void load_firstTimeLoginDialog();
+
+
+   void call_logOut();
+   void make_backUp();
+   void restoreDataBase();
+   void cancelAction();
+   void moveUrl();
+   void addNewUrl();
+
+   void exportToExcel();
+   void deleteCategory();
+   void delete_category();
+   void newCategory();
+   void editCategory();
+   void themeSelectedChanged(int index);
+   void categorySelectedChanged(const QString& text);
+
+
 private:
   Ui::Widget *ui;
 

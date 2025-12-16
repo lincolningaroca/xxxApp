@@ -16,13 +16,13 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
 
   setInit_Form();
 
-  QObject::connect(ui->stackedWidget, &QStackedWidget::currentChanged, this, [&](int index){
+  QObject::connect(ui->stackedWidget, &QStackedWidget::currentChanged, this, [this](int index){
 
     ui->btnAtras->setDisabled(index == 0);
 
   });
 
-  QObject::connect(ui->btnValidarUsuario, &QPushButton::clicked, this, [&](){
+  QObject::connect(ui->btnValidarUsuario, &QPushButton::clicked, this, [this](){
 
     if(ui->txtUser->text() == SW::Helper_t::defaultUser || ui->txtUser->text().isEmpty()){
       ui->txtUser->clear();
@@ -58,7 +58,7 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
   });
 
   //btn pregunta secreta
-  QObject::connect(ui->btnRespuesta, &QAbstractButton::clicked, this, [&](){
+  QObject::connect(ui->btnRespuesta, &QAbstractButton::clicked, this, [this](){
     if(!helper.validateAnswer(ui->txtRespuesta->text(), userId_)){
       QMessageBox::warning(this, SW::Helper_t::appName(),
                            QStringLiteral("<p><cite>Su respuesta es incorrecta.</cite></p>"));
@@ -73,7 +73,7 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
   });
 
   //btn pin numerico
-  QObject::connect(ui->btnClaveNumerica, &QPushButton::clicked, this, [&](){
+  QObject::connect(ui->btnClaveNumerica, &QPushButton::clicked, this, [this](){
 
     if(ui->txtPIN->text().size() < 4){
       QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("<span><em>El PIN numérico debe contener 4 digitos!</em></span>"));
@@ -96,7 +96,7 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
 
   //btn volver atras
 
-  QObject::connect(ui->btnAtras, &QPushButton::clicked, this, [&](){
+  QObject::connect(ui->btnAtras, &QPushButton::clicked, this, [this](){
 
     ui->txtUser->clear();
     ui->txtNewPassword->clear();
@@ -113,7 +113,7 @@ ResetPasswordDialog::ResetPasswordDialog(QWidget *parent)
 
 
   //btn reset password
-  QObject::connect(ui->btnReset, &QPushButton::clicked, this, [&](){
+  QObject::connect(ui->btnReset, &QPushButton::clicked, this, [this](){
     if(ui->txtNewPassword->text().isEmpty()){
       QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("<span><em>Este campo es requerido.</em></span>"));
       ui->txtNewPassword->setFocus(Qt::OtherFocusReason);
@@ -209,18 +209,18 @@ void ResetPasswordDialog::setInit_Form() noexcept{
 
 
   //iconos y acciones para QLineEdit para mostrar y/o ocultar los caracteres de los controles.
-  QObject::connect(ui->checkBox, &QCheckBox::clicked, this, [&](bool checked){
+  QObject::connect(ui->checkBox, &QCheckBox::clicked, this, [this](bool checked){
     setFeatures(ui->txtRespuesta, ui->checkBox, checked);
 
 
   });
-  QObject::connect(ui->checkBox_2, &QCheckBox::clicked, this, [&](bool checked){
+  QObject::connect(ui->checkBox_2, &QCheckBox::clicked, this, [this](bool checked){
     setFeatures(ui->txtPIN, ui->checkBox_2, checked);
   });
-  QObject::connect(ui->checkBox_3, &QCheckBox::clicked, this, [&](bool checked){
+  QObject::connect(ui->checkBox_3, &QCheckBox::clicked, this, [this](bool checked){
     setFeatures(ui->txtNewPassword, ui->checkBox_3, checked);
   });
-  QObject::connect(ui->checkBox_4, &QCheckBox::clicked, this, [&](bool checked){
+  QObject::connect(ui->checkBox_4, &QCheckBox::clicked, this, [this](bool checked){
     setFeatures(ui->txtRePassword, ui->checkBox_4, checked);
   });
 

@@ -33,7 +33,7 @@ dlgNewCategory::dlgNewCategory(OpenMode mode, const QStringList &list, QWidget *
     }
 
 
-  QObject::connect(ui->buttonBox, &QDialogButtonBox::accepted, this, [&](){
+  QObject::connect(ui->buttonBox, &QDialogButtonBox::accepted, this, [this, mode](){
 
       SW::HelperDataBase_t helperdb_{};
 

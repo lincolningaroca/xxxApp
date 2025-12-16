@@ -18,12 +18,10 @@ PublicUrlDialog::PublicUrlDialog(QWidget *parent) :
   loadDataComboBox();
   loadDataTableView();
 
-  QObject::connect(ui->categoryComboBox, &QComboBox::currentTextChanged, this, [&](){
-      // ui->categoryComboBox->clear();
-      loadDataTableView();
-    });
+  QObject::connect(ui->categoryComboBox, &QComboBox::currentTextChanged, this, &PublicUrlDialog::loadDataTableView);
 
-  QObject::connect(ui->openPushButton, &QPushButton::clicked, this, [&](){
+
+  QObject::connect(ui->openPushButton, &QPushButton::clicked, this, [this](){
 
       if(!ui->urlTableView->selectionModel()->hasSelection()){
           QMessageBox::warning(this, SW::Helper_t::appName(), QStringLiteral("Seleccione una fila!\n"));
