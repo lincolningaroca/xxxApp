@@ -27,7 +27,9 @@
 Widget::Widget(QWidget *parent)
   : QWidget(parent), ui(new Ui::Widget),
   db_{QSqlDatabase::database(QStringLiteral("xxxConection"))}{
+
   ui->setupUi(this);
+
   userId_ = helperdb_.getUser_id(SW::Helper_t::defaultUser, SW::User::U_public);
   ui->lblIcon->setPixmap(QPixmap(QStringLiteral(":/img/7278151.png")).scaled(16,16));
 
@@ -100,24 +102,11 @@ Widget::Widget(QWidget *parent)
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   //connect to slots to btnQuit
-  QObject::connect(ui->btnQuit, &QPushButton::clicked,this, [&](){
-    if(!validateSelectedRow()) return;
 
-    quitUrl();
-    verifyContextMenu();
+  QObject::connect(ui->btnQuit, &QPushButton::clicked,this, &Widget::quitUrl);
 
-    hastvUrlData();
-
-  });
-
-  QObject::connect(quitUrl_, &QAction::triggered,this, [&](){
-    if(!validateSelectedRow()) return;
-
-    quitUrl();
-    verifyContextMenu();
-    hastvUrlData();
-
-  });
+  //connect to slots to context menu, quit url
+  QObject::connect(quitUrl_, &QAction::triggered,this, &Widget::quitUrl);
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
   //btn edit url
@@ -552,15 +541,19 @@ void Widget::addNewUrl(){
     qry.addBindValue(id, QSql::In);
     const auto categoryId = categoryList.key(ui->cboCategory->currentText());
     qry.addBindValue(categoryId, QSql::In);
+
     if(!qry.exec()){
       QMessageBox::critical(this, SW::Helper_t::appName(), tr("Fallo la ejecución de la sentencia!\n%1").arg(
                                                              qry.lastError().text()));
       return;
 
     }
+
     setUpTable(categoryList.key(ui->cboCategory->currentText()));
+
     ui->btnAdd->setText(QStringLiteral("Agregar"));
     editAction(false);
+
     ui->txtUrl->clear();
     ui->pteDesc->clear();
     ui->txtUrl->setFocus(Qt::OtherFocusReason);
@@ -951,7 +944,12 @@ void Widget::readSettings() noexcept{
 
   settings.endGroup();
 
-  ui->cboTheme->setCurrentIndex(theme);
+  {
+    [[maybe_unused]]QSignalBlocker signalblocker(ui->cboTheme);
+    ui->cboTheme->setCurrentIndex(theme);
+
+  }
+
   applyPreferredTheme(theme);
   restoreGeometry(settings.value(QStringLiteral("position")).toByteArray());
 }
@@ -1151,6 +1149,9 @@ void Widget::openUrl() noexcept{
 }
 
 void Widget::quitUrl() noexcept{
+
+  if(!validateSelectedRow()) return;
+
   auto currentRow = ui->tvUrl->currentIndex().row();
 
   const auto url = ui->tvUrl->model()->index(currentRow, 1).data().toString();
@@ -1171,6 +1172,10 @@ void Widget::quitUrl() noexcept{
     }
 
   }
+
+  verifyContextMenu();
+  hastvUrlData();
+
 }
 
 void Widget::hastvUrlData() noexcept{
