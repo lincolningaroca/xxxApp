@@ -366,17 +366,21 @@ void LogInDialog::reject_form() noexcept{
   reject();
 }
 
-void LogInDialog::setFeatures(QLineEdit *w, QCheckBox *b, bool checked) noexcept{
+void LogInDialog::setFeatures(QLineEdit *lineEdit, QCheckBox *checkBox, bool checked) noexcept{
+
+  if(!lineEdit || !checkBox){
+    return;
+  }
 
   if(checked){
-    w->setEchoMode(QLineEdit::Normal);
-    b->setIcon(QIcon(QStringLiteral(":/img/open.png")));
-    b->setToolTip("Ocultar los caracteres.");
+    lineEdit->setEchoMode(QLineEdit::Normal);
+    checkBox->setIcon(QIcon(QStringLiteral(":/img/open.png")));
+    checkBox->setToolTip("Ocultar los caracteres.");
   }
   else{
-    w->setEchoMode(QLineEdit::Password);
-    b->setIcon(QIcon(QStringLiteral(":/img/close.png")));
-    b->setToolTip("Mostrar los caracteres.");
+    lineEdit->setEchoMode(QLineEdit::Password);
+    checkBox->setIcon(QIcon(QStringLiteral(":/img/close.png")));
+    checkBox->setToolTip("Mostrar los caracteres.");
 
   }
 

@@ -56,7 +56,7 @@ private:
   void readSettings();
   void reject_form() noexcept;
 
-  void setFeatures(QLineEdit *w, QCheckBox *b, bool checked) noexcept;
+  void setFeatures(QLineEdit *lineEdit, QCheckBox *checkBox, bool checked) noexcept;
 
   void handleToggleAnimation(bool checked);
   void setupAnimation();
