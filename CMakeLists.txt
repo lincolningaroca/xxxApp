@@ -63,8 +63,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     acercadedialog.cpp
     acercadedialog.ui
     util/excelexporter.hpp util/excelexporter.cpp
-    util/systemthemewatcher.hpp util/systemthemewatcher.cpp
-    # qaesencryption.cpp qaesencryption.h
+
   )
 add_custom_command(
   TARGET xxxapp
