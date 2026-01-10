@@ -6,10 +6,9 @@
 #include <QDir>
 #include <QMessageBox>
 #include <QFontDatabase>
-#include <QStyleHints>
+// #include <QStyleHints>
 
 #include "util/helper.hpp"
-#include "util/systemthemewatcher.hpp"
 #include "widget.hpp"
 
 struct SingleIntsanceManager{
@@ -116,26 +115,6 @@ int main(int argc, char *argv[]){
   }
 
   Widget w;
-
-  if(SW::Helper_t::nativeRegistryKeyExists(HKEY_CURRENT_USER, "Software\\SWSystem's\\xxxApp\\Theme")){
-    auto prefColor = w.loadSchemePreference();
-    w.applyPreferredTheme(prefColor);
-  }
-
-  SW::SystemThemeWatcher watcher;
-
-  qApp->installNativeEventFilter(&watcher);
-
-  QObject::connect(&watcher, &SW::SystemThemeWatcher::systemThemeChanged, &w ,[&]() {
-    if (w.loadSchemePreference() == 0) {
-      w.applyPreferredTheme(static_cast<int>(QGuiApplication::styleHints()->colorScheme()));
-      w.loadLblSchemePreference();
-    }
-
-  });
-
-
-
   w.setWindowTitle(a.applicationName());
   w.show();
   return a.exec();
