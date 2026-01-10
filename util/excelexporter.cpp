@@ -11,8 +11,6 @@
 
 namespace  SW {
 
-
-// ExcelExporter::ExcelExporter() {}
 bool ExcelExporter::exportTableView(QTableView *tableView, const QString &filePath) {
 
   lastError_.clear();
