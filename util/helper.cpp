@@ -1,14 +1,13 @@
 #include "helper.hpp"
 
 #include <random>
-#include <windows.h>
-
 #include <QIODevice>
 #include <QStyle>
 #include <QRegularExpression>
 #include <QDir>
 #include <QSettings>
 #include <QStyleFactory>
+#include <QStyleHints>
 
 extern "C"{
 #include "openssl/rand.h"
@@ -17,20 +16,8 @@ extern "C"{
 namespace SW {
 
 Qt::ColorScheme Helper_t::detectSystemColorScheme() {
-  HKEY hKey;
-  DWORD dwType = REG_DWORD;
-  DWORD dwValue = 0;
-  DWORD dwSize = sizeof(dwValue);
 
-  // Ruta del registro de Windows para el tema del sistema
-  const wchar_t* subKey = L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
-
-  if (RegOpenKeyExW(HKEY_CURRENT_USER, subKey, 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
-    RegQueryValueExW(hKey, L"AppsUseLightTheme", nullptr, &dwType, reinterpret_cast<LPBYTE>(&dwValue), &dwSize);
-    RegCloseKey(hKey);
-  }
-
-  return dwValue == 1 ? Qt::ColorScheme::Light : Qt::ColorScheme::Dark;
+  return QGuiApplication::styleHints()->colorScheme();
 }
 
 QString Helper_t::hashGenerator(const QByteArray &data) noexcept{
@@ -150,11 +137,6 @@ QPalette  Helper_t::set_Theme(Qt::ColorScheme theme) noexcept
 
 }
 
-Qt::ColorScheme Helper_t::checkSystemColorScheme() noexcept{
-  return detectSystemColorScheme();
-
-}
-
 QString Helper_t::encrypt(const QString& plainText, const QByteArray& key, const QByteArray& iv){
 
   QByteArray plainData = plainText.toUtf8();
@@ -217,17 +199,15 @@ QByteArray Helper_t::writeData(const QVariant &data){
 
 }
 
-bool Helper_t::nativeRegistryKeyExists(HKEY hive, const QString &subKey){
+bool Helper_t::nativeRegistryKeyExists(const QString &path) {
+  // Usamos el formato Nativo y el nombre de tu organización/app
+  // Esto apunta a HKEY_CURRENT_USER\Software\SWSystem's\xxxApp
+  QSettings settings(QSettings::NativeFormat, QSettings::UserScope, QApplication::organizationName(), appName());
 
-  HKEY hKey;
-  LONG result = RegOpenKeyExW(hive, subKey.toStdWString().c_str(), 0, KEY_READ, &hKey);
-
-  if (result == ERROR_SUCCESS) {
-    RegCloseKey(hKey);
-    return true;
-  }
-  return false;
-
+  // contains() es muy potente en Qt:
+  // Si le pasas "Theme", verifica si existe el grupo o carpeta.
+  // Si le pasas "Theme/ColorMode", verifica si existe esa clave específica dentro.
+  return settings.contains(path) || settings.childGroups().contains(path);
 }
 
 QVariant Helper_t::readData(QByteArray &&data){

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <windows.h>
-
 #include <QStandardPaths>
 #include <QCryptographicHash>
 #include <QStringView>
@@ -25,9 +23,6 @@ struct Helper_t{
   Helper_t& operator=(const Helper_t&) = delete;
   Helper_t& operator=(Helper_t&&) = delete;
 
-
-
-
   [[nodiscard]]static bool verify_Values(const QStringView text1, const QStringView text2) noexcept{return (text1.toString() == text2.toString());}
   [[nodiscard]]static bool open_Url(const QUrl& url) noexcept{return QDesktopServices::openUrl(url);}
   [[nodiscard]]static bool urlValidate(QStringView url) noexcept;
@@ -46,7 +41,8 @@ struct Helper_t{
 
   [[nodiscard]]static QPalette set_Theme(Qt::ColorScheme theme) noexcept;
 
-  [[nodiscard]]static Qt::ColorScheme checkSystemColorScheme() noexcept;
+  // [[nodiscard]]static Qt::ColorScheme checkSystemColorScheme() noexcept;
+  [[nodiscard]]static Qt::ColorScheme detectSystemColorScheme();
 
 
 
@@ -68,7 +64,7 @@ struct Helper_t{
   [[nodiscard]] static QVariant readData(QByteArray&& data);
   [[nodiscard]]static QByteArray writeData(const QVariant& data);
 
-  static bool nativeRegistryKeyExists(HKEY hive, const QString& subKey);
+  static bool nativeRegistryKeyExists(const QString &path);
 
   //encryp/decrypt metods
 
@@ -88,8 +84,6 @@ private:
 
   inline static const QString dbDir_name{"/xxxdatabase"};
   inline static const QPalette standardPalette_{QGuiApplication::palette()};
-
-  static Qt::ColorScheme detectSystemColorScheme();
 
   //variables y constantes de encriptacion
 

@@ -26,9 +26,6 @@ public:
    int loadSchemePreference();
    void loadLblSchemePreference();
 
-  // inline static QString currentUser_{SW::Helper_t::currentUser_.value(SW::User::U_public)};
-  // inline static SW::SessionStatus sessionStatus_{SW::SessionStatus::Session_closed};
-
  private slots:
    void load_aboutDialog();
    void load_resetPasswordDialog();
@@ -94,7 +91,7 @@ private:
 
   void setUpTable(uint32_t categoryId = 1) noexcept;
   void setUpTableHeaders() const noexcept;
-  void setTheme(Qt::ColorScheme theme) const noexcept;
+
   void writeSettings() const noexcept;
   void readSettings() noexcept;
 
