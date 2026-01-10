@@ -124,13 +124,12 @@ QPalette  Helper_t::set_Theme(Qt::ColorScheme theme) noexcept
 
   if(theme == Qt::ColorScheme::Light){
     qApp->setStyle(QStyleFactory::create("Windowsvista"));
-    // qApp->setPalette(QGuiApplication::palette());
-    mPalette.setColor(QPalette::Highlight, QColor(204, 232, 255));
-    mPalette.setColor(QPalette::HighlightedText, Qt::black);
-    mPalette.setColor(QPalette::Link, QColor(0, 109, 255));
+    mPalette = QPalette();
+
   }else{
     qApp->setStyle(QStyleFactory::create("Fusion"));
     mPalette.setColor(QPalette::Window, QColor(30, 30, 30));
+    mPalette.setColor(QPalette::WindowText, QColor(220, 220, 220));
     mPalette.setColor(QPalette::Base, QColor(40, 40, 40));
     mPalette.setColor(QPalette::AlternateBase, QColor(50, 50, 50));
     mPalette.setColor(QPalette::Text, QColor(220, 220, 220));
@@ -143,6 +142,7 @@ QPalette  Helper_t::set_Theme(Qt::ColorScheme theme) noexcept
     mPalette.setColor(QPalette::PlaceholderText, QColor(150, 150, 150));
     mPalette.setColor(QPalette::Disabled, QPalette::Text, QColor(130, 130, 130));
     mPalette.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(130, 130, 130));
+    mPalette.setColor(QPalette::Disabled, QPalette::WindowText, QColor(130, 130, 130));
 
   }
 
