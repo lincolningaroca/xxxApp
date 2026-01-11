@@ -51,7 +51,7 @@ struct Helper_t{
   inline static const QHash<Qt::ColorScheme, QString> lblColorMode{
 
     {Qt::ColorScheme::Light, "#008cf9"},
-      {Qt::ColorScheme::Dark, "#2e8b57"}
+      {Qt::ColorScheme::Dark, "#16A085"}
   };
 
   [[nodiscard]]static QString AppLocalDataLocation(){return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation).append(dbDir_name);}
