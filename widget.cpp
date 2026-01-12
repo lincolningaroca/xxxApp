@@ -799,6 +799,8 @@ void Widget::initFrm() noexcept{
                                     "esto es por la razón de que, al abrir la aplicación por primera vez, no existen usuarios,"
                                     " aparte del usario por defecto\"</cite></p>");
 
+  ui->tvUrl->setMouseTracking(true);
+
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -859,7 +861,7 @@ void Widget::setUpTableHeaders() const noexcept{
   ui->tvUrl->model()->setHeaderData(2,Qt::Horizontal, "Descripción");
   ui->tvUrl->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
   ui->tvUrl->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-  ui->tvUrl->setSelectionBehavior(QAbstractItemView::SelectRows);
+  // ui->tvUrl->setSelectionBehavior(QAbstractItemView::SelectRows);
   ui->tvUrl->setAlternatingRowColors(true);
 
 
