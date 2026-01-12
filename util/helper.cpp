@@ -182,23 +182,32 @@ void Helper_t::applyManjaroDarkColor(QTableView *table){
   table->setStyleSheet(
     /* Estilo base del cuerpo de la tabla */
     "QTableView {"
-    "    background-color: #1b1e20; "       /* Fondo oscuro para las celdas */
-    "    color: #fcfcfc;  "                 /* Texto blanco/gris claro */
-    "    gridline-color: #2d3136; "         /* Color de las líneas de la cuadrícula */
-    "    border: 1px solid #2d3136;"
-    "    selection-background-color: #16a085;" /* Verde Maia de Manjaro */
-    "    selection-color: white;"
+          /* Fondo oscuro para las celdas */
+    "   background-color: rgb(35, 38, 41);"
+     "   border: 1px solid rgb(25, 28, 31);"
+    "   border-radius: 4px;"
+    "   padding: 5px;"
     "    outline: 0;  "                     /* Elimina el borde de puntos al hacer clic */
     "}"
 
     /* Estilo para los ítems individuales */
     "QTableView::item {"
     "    padding: 5px;"
+    "   border-radius: 2px;"
+    "   color: rgb(252, 252, 252);"
     "}"
+
+
+    "QTableView::item:selected{"
+    "   background-color: rgb(22, 160, 133);" // Verde Maia
+    "   color: white;}"
+
 
     "QTableView::item:hover {"
     "    background-color: rgba(22, 160, 133, 50);" /* Verde suave al pasar el mouse */
     "}"
+
+
 
     /* Estilo para la Cabecera Horizontal (Nombres de columnas) */
     "QHeaderView::section:horizontal {"
