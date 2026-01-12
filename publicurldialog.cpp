@@ -89,6 +89,7 @@ void PublicUrlDialog::loadDataTableView(){
   ui->urlTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
   ui->urlTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+  ui->urlTableView->setAlternatingRowColors(true);
 
   ui->urlTableView->setMouseTracking(true);
 

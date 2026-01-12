@@ -860,7 +860,7 @@ void Widget::setUpTableHeaders() const noexcept{
   ui->tvUrl->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
   ui->tvUrl->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
   ui->tvUrl->setSelectionBehavior(QAbstractItemView::SelectRows);
-   ui->tvUrl->setAlternatingRowColors(true);
+  ui->tvUrl->setAlternatingRowColors(true);
 
 
 }
@@ -943,6 +943,13 @@ void Widget::writeSettings() const noexcept{
 
   settings.setValue(QStringLiteral("position"), saveGeometry());
 
+  if(ui->cboCategory->count() > 1 && SW::Helper_t::sessionStatus_ == SW::SessionStatus::Session_closed){
+
+    const auto categoryName = ui->cboCategory->currentText();
+    settings.setValue(QStringLiteral("category name"), categoryName);
+
+  }
+
   settings.beginGroup(QStringLiteral("Theme"));
 
   settings.setValue(QStringLiteral("theme name"), themeType.value(static_cast<Qt::ColorScheme>(ui->cboTheme->currentIndex())));
@@ -970,6 +977,28 @@ void Widget::readSettings() noexcept{
   QSettings settings(qApp->organizationName(), SW::Helper_t::appName());
 
   restoreGeometry(settings.value(QStringLiteral("position")).toByteArray());
+
+  auto ret = SW::Helper_t::nativeRegistryKeyExists("category name");
+
+  QString categoryName{};
+  if(ret && SW::Helper_t::sessionStatus_ == SW::SessionStatus::Session_closed){
+
+    categoryName = settings.value("category name", QString()).toString();
+
+    if(!categoryName.isEmpty() && ui->cboCategory->count() > 1){
+
+      {
+
+        QSignalBlocker signalBlocker(ui->cboCategory);
+        ui->cboCategory->setCurrentText(categoryName);
+      }
+      categorySelectedChanged(categoryName);
+    }
+  }
+
+
+
+
 
   settings.beginGroup(QStringLiteral("Theme"));
   const auto theme = settings.value(QStringLiteral("theme Value")).toInt();
