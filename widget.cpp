@@ -203,12 +203,31 @@ void Widget::applyPreferredTheme(int pref){
 
   Qt::ColorScheme scheme;
   switch (pref) {
-    case 1: scheme = Qt::ColorScheme::Light; break;
-    case 2: scheme = Qt::ColorScheme::Dark; break;
-    default: scheme = QGuiApplication::styleHints()->colorScheme(); break;
+    case 1:{
+        scheme = Qt::ColorScheme::Light;
+        ui->tvUrl->setStyleSheet("");
+        break;
+      }
+    case 2:{
+        scheme = Qt::ColorScheme::Dark;
+        SW::Helper_t::applyManjaroDarkColor(ui->tvUrl);
+        break;
+      }
+    default:{
+        scheme = QGuiApplication::styleHints()->colorScheme();
+        if(scheme == Qt::ColorScheme::Dark){
+          SW::Helper_t::applyManjaroDarkColor(ui->tvUrl);
+        }else{
+          ui->tvUrl->setStyleSheet("");
+        }
+        break;
+      }
   }
 
   qApp->setPalette(SW::Helper_t::set_Theme(scheme));
+  ui->tvUrl->style()->unpolish(ui->tvUrl);
+  ui->tvUrl->style()->polish(ui->tvUrl);
+  this->update();
 
 }
 
@@ -279,7 +298,8 @@ void Widget::load_loginForm(){
 
 void Widget::load_PublicUrlDialog(){
 
-  PublicUrlDialog publicDialog(this);
+  auto colorScheme = themeType.key(ui->cboTheme->currentText());
+  PublicUrlDialog publicDialog(colorScheme, this);
   publicDialog.setWindowTitle("Direcciones url públicas");
 
   publicDialog.exec();
@@ -839,6 +859,8 @@ void Widget::setUpTableHeaders() const noexcept{
   ui->tvUrl->model()->setHeaderData(2,Qt::Horizontal, "Descripción");
   ui->tvUrl->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
   ui->tvUrl->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+  ui->tvUrl->setSelectionBehavior(QAbstractItemView::SelectRows);
+  ui->tvUrl->setAlternatingRowColors(true);
 
 
 }
@@ -921,6 +943,13 @@ void Widget::writeSettings() const noexcept{
 
   settings.setValue(QStringLiteral("position"), saveGeometry());
 
+  if(ui->cboCategory->count() > 1 && SW::Helper_t::sessionStatus_ == SW::SessionStatus::Session_closed){
+
+    const auto categoryName = ui->cboCategory->currentText();
+    settings.setValue(QStringLiteral("category name"), categoryName);
+
+  }
+
   settings.beginGroup(QStringLiteral("Theme"));
 
   settings.setValue(QStringLiteral("theme name"), themeType.value(static_cast<Qt::ColorScheme>(ui->cboTheme->currentIndex())));
@@ -948,6 +977,28 @@ void Widget::readSettings() noexcept{
   QSettings settings(qApp->organizationName(), SW::Helper_t::appName());
 
   restoreGeometry(settings.value(QStringLiteral("position")).toByteArray());
+
+  auto ret = SW::Helper_t::nativeRegistryKeyExists("category name");
+
+  QString categoryName{};
+  if(ret && SW::Helper_t::sessionStatus_ == SW::SessionStatus::Session_closed){
+
+    categoryName = settings.value("category name", QString()).toString();
+
+    if(!categoryName.isEmpty() && ui->cboCategory->count() > 1){
+
+      {
+
+        QSignalBlocker signalBlocker(ui->cboCategory);
+        ui->cboCategory->setCurrentText(categoryName);
+      }
+      categorySelectedChanged(categoryName);
+    }
+  }
+
+
+
+
 
   settings.beginGroup(QStringLiteral("Theme"));
   const auto theme = settings.value(QStringLiteral("theme Value")).toInt();

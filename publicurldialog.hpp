@@ -11,7 +11,7 @@ class PublicUrlDialog : public QDialog{
   Q_OBJECT
 
 public:
-  explicit PublicUrlDialog(QWidget *parent = nullptr);
+  explicit PublicUrlDialog(Qt::ColorScheme colorScheme, QWidget *parent = nullptr);
   ~PublicUrlDialog();
 
 private:

@@ -8,6 +8,7 @@
 #include <QSettings>
 #include <QStyleFactory>
 #include <QStyleHints>
+#include <QTableView>
 
 extern "C"{
 #include "openssl/rand.h"
@@ -171,6 +172,59 @@ QPalette  Helper_t::set_Theme(Qt::ColorScheme theme) noexcept
   }
 
   return mPalette;
+
+}
+
+void Helper_t::applyManjaroDarkColor(QTableView *table){
+
+  if(!table) return;
+
+  table->setStyleSheet(
+    /* Estilo base del cuerpo de la tabla */
+    "QTableView {"
+    "    background-color: #1b1e20; "       /* Fondo oscuro para las celdas */
+    "    color: #fcfcfc;  "                 /* Texto blanco/gris claro */
+    "    gridline-color: #2d3136; "         /* Color de las líneas de la cuadrícula */
+    "    border: 1px solid #2d3136;"
+    "    selection-background-color: #16a085;" /* Verde Maia de Manjaro */
+    "    selection-color: white;"
+    "    outline: 0;  "                     /* Elimina el borde de puntos al hacer clic */
+    "}"
+
+    /* Estilo para los ítems individuales */
+    "QTableView::item {"
+    "    padding: 5px;"
+    "}"
+
+    "QTableView::item:hover {"
+    "    background-color: rgba(22, 160, 133, 50);" /* Verde suave al pasar el mouse */
+    "}"
+
+    /* Estilo para la Cabecera Horizontal (Nombres de columnas) */
+    "QHeaderView::section:horizontal {"
+    "    background-color: #2b3034;   "     /* Fondo gris oscuro */
+    "    color: #fcfcfc;              "     /* Texto blanco */
+    "    padding: 4px;"
+    "    border: 1px solid #1b1e20;   "     /* Bordes entre columnas */
+    "    font-weight: bold;"
+    "}"
+
+    /* Estilo para la Cabecera Vertical (Números de fila) */
+    "QHeaderView::section:vertical {"
+    "    background-color: #2b3034;"
+    "    color: #8a8a8a;            "       /* Texto más tenue para los números */
+    "    padding-left: 5px;"
+    "    padding-right: 5px;"
+    "    border: 1px solid #1b1e20;"
+    "}"
+
+    /* Esquina superior izquierda donde se cruzan los headers) */
+    "QTableCornerButton::section {"
+    "    background-color: #2b3034;"
+    "    border: 1px solid #1b1e20;"
+    "}"
+    );
+
 
 }
 
