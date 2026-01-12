@@ -9,7 +9,7 @@
 #include "util/helper.hpp"
 #include "swtablemodel.hpp"
 
-PublicUrlDialog::PublicUrlDialog(QWidget *parent) :
+PublicUrlDialog::PublicUrlDialog(Qt::ColorScheme colorScheme, QWidget *parent) :
   QDialog(parent), ui(new Ui::PublicUrlDialog),
   db_{QSqlDatabase::database(QStringLiteral("xxxConection"))}{
   ui->setupUi(this);
@@ -17,6 +17,18 @@ PublicUrlDialog::PublicUrlDialog(QWidget *parent) :
 
   loadDataComboBox();
   loadDataTableView();
+
+
+  if(colorScheme == Qt::ColorScheme::Dark){
+
+    SW::Helper_t::applyManjaroDarkColor(ui->urlTableView);
+  }
+  if(colorScheme == Qt::ColorScheme::Unknown){
+
+    auto colorSch = SW::Helper_t::detectSystemColorScheme();
+    if(colorSch == Qt::ColorScheme::Dark)
+      SW::Helper_t::applyManjaroDarkColor(ui->urlTableView);
+  }
 
   QObject::connect(ui->categoryComboBox, &QComboBox::currentTextChanged, this, &PublicUrlDialog::loadDataTableView);
 

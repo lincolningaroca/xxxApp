@@ -7,6 +7,8 @@
 #include <QApplication>
 #include <QPalette>
 
+class QTableView;
+
 namespace SW {
 
 enum class [[deprecated("Usar mejor Qt::ColorScheme")]] Theme{ Light_Mode, Dark_Mode };
@@ -43,6 +45,7 @@ struct Helper_t{
 
   // [[nodiscard]]static Qt::ColorScheme checkSystemColorScheme() noexcept;
   [[nodiscard]]static Qt::ColorScheme detectSystemColorScheme();
+  static void applyManjaroDarkColor(QTableView* table);
 
 
 
